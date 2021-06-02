@@ -172,6 +172,10 @@ public class CheckInsuranceServiceImpl extends ServiceImpl<CheckInsuranceMapper,
                     checkInsurance.setSignServiceHarge(CompulsoryServiceHarge + commercialServiceHarge);
 //                保存数据
                    insert = checkInsuranceMapper.insert(checkInsurance);
+//                 比对成功修改insuranceInhand的比对状态为已比对
+                    if(insert != 0){
+                        insuranceInHand.setIsChecked(1);//0：未比对  1：已比对
+                    }
                 }
             }
         }

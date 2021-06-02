@@ -20,7 +20,7 @@ import lombok.experimental.Accessors;
 /**
  * @Description: 核对的保单
  * @Author: jeecg-boot
- * @Date:   2021-05-31
+ * @Date:   2021-06-02
  * @Version: V1.0
  */
 @Data

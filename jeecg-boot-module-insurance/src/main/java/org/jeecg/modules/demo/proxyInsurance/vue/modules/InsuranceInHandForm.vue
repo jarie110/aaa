@@ -153,6 +153,11 @@
               <a-input-number v-model="model.seatBonus" placeholder="请输入座位保奖励金" style="width: 100%" />
             </a-form-model-item>
           </a-col>
+          <a-col :span="24">
+            <a-form-model-item label="返点支付方式" :labelCol="labelCol" :wrapperCol="wrapperCol" prop="paymentWay">
+              <j-dict-select-tag type="list" v-model="model.paymentWay" dictCode="rebate_way" placeholder="请选择返点支付方式" />
+            </a-form-model-item>
+          </a-col>
         </a-row>
       </a-form-model>
     </j-form-container>

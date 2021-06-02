@@ -11,7 +11,6 @@ import org.jeecg.modules.demo.proxyInsurance.mapper.InsuranceInHandMapper;
 import org.jeecg.modules.demo.proxyInsurance.service.IInsuranceInHandService;
 import org.jeecg.modules.demo.rebate.entity.InsuranceRebateRatio;
 import org.jeecg.modules.demo.rebate.service.IInsuranceRebateRatioService;
-import org.jeecg.modules.demo.supplemental.service.ISupplementalInsuranceService;
 import org.jeecg.modules.demo.usage.entity.InsuranceUsage;
 import org.jeecg.modules.demo.usage.service.IInsuranceUsageService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +30,7 @@ public class InsuranceInHandServiceImpl extends ServiceImpl<InsuranceInHandMappe
     public final Integer FIXED_VALUE = 20000;//司机责任险最小值
     @Autowired
     private IInsuranceUsageService usageService;
+
     @Autowired
     private IInsuranceRebateRatioService rebateRatioService;
 
@@ -135,7 +135,7 @@ public class InsuranceInHandServiceImpl extends ServiceImpl<InsuranceInHandMappe
         Integer seatsNum = insuranceInHand.getSeatsNum();//获取车座位数
         double bonus = 0;
         if (driverLiabilityInsured >= FIXED_VALUE
-                && passengerLiabilityInsured > (seatsNum - 1) * driverLiabilityInsured) {
+                && passengerLiabilityInsured >= (seatsNum - 1) * driverLiabilityInsured) {
             List<InsuranceRebateRatio> rebateRatioList = rebateRatioService.getInsuranceRebateRatioByType(RebateType.SEAT_INSURANCE.getType());
             for (InsuranceRebateRatio rebateRatio : rebateRatioList) {
                 if (!rebateRatio.getUsageType().equals("-") && usageType == Integer.valueOf(rebateRatio.getUsageType())) {

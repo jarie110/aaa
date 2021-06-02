@@ -4,16 +4,65 @@
     <div class="table-page-search-wrapper">
       <a-form layout="inline" @keyup.enter.native="searchQuery">
         <a-row :gutter="24">
-          <a-col :xl="6" :lg="7" :md="8" :sm="24">
-            <a-form-item label="是否返佣">
-              <j-dict-select-tag placeholder="请选择是否返佣" v-model="queryParam.isPayCommission" dictCode="is_paid_rebate"/>
+          <a-col :xl="10" :lg="11" :md="12" :sm="24">
+            <a-form-item label="出单日期">
+              <j-date placeholder="请选择开始日期" class="query-group-cust" v-model="queryParam.insuranceDate_begin"></j-date>
+              <span class="query-group-split-cust"></span>
+              <j-date placeholder="请选择结束日期" class="query-group-cust" v-model="queryParam.insuranceDate_end"></j-date>
             </a-form-item>
           </a-col>
           <a-col :xl="6" :lg="7" :md="8" :sm="24">
-            <a-form-item label="是否比对">
-              <j-dict-select-tag placeholder="请选择是否比对" v-model="queryParam.isChecked" dictCode="is_checked"/>
+            <a-form-item label="车牌号">
+              <a-input placeholder="请输入车牌号" v-model="queryParam.vehicleLicense"></a-input>
             </a-form-item>
           </a-col>
+          <template v-if="toggleSearchStatus">
+            <a-col :xl="6" :lg="7" :md="8" :sm="24">
+              <a-form-item label="客户名称">
+                <a-input placeholder="请输入客户名称" v-model="queryParam.customer"></a-input>
+              </a-form-item>
+            </a-col>
+            <a-col :xl="6" :lg="7" :md="8" :sm="24">
+              <a-form-item label="车架号">
+                <a-input placeholder="请输入车架号" v-model="queryParam.vehicleIdentity"></a-input>
+              </a-form-item>
+            </a-col>
+            <a-col :xl="6" :lg="7" :md="8" :sm="24">
+              <a-form-item label="交强险保单号">
+                <a-input placeholder="请输入交强险保单号" v-model="queryParam.compulsoryInsurCode"></a-input>
+              </a-form-item>
+            </a-col>
+            <a-col :xl="6" :lg="7" :md="8" :sm="24">
+              <a-form-item label="商业险保单号">
+                <a-input placeholder="请输入商业险保单号" v-model="queryParam.commercialInsurCode"></a-input>
+              </a-form-item>
+            </a-col>
+            <a-col :xl="6" :lg="7" :md="8" :sm="24">
+              <a-form-item label="渠道名称">
+                <j-dict-select-tag placeholder="请选择渠道名称" v-model="queryParam.distributionChannelId" dictCode="distribution_channel,channel_name,channel_type"/>
+              </a-form-item>
+            </a-col>
+            <a-col :xl="6" :lg="7" :md="8" :sm="24">
+              <a-form-item label="所属团队">
+                <j-dict-select-tag placeholder="请选择所属团队" v-model="queryParam.insuranceTeam" dictCode="insurance_team,team_name,team_code"/>
+              </a-form-item>
+            </a-col>
+            <a-col :xl="6" :lg="7" :md="8" :sm="24">
+              <a-form-item label="是否返佣">
+                <j-dict-select-tag placeholder="请选择是否返佣" v-model="queryParam.isPayCommission" dictCode="is_paid_rebate"/>
+              </a-form-item>
+            </a-col>
+            <a-col :xl="6" :lg="7" :md="8" :sm="24">
+              <a-form-item label="是否比对">
+                <j-dict-select-tag placeholder="请选择是否比对" v-model="queryParam.isChecked" dictCode="is_checked"/>
+              </a-form-item>
+            </a-col>
+            <a-col :xl="6" :lg="7" :md="8" :sm="24">
+              <a-form-item label="返点支付方式">
+                <j-dict-select-tag placeholder="请选择返点支付方式" v-model="queryParam.paymentWay" dictCode="rebate_way"/>
+              </a-form-item>
+            </a-col>
+          </template>
           <a-col :xl="6" :lg="7" :md="8" :sm="24">
             <span style="float: left;overflow: hidden;" class="table-page-search-submitButtons">
               <a-button type="primary" @click="searchQuery" icon="search">查询</a-button>
@@ -299,6 +348,11 @@
             dataIndex: 'seatBonus'
           },
           {
+            title:'返点支付方式',
+            align:"center",
+            dataIndex: 'paymentWay_dictText'
+          },
+          {
             title: '操作',
             dataIndex: 'action',
             align:"center",
@@ -362,6 +416,7 @@
         fieldList.push({type:'int',value:'isPayCommission',text:'是否返佣',dictCode:'is_paid_rebate'})
         fieldList.push({type:'int',value:'isChecked',text:'是否比对',dictCode:'is_checked'})
         fieldList.push({type:'double',value:'seatBonus',text:'座位保奖励金',dictCode:''})
+        fieldList.push({type:'int',value:'paymentWay',text:'返点支付方式',dictCode:'rebate_way'})
         this.superFieldList = fieldList
       }
     }

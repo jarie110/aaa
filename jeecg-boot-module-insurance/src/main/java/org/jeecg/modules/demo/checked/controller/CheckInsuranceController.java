@@ -30,7 +30,7 @@ import java.util.Arrays;
  */
 @Api(tags="核对的保单")
 @RestController
-@RequestMapping("/checkInsurance/checkInsurance")
+@RequestMapping("/checked/checkInsurance")
 @Slf4j
 public class CheckInsuranceController extends JeecgController<CheckInsurance, ICheckInsuranceService> {
 	@Autowired
@@ -46,7 +46,7 @@ public class CheckInsuranceController extends JeecgController<CheckInsurance, IC
 		 InsuranceInHand insuranceInHand = insuranceInHandService.getById(id);
 		 int insert = checkInsuranceService.checkAndSaveInsuracne(insuranceInHand);
 		 if(insert == 0){
-			 return Result.error(400,"比对失败，请检查录入的信息是否正确");
+			 return Result.error(400,"请检查录入的信息是否正确或保司保单是否已录入");
 		 }
 		 return Result.OK("比对成功");
 	 }
