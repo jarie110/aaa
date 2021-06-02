@@ -20,7 +20,7 @@ import lombok.experimental.Accessors;
 /**
  * @Description: 返点比例
  * @Author: jeecg-boot
- * @Date:   2021-05-31
+ * @Date:   2021-06-02
  * @Version: V1.0
  */
 @Data
@@ -62,8 +62,8 @@ public class InsuranceRebateRatio implements Serializable {
     @ApiModelProperty(value = "是否过户")
     private String isTransfer;
 	/**续保类型*/
-	@Excel(name = "续保类型", width = 15, dictTable = "renewal_mark", dicText = "renewal_mark_name", dicCode = "renewal_mark_type")
-	@Dict(dictTable = "renewal_mark", dicText = "renewal_mark_name", dicCode = "renewal_mark_type")
+	@Excel(name = "续保类型", width = 15, dicCode = "renewal_symbol")
+	@Dict(dicCode = "renewal_symbol")
     @ApiModelProperty(value = "续保类型")
     private String renewalType;
 	/**使用性质*/

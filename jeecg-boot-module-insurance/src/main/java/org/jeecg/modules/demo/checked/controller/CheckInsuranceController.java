@@ -13,6 +13,7 @@ import org.jeecg.common.api.vo.Result;
 import org.jeecg.common.aspect.annotation.AutoLog;
 import org.jeecg.common.system.base.controller.JeecgController;
 import org.jeecg.common.system.query.QueryGenerator;
+import org.jeecg.modules.demo.proxyInsurance.service.IInsuranceInHandService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
@@ -35,12 +36,18 @@ public class CheckInsuranceController extends JeecgController<CheckInsurance, IC
 	@Autowired
 	private ICheckInsuranceService checkInsuranceService;
 
+	@Autowired
+	private IInsuranceInHandService insuranceInHandService;
 
 	 @AutoLog(value = "录入的保单-对比保司保单数据")
 	 @ApiOperation(value="录入的保单-对比保司保单数据", notes="录入的保单-对比保司保单数据")
-	 @PostMapping(value = "/check")
-	 public Result<?> check(InsuranceInHand insuranceInHand){
-		 checkInsuranceService.checkAndSaveInsuracne(insuranceInHand);
+	 @GetMapping(value = "/check")
+	 public Result<?> check(String id){
+		 InsuranceInHand insuranceInHand = insuranceInHandService.getById(id);
+		 int insert = checkInsuranceService.checkAndSaveInsuracne(insuranceInHand);
+		 if(insert == 0){
+			 return Result.error(400,"比对失败，请检查录入的信息是否正确");
+		 }
 		 return Result.OK("比对成功");
 	 }
 

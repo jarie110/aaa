@@ -15,7 +15,7 @@
           </a-col>
           <a-col :span="24">
             <a-form-model-item label="续保类型" :labelCol="labelCol" :wrapperCol="wrapperCol" prop="renewalType">
-              <j-dict-select-tag type="list" v-model="model.renewalType" dictCode="renewal_mark,renewal_mark_name,renewal_mark_type" placeholder="请选择续保类型" />
+              <j-dict-select-tag type="list" v-model="model.renewalType" dictCode="renewal_symbol" placeholder="请选择续保类型" />
             </a-form-model-item>
           </a-col>
           <a-col :span="24">
@@ -90,6 +90,12 @@
         },
         confirmLoading: false,
         validatorRules: {
+           rebateRatioType: [
+              { required: true, message: '请输入返点类型!'},
+           ],
+           rebateRatio: [
+              { required: true, message: '请输入返点比例!'},
+           ],
         },
         url: {
           add: "/rebate/insuranceRebateRatio/add",

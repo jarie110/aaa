@@ -208,7 +208,7 @@
         let fieldList=[];
         fieldList.push({type:'int',value:'rebateRatioType',text:'返点类型',dictCode:'rebate_ratio_type'})
         fieldList.push({type:'string',value:'isTransfer',text:'是否过户',dictCode:'is_transfer'})
-        fieldList.push({type:'string',value:'renewalType',text:'续保类型',dictCode:'renewal_mark,renewal_mark_name,renewal_mark_type'})
+        fieldList.push({type:'string',value:'renewalType',text:'续保类型',dictCode:'renewal_symbol'})
         fieldList.push({type:'string',value:'usageType',text:'使用性质',dictCode:'insurance_usage,usage_name,usage_type'})
         fieldList.push({type:'string',value:'thirdPartyInsured',text:'三责保额档',dictCode:''})
         fieldList.push({type:'string',value:'carDamageInsured',text:'车损险保额档',dictCode:''})

@@ -1,8 +1,5 @@
 package org.jeecg.enumUtil;
 
-import org.springframework.stereotype.Component;
-
-
 public enum IsTransfer {
     TRANSFER(1,"过户"),
     NO_TRANSFER(0,"未过户")

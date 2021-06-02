@@ -55,12 +55,12 @@
           </a-col>
           <a-col :span="24">
             <a-form-model-item label="保费总额" :labelCol="labelCol" :wrapperCol="wrapperCol" prop="insuranceTotalFee">
-              <a-input-number v-model="model.insuranceTotalFee" placeholder="请输入保费总额" style="width: 100%" />
+              <a-input-number v-model="model.insuranceTotalFee" placeholder="请输入保费总额" style="width: 100%" disabled/>
             </a-form-model-item>
           </a-col>
           <a-col :span="24">
             <a-form-model-item label="手续费总额" :labelCol="labelCol" :wrapperCol="wrapperCol" prop="totalServiceFee">
-              <a-input-number v-model="model.totalServiceFee" placeholder="请输入手续费总额" style="width: 100%" />
+              <a-input-number v-model="model.totalServiceFee" placeholder="请输入手续费总额" style="width: 100%" disabled/>
             </a-form-model-item>
           </a-col>
           <a-col :span="24">
@@ -135,7 +135,7 @@
           </a-col>
           <a-col :span="24">
             <a-form-model-item label="商业险返点比" :labelCol="labelCol" :wrapperCol="wrapperCol" prop="commercialInsuranceRebate">
-              <a-input-number v-model="model.commercialInsuranceRebate" placeholder="请输入商业险返点比" style="width: 100%" />
+              <a-input-number v-model="model.commercialInsuranceRebate" placeholder="请输入商业险返点比" style="width: 100%" disabled/>
             </a-form-model-item>
           </a-col>
           <a-col :span="24">
@@ -192,6 +192,57 @@
         },
         confirmLoading: false,
         validatorRules: {
+           insuranceDate: [
+              { required: true, message: '请输入出单日期!'},
+           ],
+           salesman: [
+              { required: true, message: '请输入出单员!'},
+           ],
+           vehicleLicense: [
+              { required: true, message: '请输入车牌号!'},
+           ],
+           customer: [
+              { required: true, message: '请输入客户名称!'},
+           ],
+           vehicleIdentity: [
+              { required: true, message: '请输入车架号!'},
+           ],
+           compulsoryInsurCode: [
+              { required: true, message: '请输入交强险保单号!'},
+           ],
+           compulsoryInsurFee: [
+              { required: true, message: '请输入交强险保费!'},
+           ],
+           commercialInsurCode: [
+              { required: true, message: '请输入商业险保单号!'},
+           ],
+           commercialInsurFee: [
+              { required: true, message: '请输入商业险保费!'},
+           ],
+           vehicleVesselTax: [
+              { required: true, message: '请输入车船税!'},
+           ],
+           renewalType: [
+              { required: true, message: '请输入新续保标志!'},
+           ],
+           carUsageType: [
+              { required: true, message: '请输入使用性质!'},
+           ],
+           insuranceTeam: [
+              { required: true, message: '请输入所属团队!'},
+           ],
+           registerDate: [
+              { required: true, message: '请输入初登日期!'},
+           ],
+           isTransfer: [
+              { required: true, message: '请输入是否过户!'},
+           ],
+           signFee: [
+              { required: true, message: '请输入签单手续费!'},
+           ],
+           seatsNum: [
+              { required: true, message: '请输入座位数!'},
+           ],
            isPayCommission: [
               { required: true, message: '请输入是否返佣!'},
            ],

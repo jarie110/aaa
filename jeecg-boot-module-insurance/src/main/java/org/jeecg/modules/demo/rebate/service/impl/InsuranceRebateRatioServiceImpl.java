@@ -15,13 +15,13 @@ import java.util.List;
 /**
  * @Description: 返点比例
  * @Author: jeecg-boot
- * @Date:   2021-05-26
+ * @Date:   2021-06-02
  * @Version: V1.0
  */
 @Service
 public class InsuranceRebateRatioServiceImpl extends ServiceImpl<InsuranceRebateRatioMapper, InsuranceRebateRatio> implements IInsuranceRebateRatioService {
 
-   @Autowired
+   @Resource
     private InsuranceRebateRatioMapper rebateRatioMapper;
     @Override
     public List<InsuranceRebateRatio> getInsuranceRebateRatioByType(Integer type) {

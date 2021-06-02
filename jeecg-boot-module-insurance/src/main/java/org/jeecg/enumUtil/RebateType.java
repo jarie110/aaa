@@ -1,7 +1,5 @@
 package org.jeecg.enumUtil;
 
-import org.springframework.stereotype.Component;
-
 public enum RebateType {
     COMMERCIAL_BASIC_REBATE(0,"商业险基础返点"),
     THIRD_PARTY_REBATE(1,"三责保额返点"),
@@ -11,7 +9,8 @@ public enum RebateType {
     IS_TRANSFER_REBATE(5,"过户返点比"),
     OVERLAPPING_REBATE(6,"交叉返点比"),
     FOLLOW_UP_REBATE(7,"跟单零返点比"),
-    SEAT_INSURANCE(8,"座位保返点比")
+    SEAT_INSURANCE(8,"座位保返点比"),
+    CHANGE_INTO_INSURANCE(9,"转入或其他"),
     ;
     private Integer type;
     private String RebateName;

@@ -1,7 +1,5 @@
 package org.jeecg.enumUtil;
 
-import org.springframework.stereotype.Component;
-
 public enum UsageTypeEnum {
     HOME_USE(0,"家庭自用"),
     NO_BUSINESS_CAR(1,"非营业企业客车"),

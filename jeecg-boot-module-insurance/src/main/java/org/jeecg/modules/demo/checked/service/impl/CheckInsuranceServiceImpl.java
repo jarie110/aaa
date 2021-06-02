@@ -13,6 +13,7 @@ import org.apache.commons.collections.CollectionUtils;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.List;
@@ -49,7 +50,8 @@ public class CheckInsuranceServiceImpl extends ServiceImpl<CheckInsuranceMapper,
      * @return
      */
     @Override
-    public void checkAndSaveInsuracne(InsuranceInHand insuranceInHand) {
+    @Transactional
+    public int checkAndSaveInsuracne(InsuranceInHand insuranceInHand) {
 //        根据录入保单和保司保单比较生成对比结果数据保单
         CheckInsurance checkInsurance = new CheckInsurance();
         String compulsoryInsurCode = insuranceInHand.getCompulsoryInsurCode();//交强险保单号
@@ -68,6 +70,7 @@ public class CheckInsuranceServiceImpl extends ServiceImpl<CheckInsuranceMapper,
 //        1.查到则获取保司保单，比对数据
 //        1.1 获取车架号
         String vehicleIdentity = insuranceInHand.getVehicleIdentity();
+        int insert = 0;
         boolean res = false;//比对结果
         if (vehicleIdentity != null) { //
 //            查询保司
@@ -168,12 +171,10 @@ public class CheckInsuranceServiceImpl extends ServiceImpl<CheckInsuranceMapper,
 //                签单手续费
                     checkInsurance.setSignServiceHarge(CompulsoryServiceHarge + commercialServiceHarge);
 //                保存数据
-                    checkInsuranceMapper.insert(checkInsurance);
+                   insert = checkInsuranceMapper.insert(checkInsurance);
                 }
-            } else {
-//        2.如果失败，则提示当前车架号有误，或者当前系统还未导入保司保单，请检查 todo
-                log.debug("车架号输入有误或系统未导入保司保单，请检查");
             }
         }
+        return insert;
     }
 }

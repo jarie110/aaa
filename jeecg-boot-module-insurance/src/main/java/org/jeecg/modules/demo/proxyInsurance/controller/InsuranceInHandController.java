@@ -82,6 +82,8 @@ public class InsuranceInHandController extends JeecgController<InsuranceInHand, 
 	@ApiOperation(value="录入的保单-编辑", notes="录入的保单-编辑")
 	@PutMapping(value = "/edit")
 	public Result<?> edit(@RequestBody InsuranceInHand insuranceInHand) {
+		//		完善所有数据
+		insuranceInHandService.setAllArgs(insuranceInHand);
 		insuranceInHandService.updateById(insuranceInHand);
 		return Result.OK("编辑成功!");
 	}
