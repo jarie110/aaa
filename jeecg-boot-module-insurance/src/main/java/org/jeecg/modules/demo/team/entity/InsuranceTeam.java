@@ -20,7 +20,7 @@ import lombok.experimental.Accessors;
 /**
  * @Description: 车险销售团队
  * @Author: jeecg-boot
- * @Date:   2021-05-31
+ * @Date:   2021-06-03
  * @Version: V1.0
  */
 @Data
@@ -59,4 +59,9 @@ public class InsuranceTeam implements Serializable {
 	@Excel(name = "团队序号", width = 15)
     @ApiModelProperty(value = "团队序号")
     private Integer teamCode;
+	/**团队状态*/
+	@Excel(name = "团队状态", width = 15, dicCode = "team_state")
+	@Dict(dicCode = "team_state")
+    @ApiModelProperty(value = "团队状态")
+    private Integer teamState;
 }

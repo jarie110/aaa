@@ -4,6 +4,21 @@
     <div class="table-page-search-wrapper">
       <a-form layout="inline" @keyup.enter.native="searchQuery">
         <a-row :gutter="24">
+          <a-col :xl="6" :lg="7" :md="8" :sm="24">
+            <a-form-item label="团队序号">
+              <a-input placeholder="请输入团队序号" v-model="queryParam.teamCode"></a-input>
+            </a-form-item>
+          </a-col>
+          <a-col :xl="6" :lg="7" :md="8" :sm="24">
+            <span style="float: left;overflow: hidden;" class="table-page-search-submitButtons">
+              <a-button type="primary" @click="searchQuery" icon="search">查询</a-button>
+              <a-button type="primary" @click="searchReset" icon="reload" style="margin-left: 8px">重置</a-button>
+              <a @click="handleToggleSearch" style="margin-left: 8px">
+                {{ toggleSearchStatus ? '收起' : '展开' }}
+                <a-icon :type="toggleSearchStatus ? 'up' : 'down'"/>
+              </a>
+            </span>
+          </a-col>
         </a-row>
       </a-form>
     </div>
@@ -99,6 +114,7 @@
   import { mixinDevice } from '@/utils/mixin'
   import { JeecgListMixin } from '@/mixins/JeecgListMixin'
   import InsuranceTeamModal from './modules/InsuranceTeamModal'
+  import {filterMultiDictText} from '@/components/dict/JDictSelectUtil'
 
   export default {
     name: 'InsuranceTeamList',
@@ -130,6 +146,11 @@
             title:'团队序号',
             align:"center",
             dataIndex: 'teamCode'
+          },
+          {
+            title:'团队状态',
+            align:"center",
+            dataIndex: 'teamState_dictText'
           },
           {
             title: '操作',
@@ -167,6 +188,7 @@
         let fieldList=[];
         fieldList.push({type:'string',value:'teamName',text:'所属团队名',dictCode:''})
         fieldList.push({type:'int',value:'teamCode',text:'团队序号',dictCode:''})
+        fieldList.push({type:'int',value:'teamState',text:'团队状态',dictCode:'team_state'})
         this.superFieldList = fieldList
       }
     }

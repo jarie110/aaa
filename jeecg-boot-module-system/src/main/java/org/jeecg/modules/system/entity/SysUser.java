@@ -165,7 +165,7 @@ public class SysUser implements Serializable {
     /**
      * 身份（0 普通成员 1 上级）
      */
-    @Excel(name="（1普通成员 2上级）",width = 15)
+    @Excel(name="（1普通成员 2上级 3手机端用户）",width = 15)
     private Integer userIdentity;
 
     /**

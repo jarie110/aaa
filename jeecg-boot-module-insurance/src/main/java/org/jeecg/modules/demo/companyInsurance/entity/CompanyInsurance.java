@@ -20,7 +20,7 @@ import lombok.experimental.Accessors;
 /**
  * @Description: 保险公司保单
  * @Author: jeecg-boot
- * @Date:   2021-05-31
+ * @Date:   2021-06-03
  * @Version: V1.0
  */
 @Data
@@ -35,10 +35,6 @@ public class CompanyInsurance implements Serializable {
 	@TableId(type = IdType.ASSIGN_ID)
     @ApiModelProperty(value = "主键")
     private String id;
-	/**投保单号*/
-	@Excel(name = "投保单号", width = 15)
-    @ApiModelProperty(value = "投保单号")
-    private String insureOddNum;
 	/**保单号 （交强，商业）*/
 	@Excel(name = "保单号 （交强，商业）", width = 15)
     @ApiModelProperty(value = "保单号 （交强，商业）")

@@ -41,7 +41,7 @@ import java.util.stream.Collectors;
 @Service
 @Slf4j
 public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> implements ISysUserService {
-	
+
 	@Autowired
 	private SysUserMapper userMapper;
 	@Autowired
@@ -116,8 +116,8 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
 	public SysUser getUserByName(String username) {
 		return userMapper.getUserByName(username);
 	}
-	
-	
+
+
 	@Override
 	@Transactional
 	public void addUserWithRole(SysUser user, String roles) {
@@ -152,7 +152,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
 	public List<String> getRole(String username) {
 		return sysUserRoleMapper.getRoleByUserName(username);
 	}
-	
+
 	/**
 	 * 通过用户名获取用户角色集合
 	 * @param username 用户名
@@ -196,7 +196,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
 //		SysUser user = userMapper.getUserByName(username);
 //		info.setSysUserCode(user.getUsername());
 //		info.setSysUserName(user.getRealname());
-		
+
 
 		LoginUser user = sysBaseAPI.getUserByName(username);
 		if(user!=null) {
@@ -204,7 +204,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
 			info.setSysUserName(user.getRealname());
 			info.setSysOrgCode(user.getOrgCode());
 		}
-		
+
 		//多部门支持in查询
 		List<SysDepart> list = sysDepartMapper.queryUserDeparts(user.getId());
 		List<String> sysMultiOrgCode = new ArrayList<String>();
@@ -220,7 +220,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
 			}
 		}
 		info.setSysMultiOrgCode(sysMultiOrgCode);
-		
+
 		return info;
 	}
 
@@ -361,6 +361,14 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
 			baseCommonService.addLog("用户登录失败，用户不存在！", CommonConstant.LOG_TYPE_1, null);
 			return result;
 		}
+//
+		if (sysUser.getUserIdentity() == 3) {
+			result.error500("该用户无权登录");
+			baseCommonService.addLog("用户登录失败，用户无权登录！", CommonConstant.LOG_TYPE_1, null);
+			return result;
+		}
+
+
 		//情况2：根据用户信息查询，该用户已注销
 		//update-begin---author:王帅   Date:20200601  for：if条件永远为falsebug------------
 		if (CommonConstant.DEL_FLAG_1.equals(sysUser.getDelFlag())) {

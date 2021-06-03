@@ -144,6 +144,10 @@ public class InsuranceInHandServiceImpl extends ServiceImpl<InsuranceInHandMappe
                     insuranceInHand.setSeatBonus(bonus);
                 }
             }
+        }else{
+//            修改数据时，不满足则奖金为零
+            bonus = 0;
+            insuranceInHand.setSeatBonus(bonus);
         }
 //        计算返点比例总和
 //        Double rebateAll = percentList.stream().collect(Collectors.summingDouble(Double::doubleValue));
@@ -162,7 +166,7 @@ public class InsuranceInHandServiceImpl extends ServiceImpl<InsuranceInHandMappe
         insuranceInHand.setInsuranceTotalFee(commercialInsurFee + compulsoryInsurFee + vehicleVesselTax);
 
         /* 计算返点佣金 = 商业险 * 商业险返点 + 交强险 * 交强险返点比 + 座位保奖金+签单手续费*/
-        double totalServiceFee = commercialInsurFee * (rebateAll / 100) + compulsoryInsurFee * (insuranceInHand.getCompulsoryInsuranceRebate() / 100) + bonus + signFee;
+        double totalServiceFee = commercialInsurFee * (rebateAll / 100) + compulsoryInsurFee * (insuranceInHand.getCompulsoryInsuranceRebate() / 100) + insuranceInHand.getSeatBonus() + signFee;
         insuranceInHand.setTotalServiceFee(totalServiceFee);
 
     }

@@ -13,6 +13,11 @@
               <a-input-number v-model="model.teamCode" placeholder="请输入团队序号" style="width: 100%" />
             </a-form-model-item>
           </a-col>
+          <a-col :span="24">
+            <a-form-model-item label="团队状态" :labelCol="labelCol" :wrapperCol="wrapperCol" prop="teamState">
+              <j-dict-select-tag type="list" v-model="model.teamState" dictCode="team_state" placeholder="请选择团队状态" />
+            </a-form-model-item>
+          </a-col>
         </a-row>
       </a-form-model>
     </j-form-container>

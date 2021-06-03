@@ -63,7 +63,7 @@ import java.util.stream.Collectors;
 public class SysUserController {
 	@Autowired
 	private ISysBaseAPI sysBaseAPI;
-	
+
 	@Autowired
 	private ISysUserService sysUserService;
 
@@ -464,8 +464,9 @@ public class SysUserController {
                         // 通过索引名判断出错信息
                         if (message.contains(CommonConstant.SQL_INDEX_UNIQ_SYS_USER_USERNAME)) {
                             errorMessage.add("第 " + lineNumber + " 行：用户名已经存在，忽略导入。");
-                        } else if (message.contains(CommonConstant.SQL_INDEX_UNIQ_SYS_USER_WORK_NO)) {
-                            errorMessage.add("第 " + lineNumber + " 行：工号已经存在，忽略导入。");
+//                        }
+//                        else if (message.contains(CommonConstant.SQL_INDEX_UNIQ_SYS_USER_WORK_NO)) {
+//                            errorMessage.add("第 " + lineNumber + " 行：工号已经存在，忽略导入。");
                         } else if (message.contains(CommonConstant.SQL_INDEX_UNIQ_SYS_USER_PHONE)) {
                             errorMessage.add("第 " + lineNumber + " 行：手机号已经存在，忽略导入。");
                         } else if (message.contains(CommonConstant.SQL_INDEX_UNIQ_SYS_USER_EMAIL)) {
@@ -817,7 +818,7 @@ public class SysUserController {
         }
         return result;
     }
-    
+
     /**
          *  查询当前用户的所有部门/当前部门编码
      * @return
@@ -840,12 +841,12 @@ public class SysUserController {
         return result;
     }
 
-    
+
 
 
 	/**
 	 * 用户注册接口
-	 * 
+	 *
 	 * @param jsonObject
 	 * @param user
 	 * @return
@@ -912,7 +913,8 @@ public class SysUserController {
 			user.setStatus(CommonConstant.USER_UNFREEZE);
 			user.setDelFlag(CommonConstant.DEL_FLAG_0);
 			user.setActivitiSync(CommonConstant.ACT_SYNC_0);
-			sysUserService.addUserWithRole(user,"ee8626f80f7c2619917b6236f3a7f02b");//默认临时角色 test
+            user.setUserIdentity(3);//只允许手机端用户注册
+			sysUserService.addUserWithRole(user,"1400290073257517058");//给手机端用户设置默认角色
 			result.success("注册成功");
 		} catch (Exception e) {
 			result.error500("注册失败");
@@ -955,7 +957,7 @@ public class SysUserController {
 		result.setMessage("验证失败");
 		return result;
 	}
-	
+
 	/**
 	 * 用户手机号验证
 	 */
@@ -983,7 +985,7 @@ public class SysUserController {
 		result.setSuccess(true);
 		return result;
 	}
-	
+
 	/**
 	 * 用户更改密码
 	 */
@@ -1027,11 +1029,11 @@ public class SysUserController {
             return result;
         }
     }
-	
+
 
 	/**
 	 * 根据TOKEN获取用户的部分信息（返回的数据是可供表单设计器使用的数据）
-	 * 
+	 *
 	 * @return
 	 */
 	@GetMapping("/getUserSectionInfoByToken")
@@ -1042,7 +1044,7 @@ public class SysUserController {
 			if (oConvertUtils.isEmpty(token)) {
 				 username = JwtUtil.getUserNameByToken(request);
 			} else {
-				 username = JwtUtil.getUsername(token);				
+				 username = JwtUtil.getUsername(token);
 			}
 
 			log.debug(" ------ 通过令牌获取部分用户信息，当前用户： " + username);
@@ -1063,7 +1065,7 @@ public class SysUserController {
 			return Result.error(500, "查询失败:" + e.getMessage());
 		}
 	}
-	
+
 	/**
 	 * 【APP端接口】获取用户列表  根据用户名和真实名 模糊匹配
 	 * @param keyword
@@ -1100,7 +1102,7 @@ public class SysUserController {
 			log.error(e.getMessage(), e);
 			return Result.error(500, "查询失败:" + e.getMessage());
 		}
-		
+
 	}
 
     /**
