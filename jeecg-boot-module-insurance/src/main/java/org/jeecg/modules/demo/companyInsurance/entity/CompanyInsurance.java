@@ -20,7 +20,7 @@ import lombok.experimental.Accessors;
 /**
  * @Description: 保险公司保单
  * @Author: jeecg-boot
- * @Date:   2021-06-03
+ * @Date:   2021-06-04
  * @Version: V1.0
  */
 @Data
@@ -35,6 +35,26 @@ public class CompanyInsurance implements Serializable {
 	@TableId(type = IdType.ASSIGN_ID)
     @ApiModelProperty(value = "主键")
     private String id;
+	/**创建时间*/
+	@JsonFormat(timezone = "GMT+8",pattern = "yyyy-MM-dd")
+    @DateTimeFormat(pattern="yyyy-MM-dd")
+    @ApiModelProperty(value = "创建时间")
+    private Date createTime;
+	/**创建人*/
+    @ApiModelProperty(value = "创建人")
+    private String createBy;
+	/**更新人*/
+    @ApiModelProperty(value = "更新人")
+    private String updateBy;
+	/**更新日期*/
+	@JsonFormat(timezone = "GMT+8",pattern = "yyyy-MM-dd")
+    @DateTimeFormat(pattern="yyyy-MM-dd")
+    @ApiModelProperty(value = "更新日期")
+    private Date updateTime;
+	/**投保单号*/
+	@Excel(name = "投保单号", width = 15)
+    @ApiModelProperty(value = "投保单号")
+    private String toubaoDh;
 	/**保单号 （交强，商业）*/
 	@Excel(name = "保单号 （交强，商业）", width = 15)
     @ApiModelProperty(value = "保单号 （交强，商业）")
@@ -64,9 +84,9 @@ public class CompanyInsurance implements Serializable {
     @ApiModelProperty(value = "转保单时间（出单时间）")
     private Date zbTime;
 	/**转保单日期（出单日期）*/
-	@Excel(name = "转保单日期（出单日期）", width = 15, format = "yyyy-MM-dd")
-	@JsonFormat(timezone = "GMT+8",pattern = "yyyy-MM-dd")
-    @DateTimeFormat(pattern="yyyy-MM-dd")
+	@Excel(name = "转保单日期（出单日期）", width = 20, format = "yyyy-MM-dd HH:mm:ss")
+	@JsonFormat(timezone = "GMT+8",pattern = "yyyy-MM-dd HH:mm:ss")
+    @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
     @ApiModelProperty(value = "转保单日期（出单日期）")
     private Date zbDate;
 	/**起保日期*/
@@ -242,7 +262,7 @@ public class CompanyInsurance implements Serializable {
 	/**车损险保额*/
 	@Excel(name = "车损险保额", width = 15)
     @ApiModelProperty(value = "车损险保额")
-    private Integer carDamageInsured;
+    private Double carDamageInsured;
 	/**是否电子投保单*/
 	@Excel(name = "是否电子投保单", width = 15)
     @ApiModelProperty(value = "是否电子投保单")

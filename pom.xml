@@ -152,18 +152,18 @@
 				<version>${jeecgboot.version}</version>
 			</dependency>
 			<!-- system 微服务 api -->
-			<dependency>
+			<!--<dependency>
 				<groupId>org.jeecgframework.boot</groupId>
 				<artifactId>jeecg-system-cloud-api</artifactId>
 				<version>${jeecgboot.version}</version>
-			</dependency>
+			</dependency>-->
 
             <!--微服务模块-->
-            <dependency>
+            <!--<dependency>
                 <groupId>org.jeecgframework.boot</groupId>
                 <artifactId>jeecg-boot-starter-cloud</artifactId>
                 <version>${jeecgboot.version}</version>
-            </dependency>
+            </dependency>-->
 
 			<!--xxl-job定时任务-->
 			<dependency>

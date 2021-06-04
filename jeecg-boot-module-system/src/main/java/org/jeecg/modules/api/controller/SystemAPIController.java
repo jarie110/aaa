@@ -484,7 +484,7 @@ public class SystemAPIController {
 
     /**
      * 37根据多个用户id(逗号分隔)，查询返回多个用户信息
-     * @param usernames
+     * @param
      * @return
      */
     @GetMapping("/queryUsersByIds")

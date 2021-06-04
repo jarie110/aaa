@@ -1,21 +1,19 @@
 package org.jeecg.modules.demo.checked.entity;
 
-import java.io.Serializable;
-import java.io.UnsupportedEncodingException;
-import java.util.Date;
-import java.math.BigDecimal;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import lombok.Data;
 import com.fasterxml.jackson.annotation.JsonFormat;
-import org.springframework.format.annotation.DateTimeFormat;
-import org.jeecgframework.poi.excel.annotation.Excel;
-import org.jeecg.common.aspect.annotation.Dict;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
+import org.jeecgframework.poi.excel.annotation.Excel;
+import org.springframework.format.annotation.DateTimeFormat;
+
+import java.io.Serializable;
+import java.util.Date;
 
 /**
  * @Description: 核对的保单
@@ -144,7 +142,7 @@ public class CheckInsurance implements Serializable {
 	/**车损险保额*/
 	@Excel(name = "车损险保额", width = 15)
     @ApiModelProperty(value = "车损险保额")
-    private Integer carDamageInsured;
+    private Double carDamageInsured;
 	/**承保险别名称*/
 	@Excel(name = "承保险别名称", width = 15)
     @ApiModelProperty(value = "承保险别名称")

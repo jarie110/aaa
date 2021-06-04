@@ -9,7 +9,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 /**
  * @Description: 保险公司保单
  * @Author: jeecg-boot
- * @Date:   2021-05-31
+ * @Date:   2021-06-04
  * @Version: V1.0
  */
 public interface CompanyInsuranceMapper extends BaseMapper<CompanyInsurance> {

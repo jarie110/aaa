@@ -53,7 +53,7 @@ import java.util.*;
 /**
  * @Description: 底层共通业务API，提供其他独立模块调用
  * @Author: scott
- * @Date:2019-4-20 
+ * @Date:2019-4-20
  * @Version:V1.0
  */
 @Slf4j
@@ -848,7 +848,7 @@ public class SysBaseApiImpl implements ISysBaseAPI {
 
 	/**
 	 * 36根据多个用户账号(逗号分隔)，查询返回多个用户信息
-	 * @param orgCodes
+	 * @param
 	 * @return
 	 */
 	@Override
@@ -867,7 +867,7 @@ public class SysBaseApiImpl implements ISysBaseAPI {
 
 	/**
 	 * 37根据多个部门编码(逗号分隔)，查询返回多个部门信息
-	 * @param usernames
+	 * @param
 	 * @return
 	 */
 	@Override

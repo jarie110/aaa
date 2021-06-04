@@ -1,29 +1,45 @@
 package org.jeecg.modules.demo.companyInsurance.controller;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import org.jeecg.common.api.vo.Result;
+import org.jeecg.common.system.query.QueryGenerator;
+import org.jeecg.common.util.oConvertUtils;
+import org.jeecg.modules.demo.companyInsurance.entity.CompanyInsurance;
+import org.jeecg.modules.demo.companyInsurance.service.ICompanyInsuranceService;
+
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import org.jeecg.modules.demo.companyInsurance.entity.CompanyInsurance;
-import org.jeecg.modules.demo.companyInsurance.service.ICompanyInsuranceService;
 import lombok.extern.slf4j.Slf4j;
-import org.jeecg.common.api.vo.Result;
-import org.jeecg.common.aspect.annotation.AutoLog;
+
+import org.jeecgframework.poi.excel.ExcelImportUtil;
+import org.jeecgframework.poi.excel.def.NormalExcelConstants;
+import org.jeecgframework.poi.excel.entity.ExportParams;
+import org.jeecgframework.poi.excel.entity.ImportParams;
+import org.jeecgframework.poi.excel.view.JeecgEntityExcelView;
 import org.jeecg.common.system.base.controller.JeecgController;
-import org.jeecg.common.system.query.QueryGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.ModelAndView;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.util.Arrays;
+import com.alibaba.fastjson.JSON;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import org.jeecg.common.aspect.annotation.AutoLog;
 
  /**
  * @Description: 保险公司保单
  * @Author: jeecg-boot
- * @Date:   2021-05-27
+ * @Date:   2021-06-04
  * @Version: V1.0
  */
 @Api(tags="保险公司保单")
@@ -33,7 +49,7 @@ import java.util.Arrays;
 public class CompanyInsuranceController extends JeecgController<CompanyInsurance, ICompanyInsuranceService> {
 	@Autowired
 	private ICompanyInsuranceService companyInsuranceService;
-
+	
 	/**
 	 * 分页列表查询
 	 *
@@ -55,7 +71,7 @@ public class CompanyInsuranceController extends JeecgController<CompanyInsurance
 		IPage<CompanyInsurance> pageList = companyInsuranceService.page(page, queryWrapper);
 		return Result.OK(pageList);
 	}
-
+	
 	/**
 	 *   添加
 	 *
@@ -69,7 +85,7 @@ public class CompanyInsuranceController extends JeecgController<CompanyInsurance
 		companyInsuranceService.save(companyInsurance);
 		return Result.OK("添加成功！");
 	}
-
+	
 	/**
 	 *  编辑
 	 *
@@ -83,7 +99,7 @@ public class CompanyInsuranceController extends JeecgController<CompanyInsurance
 		companyInsuranceService.updateById(companyInsurance);
 		return Result.OK("编辑成功!");
 	}
-
+	
 	/**
 	 *   通过id删除
 	 *
@@ -97,7 +113,7 @@ public class CompanyInsuranceController extends JeecgController<CompanyInsurance
 		companyInsuranceService.removeById(id);
 		return Result.OK("删除成功!");
 	}
-
+	
 	/**
 	 *  批量删除
 	 *
@@ -111,7 +127,7 @@ public class CompanyInsuranceController extends JeecgController<CompanyInsurance
 		this.companyInsuranceService.removeByIds(Arrays.asList(ids.split(",")));
 		return Result.OK("批量删除成功!");
 	}
-
+	
 	/**
 	 * 通过id查询
 	 *
