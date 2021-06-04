@@ -1,5 +1,20 @@
 package org.jeecg.modules.demo.checked.controller;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import org.jeecg.common.api.vo.Result;
+import org.jeecg.common.system.query.QueryGenerator;
+import org.jeecg.common.util.oConvertUtils;
+import org.jeecg.modules.demo.checked.entity.CheckInsurance;
+import org.jeecg.modules.demo.checked.service.ICheckInsuranceService;
+
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -72,7 +87,7 @@ public class CheckInsuranceController extends JeecgController<CheckInsurance, IC
 		IPage<CheckInsurance> pageList = checkInsuranceService.page(page, queryWrapper);
 		return Result.OK(pageList);
 	}
-
+	
 	/**
 	 *   添加
 	 *
@@ -86,7 +101,7 @@ public class CheckInsuranceController extends JeecgController<CheckInsurance, IC
 		checkInsuranceService.save(checkInsurance);
 		return Result.OK("添加成功！");
 	}
-
+	
 	/**
 	 *  编辑
 	 *
@@ -100,7 +115,7 @@ public class CheckInsuranceController extends JeecgController<CheckInsurance, IC
 		checkInsuranceService.updateById(checkInsurance);
 		return Result.OK("编辑成功!");
 	}
-
+	
 	/**
 	 *   通过id删除
 	 *
@@ -114,7 +129,7 @@ public class CheckInsuranceController extends JeecgController<CheckInsurance, IC
 		checkInsuranceService.removeById(id);
 		return Result.OK("删除成功!");
 	}
-
+	
 	/**
 	 *  批量删除
 	 *
@@ -128,7 +143,7 @@ public class CheckInsuranceController extends JeecgController<CheckInsurance, IC
 		this.checkInsuranceService.removeByIds(Arrays.asList(ids.split(",")));
 		return Result.OK("批量删除成功!");
 	}
-
+	
 	/**
 	 * 通过id查询
 	 *

@@ -79,11 +79,11 @@ public class CheckInsuranceServiceImpl extends ServiceImpl<CheckInsuranceMapper,
             if (CollectionUtils.isNotEmpty(companyInsuranceList)) {
 //                1.核对交强险保单号
                 for (CompanyInsurance companyInsurance : companyInsuranceList) {
-                    if (compulsoryInsurCode.equals(companyInsurance.getInsureNum())) {//如果是交强险保单
+                    if (compulsoryInsurCode.equals(companyInsurance.getInsuranceNum())) {//如果是交强险保单
 //                        封装数据，从保司保单中获取数据
                         if (insuranceDate.equals(companyInsurance.getZbDate()) && salesman.equals(companyInsurance.getSalesMan())) {
                             //交强险保单号
-                            checkInsurance.setCompulsoryInsurCode(companyInsurance.getInsureNum());
+                            checkInsurance.setCompulsoryInsurCode(companyInsurance.getInsuranceNum());
 //                            交强险保费
                             insureCompulsoryFeeIncludeTax = companyInsurance.getInsureFeeIncludeTax();
                             checkInsurance.setCompulsoryInsurFee(insureCompulsoryFeeIncludeTax);
@@ -92,11 +92,11 @@ public class CheckInsuranceServiceImpl extends ServiceImpl<CheckInsuranceMapper,
                         }
                     }
 //                    2.核对商业险保单号
-                    if (commercialInsurCode.equals(companyInsurance.getInsureNum())) {//如果是商业险保单
+                    if (commercialInsurCode.equals(companyInsurance.getInsuranceNum())) {//如果是商业险保单
 //                        封装数据，从保司保单中获取数据
                         if (insuranceDate.equals(companyInsurance.getZbDate()) && salesman.equals(companyInsurance.getSalesMan())) {
                             //商业险保单号
-                            checkInsurance.setCommercialInsurCode(companyInsurance.getInsureNum());
+                            checkInsurance.setCommercialInsurCode(companyInsurance.getInsuranceNum());
 //                            商业险保费
                             insureCommercialFeeIncludeTax = companyInsurance.getInsureFeeIncludeTax();
 //                          签单手续费 = 交强险手续费+商业险手续费

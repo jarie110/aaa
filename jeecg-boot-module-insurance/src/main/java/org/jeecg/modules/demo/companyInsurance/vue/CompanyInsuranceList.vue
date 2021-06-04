@@ -139,12 +139,12 @@
           {
             title:'投保单号',
             align:"center",
-            dataIndex: 'toubaoDh'
+            dataIndex: 'policyNumber'
           },
           {
-            title:'保单号 （交强，商业）',
+            title:'保单号',
             align:"center",
-            dataIndex: 'insureNum'
+            dataIndex: 'insuranceNum'
           },
           {
             title:'险类名称',
@@ -170,7 +170,7 @@
             }
           },
           {
-            title:'转保单时间（出单时间）',
+            title:'转保单时间',
             align:"center",
             dataIndex: 'zbTime',
             customRender:function (text) {
@@ -178,7 +178,7 @@
             }
           },
           {
-            title:'转保单日期（出单日期）',
+            title:'转保单日期',
             align:"center",
             dataIndex: 'zbDate'
           },
@@ -464,14 +464,14 @@
       },
       getSuperFieldList(){
         let fieldList=[];
-        fieldList.push({type:'string',value:'toubaoDh',text:'投保单号',dictCode:''})
-        fieldList.push({type:'string',value:'insureNum',text:'保单号 （交强，商业）',dictCode:''})
+        fieldList.push({type:'string',value:'policyNumber',text:'投保单号',dictCode:''})
+        fieldList.push({type:'string',value:'insuranceNum',text:'保单号',dictCode:''})
         fieldList.push({type:'string',value:'insureTypeName',text:'险类名称',dictCode:''})
         fieldList.push({type:'string',value:'insureProductCode',text:'险种代码',dictCode:''})
         fieldList.push({type:'string',value:'insureProductName',text:'险种',dictCode:''})
         fieldList.push({type:'date',value:'insureSignDate',text:'签单日期'})
-        fieldList.push({type:'date',value:'zbTime',text:'转保单时间（出单时间）'})
-        fieldList.push({type:'datetime',value:'zbDate',text:'转保单日期（出单日期）'})
+        fieldList.push({type:'date',value:'zbTime',text:'转保单时间'})
+        fieldList.push({type:'datetime',value:'zbDate',text:'转保单日期'})
         fieldList.push({type:'date',value:'insureStartDate',text:'起保日期'})
         fieldList.push({type:'int',value:'insureStartHours',text:'起保小时',dictCode:''})
         fieldList.push({type:'int',value:'insureEndHours',text:'终保小时',dictCode:''})
@@ -479,7 +479,7 @@
         fieldList.push({type:'double',value:'insureFeeIncludeTax',text:'签单保费（含税）',dictCode:''})
         fieldList.push({type:'double',value:'insureFeeExcludeTax',text:'签单保费（不含税）',dictCode:''})
         fieldList.push({type:'double',value:'alreadyPaymentFee',text:'已结金额',dictCode:''})
-        fieldList.push({type:'string',value:'unpaidFee',text:'未结金额',dictCode:''})
+        fieldList.push({type:'double',value:'unpaidFee',text:'未结金额',dictCode:''})
         fieldList.push({type:'double',value:'earnMoney',text:'已赚保费',dictCode:''})
         fieldList.push({type:'double',value:'signServiceHarge',text:'签单手续费',dictCode:''})
         fieldList.push({type:'string',value:'renewalType',text:'新续保标志',dictCode:''})

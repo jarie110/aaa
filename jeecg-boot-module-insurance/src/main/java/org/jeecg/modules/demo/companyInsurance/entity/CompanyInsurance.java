@@ -54,11 +54,11 @@ public class CompanyInsurance implements Serializable {
 	/**投保单号*/
 	@Excel(name = "投保单号", width = 15)
     @ApiModelProperty(value = "投保单号")
-    private String toubaoDh;
-	/**保单号 （交强，商业）*/
-	@Excel(name = "保单号 （交强，商业）", width = 15)
-    @ApiModelProperty(value = "保单号 （交强，商业）")
-    private String insureNum;
+    private String policyNumber;
+	/**保单号*/
+	@Excel(name = "保单号", width = 15)
+    @ApiModelProperty(value = "保单号")
+    private String insuranceNum;
 	/**险类名称*/
 	@Excel(name = "险类名称", width = 15)
     @ApiModelProperty(value = "险类名称")
@@ -77,17 +77,17 @@ public class CompanyInsurance implements Serializable {
     @DateTimeFormat(pattern="yyyy-MM-dd")
     @ApiModelProperty(value = "签单日期")
     private Date insureSignDate;
-	/**转保单时间（出单时间）*/
-	@Excel(name = "转保单时间（出单时间）", width = 15, format = "yyyy-MM-dd")
+	/**转保单时间*/
+	@Excel(name = "转保单时间", width = 15, format = "yyyy-MM-dd")
 	@JsonFormat(timezone = "GMT+8",pattern = "yyyy-MM-dd")
     @DateTimeFormat(pattern="yyyy-MM-dd")
-    @ApiModelProperty(value = "转保单时间（出单时间）")
+    @ApiModelProperty(value = "转保单时间")
     private Date zbTime;
-	/**转保单日期（出单日期）*/
-	@Excel(name = "转保单日期（出单日期）", width = 20, format = "yyyy-MM-dd HH:mm:ss")
+	/**转保单日期*/
+	@Excel(name = "转保单日期", width = 20, format = "yyyy-MM-dd HH:mm:ss")
 	@JsonFormat(timezone = "GMT+8",pattern = "yyyy-MM-dd HH:mm:ss")
     @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
-    @ApiModelProperty(value = "转保单日期（出单日期）")
+    @ApiModelProperty(value = "转保单日期")
     private Date zbDate;
 	/**起保日期*/
 	@Excel(name = "起保日期", width = 15, format = "yyyy-MM-dd")
@@ -124,7 +124,7 @@ public class CompanyInsurance implements Serializable {
 	/**未结金额*/
 	@Excel(name = "未结金额", width = 15)
     @ApiModelProperty(value = "未结金额")
-    private String unpaidFee;
+    private Double unpaidFee;
 	/**已赚保费*/
 	@Excel(name = "已赚保费", width = 15)
     @ApiModelProperty(value = "已赚保费")

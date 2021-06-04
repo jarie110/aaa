@@ -1,24 +1,26 @@
 package org.jeecg.modules.demo.checked.entity;
 
+import java.io.Serializable;
+import java.io.UnsupportedEncodingException;
+import java.util.Date;
+import java.math.BigDecimal;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import lombok.Data;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.jeecgframework.poi.excel.annotation.Excel;
+import org.jeecg.common.aspect.annotation.Dict;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
-import org.jeecgframework.poi.excel.annotation.Excel;
-import org.springframework.format.annotation.DateTimeFormat;
-
-import java.io.Serializable;
-import java.util.Date;
 
 /**
  * @Description: 核对的保单
  * @Author: jeecg-boot
- * @Date:   2021-06-02
+ * @Date:   2021-06-04
  * @Version: V1.0
  */
 @Data
@@ -33,6 +35,22 @@ public class CheckInsurance implements Serializable {
 	@TableId(type = IdType.ASSIGN_ID)
     @ApiModelProperty(value = "主键")
     private String id;
+	/**创建时间*/
+	@JsonFormat(timezone = "GMT+8",pattern = "yyyy-MM-dd")
+    @DateTimeFormat(pattern="yyyy-MM-dd")
+    @ApiModelProperty(value = "创建时间")
+    private Date createTime;
+	/**创建人*/
+    @ApiModelProperty(value = "创建人")
+    private String createBy;
+	/**更新人*/
+    @ApiModelProperty(value = "更新人")
+    private String updateBy;
+	/**更新时间*/
+	@JsonFormat(timezone = "GMT+8",pattern = "yyyy-MM-dd")
+    @DateTimeFormat(pattern="yyyy-MM-dd")
+    @ApiModelProperty(value = "更新时间")
+    private Date updateTime;
 	/**保单编号*/
 	@Excel(name = "保单编号", width = 15)
     @ApiModelProperty(value = "保单编号")

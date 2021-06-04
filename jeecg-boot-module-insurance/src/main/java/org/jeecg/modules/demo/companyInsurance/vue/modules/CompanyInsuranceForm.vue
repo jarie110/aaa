@@ -4,13 +4,13 @@
       <a-form-model ref="form" :model="model" :rules="validatorRules" slot="detail">
         <a-row>
           <a-col :span="24">
-            <a-form-model-item label="投保单号" :labelCol="labelCol" :wrapperCol="wrapperCol" prop="toubaoDh">
-              <a-input v-model="model.toubaoDh" placeholder="请输入投保单号"  ></a-input>
+            <a-form-model-item label="投保单号" :labelCol="labelCol" :wrapperCol="wrapperCol" prop="policyNumber">
+              <a-input v-model="model.policyNumber" placeholder="请输入投保单号" disabled ></a-input>
             </a-form-model-item>
           </a-col>
           <a-col :span="24">
-            <a-form-model-item label="保单号 （交强，商业）" :labelCol="labelCol" :wrapperCol="wrapperCol" prop="insureNum">
-              <a-input v-model="model.insureNum" placeholder="请输入保单号 （交强，商业）" disabled ></a-input>
+            <a-form-model-item label="保单号" :labelCol="labelCol" :wrapperCol="wrapperCol" prop="insuranceNum">
+              <a-input v-model="model.insuranceNum" placeholder="请输入保单号" disabled ></a-input>
             </a-form-model-item>
           </a-col>
           <a-col :span="24">
@@ -34,13 +34,13 @@
             </a-form-model-item>
           </a-col>
           <a-col :span="24">
-            <a-form-model-item label="转保单时间（出单时间）" :labelCol="labelCol" :wrapperCol="wrapperCol" prop="zbTime">
-              <j-date placeholder="请选择转保单时间（出单时间）" v-model="model.zbTime"  style="width: 100%" disabled/>
+            <a-form-model-item label="转保单时间" :labelCol="labelCol" :wrapperCol="wrapperCol" prop="zbTime">
+              <j-date placeholder="请选择转保单时间" v-model="model.zbTime"  style="width: 100%" disabled/>
             </a-form-model-item>
           </a-col>
           <a-col :span="24">
-            <a-form-model-item label="转保单日期（出单日期）" :labelCol="labelCol" :wrapperCol="wrapperCol" prop="zbDate">
-              <j-date placeholder="请选择转保单日期（出单日期）"  v-model="model.zbDate" :show-time="true" date-format="YYYY-MM-DD HH:mm:ss" style="width: 100%" disabled/>
+            <a-form-model-item label="转保单日期" :labelCol="labelCol" :wrapperCol="wrapperCol" prop="zbDate">
+              <j-date placeholder="请选择转保单日期"  v-model="model.zbDate" :show-time="true" date-format="YYYY-MM-DD HH:mm:ss" style="width: 100%" disabled/>
             </a-form-model-item>
           </a-col>
           <a-col :span="24">
@@ -80,7 +80,7 @@
           </a-col>
           <a-col :span="24">
             <a-form-model-item label="未结金额" :labelCol="labelCol" :wrapperCol="wrapperCol" prop="unpaidFee">
-              <a-input v-model="model.unpaidFee" placeholder="请输入未结金额" disabled ></a-input>
+              <a-input-number v-model="model.unpaidFee" placeholder="请输入未结金额" style="width: 100%" disabled/>
             </a-form-model-item>
           </a-col>
           <a-col :span="24">
