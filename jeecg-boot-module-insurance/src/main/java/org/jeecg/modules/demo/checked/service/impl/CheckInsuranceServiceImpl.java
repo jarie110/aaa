@@ -1,6 +1,8 @@
 package org.jeecg.modules.demo.checked.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import org.jeecg.BeanUtils.MyBeanUtil;
 import org.jeecg.enumUtil.IsTransfer;
 import org.jeecg.modules.demo.checked.entity.CheckInsurance;
 import org.jeecg.modules.demo.checked.mapper.CheckInsuranceMapper;
@@ -11,6 +13,7 @@ import org.jeecg.modules.demo.proxyInsurance.entity.InsuranceInHand;
 import org.jeecg.modules.demo.team.service.IInsuranceTeamService;
 import org.apache.commons.collections.CollectionUtils;
 
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -51,7 +54,7 @@ public class CheckInsuranceServiceImpl extends ServiceImpl<CheckInsuranceMapper,
      */
     @Override
     @Transactional
-    public int checkAndSaveInsuracne(InsuranceInHand insuranceInHand) {
+    public boolean checkAndSaveInsuracne(InsuranceInHand insuranceInHand) {
 //        根据录入保单和保司保单比较生成对比结果数据保单
         CheckInsurance checkInsurance = new CheckInsurance();
         String compulsoryInsurCode = insuranceInHand.getCompulsoryInsurCode();//交强险保单号
@@ -61,6 +64,7 @@ public class CheckInsuranceServiceImpl extends ServiceImpl<CheckInsuranceMapper,
         Double vesselTax = insuranceInHand.getVehicleVesselTax();//车船税
         Double CompulsoryServiceHarge = 0.0;//交强险手续费
         Double commercialServiceHarge = 0.0;//商业险手续费
+        boolean flag = false;//标志是否更新或插入成功
 //        交强险签单保费（含税）
         double insureCompulsoryFeeIncludeTax = 0.0;
 //        商业险签单保费（含税）
@@ -81,7 +85,7 @@ public class CheckInsuranceServiceImpl extends ServiceImpl<CheckInsuranceMapper,
                 for (CompanyInsurance companyInsurance : companyInsuranceList) {
                     if (compulsoryInsurCode.equals(companyInsurance.getInsuranceNum())) {//如果是交强险保单
 //                        封装数据，从保司保单中获取数据
-                        if (insuranceDate.equals(companyInsurance.getZbDate()) && salesman.equals(companyInsurance.getSalesMan())) {
+                        if (insuranceDate.equals(companyInsurance.getZbTime()) && salesman.equals(companyInsurance.getSalesMan())) {
                             //交强险保单号
                             checkInsurance.setCompulsoryInsurCode(companyInsurance.getInsuranceNum());
 //                            交强险保费
@@ -94,7 +98,7 @@ public class CheckInsuranceServiceImpl extends ServiceImpl<CheckInsuranceMapper,
 //                    2.核对商业险保单号
                     if (commercialInsurCode.equals(companyInsurance.getInsuranceNum())) {//如果是商业险保单
 //                        封装数据，从保司保单中获取数据
-                        if (insuranceDate.equals(companyInsurance.getZbDate()) && salesman.equals(companyInsurance.getSalesMan())) {
+                        if (insuranceDate.equals(companyInsurance.getZbTime()) && salesman.equals(companyInsurance.getSalesMan())) {
                             //商业险保单号
                             checkInsurance.setCommercialInsurCode(companyInsurance.getInsuranceNum());
 //                            商业险保费
@@ -171,14 +175,43 @@ public class CheckInsuranceServiceImpl extends ServiceImpl<CheckInsuranceMapper,
 //                签单手续费
                     checkInsurance.setSignServiceHarge(CompulsoryServiceHarge + commercialServiceHarge);
 //                保存数据
-                   insert = checkInsuranceMapper.insert(checkInsurance);
+//                判断比对过的数据库是否存在该数据(根据车架号、商业保单号、交强保单号)
+//                  1. 存在则更新(判断是否是今年的保单)
+//                    checkInsuranceMapper.select()
+                    CheckInsurance checkObj =this.selectByVehicleIdAndCommercialInsurCodeAndCompulsoryInsurCode(checkInsurance);
+                    if(checkObj != null){
+//                        将再次比对的数据拷贝到数据库的记录中更新数据
+                        MyBeanUtil.copyPropertiesIgnoreNull(checkInsurance,checkObj);
+                       if(checkInsuranceMapper.updateById(checkObj) == 1){
+                           flag = true;
+                           insuranceInHand.setIsChecked(1);//0：未比对  1：已比对
+                           return flag;
+                       }
+                    }else {
+//                  2. 不存在则新增
+                        insert = checkInsuranceMapper.insert(checkInsurance);
+                    }
 //                 比对成功修改insuranceInhand的比对状态为已比对
                     if(insert != 0){
+                        flag = true;
                         insuranceInHand.setIsChecked(1);//0：未比对  1：已比对
                     }
                 }
             }
         }
-        return insert;
+        return flag;
     }
+
+    /**
+     * 根据车架号，商业保单号、交强险保单号
+     * @param checkInsurance
+     * @return
+     */
+    private CheckInsurance selectByVehicleIdAndCommercialInsurCodeAndCompulsoryInsurCode(CheckInsurance checkInsurance) {
+        QueryWrapper<CheckInsurance> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("vehicle_identity",checkInsurance.getVehicleIdentity()).eq("compulsory_insur_code",checkInsurance.getCompulsoryInsurCode()).eq("commercial_insur_code",checkInsurance.getCommercialInsurCode());
+        return  checkInsuranceMapper.selectOne(queryWrapper);
+    }
+
+
 }

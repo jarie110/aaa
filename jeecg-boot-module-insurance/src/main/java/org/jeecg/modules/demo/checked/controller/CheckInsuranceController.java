@@ -59,8 +59,8 @@ public class CheckInsuranceController extends JeecgController<CheckInsurance, IC
 	 @GetMapping(value = "/check")
 	 public Result<?> check(String id){
 		 InsuranceInHand insuranceInHand = insuranceInHandService.getById(id);
-		 int insert = checkInsuranceService.checkAndSaveInsuracne(insuranceInHand);
-		 if(insert == 0){
+		 boolean insert = checkInsuranceService.checkAndSaveInsuracne(insuranceInHand);
+		 if(!insert){
 			 return Result.error(400,"请检查录入的信息是否正确或保司保单是否已录入");
 		 }
 		 return Result.OK("比对成功");
@@ -87,7 +87,7 @@ public class CheckInsuranceController extends JeecgController<CheckInsurance, IC
 		IPage<CheckInsurance> pageList = checkInsuranceService.page(page, queryWrapper);
 		return Result.OK(pageList);
 	}
-	
+
 	/**
 	 *   添加
 	 *
@@ -101,7 +101,7 @@ public class CheckInsuranceController extends JeecgController<CheckInsurance, IC
 		checkInsuranceService.save(checkInsurance);
 		return Result.OK("添加成功！");
 	}
-	
+
 	/**
 	 *  编辑
 	 *
@@ -115,7 +115,7 @@ public class CheckInsuranceController extends JeecgController<CheckInsurance, IC
 		checkInsuranceService.updateById(checkInsurance);
 		return Result.OK("编辑成功!");
 	}
-	
+
 	/**
 	 *   通过id删除
 	 *
@@ -129,7 +129,7 @@ public class CheckInsuranceController extends JeecgController<CheckInsurance, IC
 		checkInsuranceService.removeById(id);
 		return Result.OK("删除成功!");
 	}
-	
+
 	/**
 	 *  批量删除
 	 *
@@ -143,7 +143,7 @@ public class CheckInsuranceController extends JeecgController<CheckInsurance, IC
 		this.checkInsuranceService.removeByIds(Arrays.asList(ids.split(",")));
 		return Result.OK("批量删除成功!");
 	}
-	
+
 	/**
 	 * 通过id查询
 	 *

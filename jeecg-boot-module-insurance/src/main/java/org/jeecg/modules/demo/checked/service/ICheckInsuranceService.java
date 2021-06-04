@@ -13,6 +13,6 @@ import org.jeecg.modules.demo.proxyInsurance.entity.InsuranceInHand;
  */
 public interface ICheckInsuranceService extends IService<CheckInsurance> {
 
-    int checkAndSaveInsuracne(InsuranceInHand insuranceInHand);
+    boolean checkAndSaveInsuracne(InsuranceInHand insuranceInHand);
 
 }
