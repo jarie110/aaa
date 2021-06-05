@@ -20,7 +20,7 @@ import lombok.experimental.Accessors;
 /**
  * @Description: 手输保单
  * @Author: jeecg-boot
- * @Date:   2021-06-02
+ * @Date:   2021-06-05
  * @Version: V1.0
  */
 @Data
@@ -128,19 +128,19 @@ public class InsuranceInHand implements Serializable {
 	/**三者责任险保额*/
 	@Excel(name = "三者责任险保额", width = 15)
     @ApiModelProperty(value = "三者责任险保额")
-    private Integer thirdPartyInsured;
+    private Double thirdPartyInsured;
 	/**司机责任险保额*/
 	@Excel(name = "司机责任险保额", width = 15)
     @ApiModelProperty(value = "司机责任险保额")
-    private Integer driverLiabilityInsure;
+    private Double driverLiabilityInsure;
 	/**车损险保额*/
 	@Excel(name = "车损险保额", width = 15)
     @ApiModelProperty(value = "车损险保额")
-    private Integer carDamageInsured;
+    private Double carDamageInsured;
 	/**乘客责任险保额*/
 	@Excel(name = "乘客责任险保额", width = 15)
     @ApiModelProperty(value = "乘客责任险保额")
-    private Integer passengerLiability;
+    private Double passengerLiability;
 	/**初登日期*/
 	@Excel(name = "初登日期", width = 15, format = "yyyy-MM-dd")
 	@JsonFormat(timezone = "GMT+8",pattern = "yyyy-MM-dd")

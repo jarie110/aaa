@@ -20,7 +20,7 @@ import lombok.experimental.Accessors;
 /**
  * @Description: 核对的保单
  * @Author: jeecg-boot
- * @Date:   2021-06-04
+ * @Date:   2021-06-05
  * @Version: V1.0
  */
 @Data
@@ -182,9 +182,10 @@ public class CheckInsurance implements Serializable {
     @ApiModelProperty(value = "手续费总额")
     private Double totalServiceFee;
 	/**是否返点*/
-	@Excel(name = "是否返点", width = 15)
+	@Excel(name = "是否返点", width = 15, dicCode = "is_paid_rebate")
+	@Dict(dicCode = "is_paid_rebate")
     @ApiModelProperty(value = "是否返点")
-    private String isRebate;
+    private Integer isRebate;
 	/**返点支付时间*/
 	@Excel(name = "返点支付时间", width = 15, format = "yyyy-MM-dd")
 	@JsonFormat(timezone = "GMT+8",pattern = "yyyy-MM-dd")
@@ -192,7 +193,8 @@ public class CheckInsurance implements Serializable {
     @ApiModelProperty(value = "返点支付时间")
     private Date rebatePaymentDate;
 	/**返点收取方式*/
-	@Excel(name = "返点收取方式", width = 15)
+	@Excel(name = "返点收取方式", width = 15, dicCode = "rebate_way")
+	@Dict(dicCode = "rebate_way")
     @ApiModelProperty(value = "返点收取方式")
     private Integer rebateWay;
 	/**车牌号*/

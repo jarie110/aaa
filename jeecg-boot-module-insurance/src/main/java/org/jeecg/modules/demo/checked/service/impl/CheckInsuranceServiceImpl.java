@@ -10,6 +10,7 @@ import org.jeecg.modules.demo.checked.service.ICheckInsuranceService;
 import org.jeecg.modules.demo.companyInsurance.entity.CompanyInsurance;
 import org.jeecg.modules.demo.companyInsurance.service.ICompanyInsuranceService;
 import org.jeecg.modules.demo.proxyInsurance.entity.InsuranceInHand;
+import org.jeecg.modules.demo.proxyInsurance.service.impl.InsuranceInHandServiceImpl;
 import org.jeecg.modules.demo.team.service.IInsuranceTeamService;
 import org.apache.commons.collections.CollectionUtils;
 
@@ -43,6 +44,8 @@ public class CheckInsuranceServiceImpl extends ServiceImpl<CheckInsuranceMapper,
     private IInsuranceTeamService teamService;
     @Autowired
     private CheckInsuranceMapper checkInsuranceMapper;
+    @Autowired
+    private InsuranceInHandServiceImpl insuranceInHandService;
 
     /**
      * 比对并构建checkInsurance对象
@@ -165,6 +168,8 @@ public class CheckInsuranceServiceImpl extends ServiceImpl<CheckInsuranceMapper,
                             checkInsurance.setPassengerLiability(companyInsurance.getPassengerLiability());
 //                           备注
                             checkInsurance.setRemarks(insuranceInHand.getRemark());
+//                            是否返点
+                            checkInsurance.setIsRebate(insuranceInHand.getIsPayCommission());
                             res = true;
                         }
                     }
@@ -185,6 +190,7 @@ public class CheckInsuranceServiceImpl extends ServiceImpl<CheckInsuranceMapper,
                        if(checkInsuranceMapper.updateById(checkObj) == 1){
                            flag = true;
                            insuranceInHand.setIsChecked(1);//0：未比对  1：已比对
+                           insuranceInHandService.updateById(insuranceInHand);
                            return flag;
                        }
                     }else {
@@ -195,6 +201,7 @@ public class CheckInsuranceServiceImpl extends ServiceImpl<CheckInsuranceMapper,
                     if(insert != 0){
                         flag = true;
                         insuranceInHand.setIsChecked(1);//0：未比对  1：已比对
+                        insuranceInHandService.updateById(insuranceInHand);
                     }
                 }
             }

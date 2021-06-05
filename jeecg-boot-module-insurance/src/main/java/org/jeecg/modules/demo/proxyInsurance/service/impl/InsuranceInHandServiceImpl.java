@@ -50,10 +50,10 @@ public class InsuranceInHandServiceImpl extends ServiceImpl<InsuranceInHandMappe
         Double usagePercent = insuranceUsage.getUsagePercent();
         percentList.add(usagePercent);
 //        2.获取用户的三者险保额、车损险保额，司机责任险保额，乘客责任险保额
-        Integer thirdPartyInsured = insuranceInHand.getThirdPartyInsured() == null ? 0 : insuranceInHand.getThirdPartyInsured() ;//三者险保额
-        Integer carDamageInsured = insuranceInHand.getCarDamageInsured() == null ? 0 : insuranceInHand.getCarDamageInsured();//车损险保额
-        Integer driverLiabilityInsured = insuranceInHand.getDriverLiabilityInsure() == null ? 0 : insuranceInHand.getDriverLiabilityInsure();//司机责任险保额
-        Integer passengerLiabilityInsured = insuranceInHand.getPassengerLiability() == null ? 0 : insuranceInHand.getPassengerLiability();//乘客责任险保额
+        Double thirdPartyInsured = insuranceInHand.getThirdPartyInsured() == null ? 0 : insuranceInHand.getThirdPartyInsured() ;//三者险保额
+        Double carDamageInsured = insuranceInHand.getCarDamageInsured() == null ? 0 : insuranceInHand.getCarDamageInsured();//车损险保额
+        Double driverLiabilityInsured = insuranceInHand.getDriverLiabilityInsure() == null ? 0 : insuranceInHand.getDriverLiabilityInsure();//司机责任险保额
+        Double passengerLiabilityInsured = insuranceInHand.getPassengerLiability() == null ? 0 : insuranceInHand.getPassengerLiability();//乘客责任险保额
 //		三者保额比例（使用性质，三者保额，车损保额是否达标）
         List<InsuranceRebateRatio> insuranceRebateRatioList = rebateRatioService.getInsuranceRebateRatioByType(RebateType.THIRD_PARTY_REBATE.getType());
         ArrayList<Integer> insureds = new ArrayList<>();
