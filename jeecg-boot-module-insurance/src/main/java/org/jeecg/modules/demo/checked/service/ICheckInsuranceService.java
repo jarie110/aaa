@@ -2,6 +2,7 @@ package org.jeecg.modules.demo.checked.service;
 
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import org.jeecg.common.api.vo.Result;
 import org.jeecg.modules.demo.checked.entity.CheckInsurance;
 import org.jeecg.modules.demo.proxyInsurance.entity.InsuranceInHand;
 
@@ -13,6 +14,6 @@ import org.jeecg.modules.demo.proxyInsurance.entity.InsuranceInHand;
  */
 public interface ICheckInsuranceService extends IService<CheckInsurance> {
 
-    boolean checkAndSaveInsuracne(InsuranceInHand insuranceInHand);
+    Result<?> checkAndSaveInsuracne(InsuranceInHand insuranceInHand);
 
 }

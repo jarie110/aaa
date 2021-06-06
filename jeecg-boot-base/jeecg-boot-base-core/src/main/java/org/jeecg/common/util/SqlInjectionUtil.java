@@ -3,6 +3,7 @@ package org.jeecg.common.util;
 import cn.hutool.crypto.SecureUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.jeecg.common.exception.JeecgBootException;
+
 import javax.servlet.http.HttpServletRequest;
 
 /**

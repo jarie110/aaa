@@ -1,6 +1,7 @@
 package org.jeecg.common.api.dto.message;
 
 import lombok.Data;
+
 import java.io.Serializable;
 import java.util.Map;
 

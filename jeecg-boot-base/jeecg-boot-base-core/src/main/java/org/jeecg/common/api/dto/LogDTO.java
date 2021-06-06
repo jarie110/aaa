@@ -1,6 +1,8 @@
 package org.jeecg.common.api.dto;
+
 import lombok.Data;
 import org.jeecg.common.system.vo.LoginUser;
+
 import java.io.Serializable;
 import java.util.Date;
 

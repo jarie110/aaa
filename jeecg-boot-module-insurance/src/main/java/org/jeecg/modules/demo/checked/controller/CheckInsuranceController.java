@@ -59,11 +59,8 @@ public class CheckInsuranceController extends JeecgController<CheckInsurance, IC
 	 @GetMapping(value = "/check")
 	 public Result<?> check(String id){
 		 InsuranceInHand insuranceInHand = insuranceInHandService.getById(id);
-		 boolean insert = checkInsuranceService.checkAndSaveInsuracne(insuranceInHand);
-		 if(!insert){
-			 return Result.error(400,"请检查录入的信息是否正确或保司保单是否已录入");
-		 }
-		 return Result.OK("比对成功");
+		 return checkInsuranceService.checkAndSaveInsuracne(insuranceInHand);
+
 	 }
 
 	/**

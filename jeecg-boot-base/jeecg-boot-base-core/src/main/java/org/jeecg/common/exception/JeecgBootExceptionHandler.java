@@ -1,6 +1,6 @@
 package org.jeecg.common.exception;
 
-import io.lettuce.core.RedisConnectionException;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authz.AuthorizationException;
 import org.apache.shiro.authz.UnauthorizedException;
 import org.jeecg.common.api.vo.Result;
@@ -12,8 +12,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.servlet.NoHandlerFoundException;
-
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * 异常处理器
@@ -56,6 +54,13 @@ public class JeecgBootExceptionHandler {
 	public Result<?> handleException(Exception e){
 		log.error(e.getMessage(), e);
 		return Result.error("操作失败，"+e.getMessage());
+	}
+
+//自定义异常处理
+	@ExceptionHandler(InsuranceException.class)
+	public Result<?> handleInsuranceException(InsuranceException e){
+		log.error(e.getMsg(), e);
+		return Result.error(e.getExceptionCode(),e.getMsg());
 	}
 	
 	/**

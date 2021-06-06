@@ -3,6 +3,7 @@ package org.jeecg.modules.demo.checked.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.jeecg.BeanUtils.MyBeanUtil;
+import org.jeecg.common.api.vo.Result;
 import org.jeecg.enumUtil.IsTransfer;
 import org.jeecg.modules.demo.checked.entity.CheckInsurance;
 import org.jeecg.modules.demo.checked.mapper.CheckInsuranceMapper;
@@ -14,7 +15,6 @@ import org.jeecg.modules.demo.proxyInsurance.service.impl.InsuranceInHandService
 import org.jeecg.modules.demo.team.service.IInsuranceTeamService;
 import org.apache.commons.collections.CollectionUtils;
 
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -57,7 +57,8 @@ public class CheckInsuranceServiceImpl extends ServiceImpl<CheckInsuranceMapper,
      */
     @Override
     @Transactional
-    public boolean checkAndSaveInsuracne(InsuranceInHand insuranceInHand) {
+    public Result<?> checkAndSaveInsuracne(InsuranceInHand insuranceInHand) {
+
 //        根据录入保单和保司保单比较生成对比结果数据保单
         CheckInsurance checkInsurance = new CheckInsurance();
         String compulsoryInsurCode = insuranceInHand.getCompulsoryInsurCode();//交强险保单号
@@ -67,7 +68,7 @@ public class CheckInsuranceServiceImpl extends ServiceImpl<CheckInsuranceMapper,
         Double vesselTax = insuranceInHand.getVehicleVesselTax();//车船税
         Double CompulsoryServiceHarge = 0.0;//交强险手续费
         Double commercialServiceHarge = 0.0;//商业险手续费
-        boolean flag = false;//标志是否更新或插入成功
+//        boolean flag = false;//标志是否更新或插入成功
 //        交强险签单保费（含税）
         double insureCompulsoryFeeIncludeTax = 0.0;
 //        商业险签单保费（含税）
@@ -182,16 +183,15 @@ public class CheckInsuranceServiceImpl extends ServiceImpl<CheckInsuranceMapper,
 //                保存数据
 //                判断比对过的数据库是否存在该数据(根据车架号、商业保单号、交强保单号)
 //                  1. 存在则更新(判断是否是今年的保单)
-//                    checkInsuranceMapper.select()
                     CheckInsurance checkObj =this.selectByVehicleIdAndCommercialInsurCodeAndCompulsoryInsurCode(checkInsurance);
                     if(checkObj != null){
 //                        将再次比对的数据拷贝到数据库的记录中更新数据
                         MyBeanUtil.copyPropertiesIgnoreNull(checkInsurance,checkObj);
                        if(checkInsuranceMapper.updateById(checkObj) == 1){
-                           flag = true;
+//                           flag = true;
                            insuranceInHand.setIsChecked(1);//0：未比对  1：已比对
                            insuranceInHandService.updateById(insuranceInHand);
-                           return flag;
+                           return Result.OK("比对成功", insuranceInHand);
                        }
                     }else {
 //                  2. 不存在则新增
@@ -199,14 +199,16 @@ public class CheckInsuranceServiceImpl extends ServiceImpl<CheckInsuranceMapper,
                     }
 //                 比对成功修改insuranceInhand的比对状态为已比对
                     if(insert != 0){
-                        flag = true;
+//                        flag = true;
                         insuranceInHand.setIsChecked(1);//0：未比对  1：已比对
                         insuranceInHandService.updateById(insuranceInHand);
+                        return Result.OK("比对成功", insuranceInHand);
                     }
                 }
             }
         }
-        return flag;
+        return Result.error(400,"请检查录入的信息是否正确或保司保单是否已录入");
+
     }
 
     /**

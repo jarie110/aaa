@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.jeecg.enumUtil.IsChecked;
 import org.jeecg.modules.demo.proxyInsurance.entity.InsuranceInHand;
 import org.jeecg.modules.demo.proxyInsurance.service.IInsuranceInHandService;
 import lombok.extern.slf4j.Slf4j;
@@ -82,6 +83,8 @@ public class InsuranceInHandController extends JeecgController<InsuranceInHand, 
 	@ApiOperation(value="录入的保单-编辑", notes="录入的保单-编辑")
 	@PutMapping(value = "/edit")
 	public Result<?> edit(@RequestBody InsuranceInHand insuranceInHand) {
+//		如果修改了输入保单信息，则需要将比对状态设置为未比对
+		insuranceInHand.setIsChecked(IsChecked.NO_CHECKED.getCode());
 		//		完善所有数据
 		insuranceInHandService.setAllArgs(insuranceInHand);
 		insuranceInHandService.updateById(insuranceInHand);
