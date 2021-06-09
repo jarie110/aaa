@@ -1,26 +1,25 @@
 package org.jeecg.modules.demo.companyInsurance.entity;
 
-import java.io.Serializable;
-import java.io.UnsupportedEncodingException;
-import java.util.Date;
-import java.math.BigDecimal;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import lombok.Data;
 import com.fasterxml.jackson.annotation.JsonFormat;
-import org.springframework.format.annotation.DateTimeFormat;
-import org.jeecgframework.poi.excel.annotation.Excel;
-import org.jeecg.common.aspect.annotation.Dict;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
+import org.jeecg.common.aspect.annotation.Dict;
+import org.jeecgframework.poi.excel.annotation.Excel;
+import org.springframework.format.annotation.DateTimeFormat;
+
+import java.io.Serializable;
+import java.util.Date;
 
 /**
  * @Description: 保险公司保单
  * @Author: jeecg-boot
- * @Date:   2021-06-04
+ * @Date:   2021-06-08
  * @Version: V1.0
  */
 @Data
@@ -68,7 +67,8 @@ public class CompanyInsurance implements Serializable {
     @ApiModelProperty(value = "险种代码")
     private String insureProductCode;
 	/**险种*/
-	@Excel(name = "险种", width = 15)
+	@Excel(name = "险种", width = 15, dicCode = "insurance_type")
+	@Dict(dicCode = "insurance_type")
     @ApiModelProperty(value = "险种")
     private String insureProductName;
 	/**签单日期*/
@@ -166,7 +166,7 @@ public class CompanyInsurance implements Serializable {
 	/**三责保额*/
 	@Excel(name = "三责保额", width = 15)
     @ApiModelProperty(value = "三责保额")
-    private Integer thirdPartyInsured;
+    private Double thirdPartyInsured;
 	/**三责保费*/
 	@Excel(name = "三责保费", width = 15)
     @ApiModelProperty(value = "三责保费")
@@ -188,7 +188,8 @@ public class CompanyInsurance implements Serializable {
     @ApiModelProperty(value = "渠道码")
     private String distributionChannelCode;
 	/**渠道名称*/
-	@Excel(name = "渠道名称", width = 15)
+	@Excel(name = "渠道名称", width = 15, dictTable = "distribution_channel", dicText = "channel_name", dicCode = "channel_type")
+	@Dict(dictTable = "distribution_channel", dicText = "channel_name", dicCode = "channel_type")
     @ApiModelProperty(value = "渠道名称")
     private String distributionChannelName;
 	/**渠道类型*/
@@ -274,11 +275,11 @@ public class CompanyInsurance implements Serializable {
 	/**司机责任险保额*/
 	@Excel(name = "司机责任险保额", width = 15)
     @ApiModelProperty(value = "司机责任险保额")
-    private Integer driverLiabilityInsure;
+    private Double driverLiabilityInsure;
 	/**乘客责任险保额*/
 	@Excel(name = "乘客责任险保额", width = 15)
     @ApiModelProperty(value = "乘客责任险保额")
-    private Integer passengerLiability;
+    private Double passengerLiability;
 	/**上年终保日期*/
 	@Excel(name = "上年终保日期", width = 15, format = "yyyy-MM-dd")
 	@JsonFormat(timezone = "GMT+8",pattern = "yyyy-MM-dd")

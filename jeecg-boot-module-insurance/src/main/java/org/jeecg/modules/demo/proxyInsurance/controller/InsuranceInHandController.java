@@ -83,8 +83,14 @@ public class InsuranceInHandController extends JeecgController<InsuranceInHand, 
 	@ApiOperation(value="录入的保单-编辑", notes="录入的保单-编辑")
 	@PutMapping(value = "/edit")
 	public Result<?> edit(@RequestBody InsuranceInHand insuranceInHand) {
+//		从数据库中查找与修改后的对象是否相等
+		boolean isEquals = insuranceInHandService.isEquals(insuranceInHand);
+		if(!isEquals){
+//		不相等就修改比对状态为“未比对”
+			insuranceInHand.setIsChecked(IsChecked.NO_CHECKED.getCode());
+		}
+//		相等则什么也不做
 //		如果修改了输入保单信息，则需要将比对状态设置为未比对
-		insuranceInHand.setIsChecked(IsChecked.NO_CHECKED.getCode());
 		//		完善所有数据
 		insuranceInHandService.setAllArgs(insuranceInHand);
 		insuranceInHandService.updateById(insuranceInHand);

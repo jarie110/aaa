@@ -2,6 +2,7 @@ package org.jeecg.modules.demo.checked.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import org.apache.commons.collections.CollectionUtils;
 import org.jeecg.BeanUtils.MyBeanUtil;
 import org.jeecg.common.api.vo.Result;
 import org.jeecg.enumUtil.IsTransfer;
@@ -13,8 +14,7 @@ import org.jeecg.modules.demo.companyInsurance.service.ICompanyInsuranceService;
 import org.jeecg.modules.demo.proxyInsurance.entity.InsuranceInHand;
 import org.jeecg.modules.demo.proxyInsurance.service.impl.InsuranceInHandServiceImpl;
 import org.jeecg.modules.demo.team.service.IInsuranceTeamService;
-import org.apache.commons.collections.CollectionUtils;
-
+import org.jeecg.snowFlake.SnowFlakeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -64,9 +64,9 @@ public class CheckInsuranceServiceImpl extends ServiceImpl<CheckInsuranceMapper,
         String compulsoryInsurCode = insuranceInHand.getCompulsoryInsurCode();//交强险保单号
         String commercialInsurCode = insuranceInHand.getCommercialInsurCode();//商业险保单号
         Date insuranceDate = insuranceInHand.getInsuranceDate();//出单日期
-        String salesman = insuranceInHand.getSalesman();//出单员
+        String billMan = insuranceInHand.getBillMan();//出单员
         Double vesselTax = insuranceInHand.getVehicleVesselTax();//车船税
-        Double CompulsoryServiceHarge = 0.0;//交强险手续费
+        Double compulsoryServiceHarge = 0.0;//交强险手续费
         Double commercialServiceHarge = 0.0;//商业险手续费
 //        boolean flag = false;//标志是否更新或插入成功
 //        交强险签单保费（含税）
@@ -89,30 +89,32 @@ public class CheckInsuranceServiceImpl extends ServiceImpl<CheckInsuranceMapper,
                 for (CompanyInsurance companyInsurance : companyInsuranceList) {
                     if (compulsoryInsurCode.equals(companyInsurance.getInsuranceNum())) {//如果是交强险保单
 //                        封装数据，从保司保单中获取数据
-                        if (insuranceDate.equals(companyInsurance.getZbTime()) && salesman.equals(companyInsurance.getSalesMan())) {
+                        if (insuranceDate.equals(companyInsurance.getZbTime()) && billMan.equals(companyInsurance.getSalesMan())) {
                             //交强险保单号
                             checkInsurance.setCompulsoryInsurCode(companyInsurance.getInsuranceNum());
 //                            交强险保费
                             insureCompulsoryFeeIncludeTax = companyInsurance.getInsureFeeIncludeTax();
                             checkInsurance.setCompulsoryInsurFee(insureCompulsoryFeeIncludeTax);
 //                            交强险签单手续费
-                            CompulsoryServiceHarge = companyInsurance.getSignServiceHarge();
+                            compulsoryServiceHarge = companyInsurance.getSignServiceHarge();
                         }
                     }
 //                    2.核对商业险保单号
                     if (commercialInsurCode.equals(companyInsurance.getInsuranceNum())) {//如果是商业险保单
 //                        封装数据，从保司保单中获取数据
-                        if (insuranceDate.equals(companyInsurance.getZbTime()) && salesman.equals(companyInsurance.getSalesMan())) {
+                        if (insuranceDate.equals(companyInsurance.getZbTime()) && billMan.equals(companyInsurance.getSalesMan())) {
                             //商业险保单号
                             checkInsurance.setCommercialInsurCode(companyInsurance.getInsuranceNum());
 //                            商业险保费
                             insureCommercialFeeIncludeTax = companyInsurance.getInsureFeeIncludeTax();
-//                          签单手续费 = 交强险手续费+商业险手续费
+//                          商业签单手续费
                             commercialServiceHarge = companyInsurance.getSignServiceHarge();
 //                     封装数据checkInsurance
 //                        出单日期
                             checkInsurance.setInsuranceDate(companyInsurance.getZbDate());
 //                           出单员
+                            checkInsurance.setBillMan(insuranceInHand.getBillMan());
+//                           业务员
                             checkInsurance.setSalesman(companyInsurance.getSalesMan());
 //                           团队
                             String teamName = teamService.getTeamNameByCode(insuranceInHand.getInsuranceTeam());
@@ -178,8 +180,14 @@ public class CheckInsuranceServiceImpl extends ServiceImpl<CheckInsuranceMapper,
                 if (res) {
 //                保费总额=交强险签单保费+商业险签单保费+车船税（从录入保单中取）
                     checkInsurance.setInsuranceTotalFee(insureCompulsoryFeeIncludeTax + insureCommercialFeeIncludeTax + vesselTax);
-//                签单手续费
-                    checkInsurance.setSignServiceHarge(CompulsoryServiceHarge + commercialServiceHarge);
+//                签单手续费是否包含手续费总额
+                    checkInsurance.setSignServiceHarge(compulsoryServiceHarge + commercialServiceHarge);
+//                    设置比对时间
+                    checkInsurance.setCheckDate(new Date());
+//                   录入日期
+                    checkInsurance.setInputInsuranceDate(insuranceInHand.getCreateTime());
+//                    保单编号
+                    checkInsurance.setInsureNum(SnowFlakeUtil.getId().toString());
 //                保存数据
 //                判断比对过的数据库是否存在该数据(根据车架号、商业保单号、交强保单号)
 //                  1. 存在则更新(判断是否是今年的保单)

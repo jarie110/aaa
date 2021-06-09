@@ -1,26 +1,26 @@
 package org.jeecg.modules.demo.proxyInsurance.entity;
 
-import java.io.Serializable;
-import java.io.UnsupportedEncodingException;
-import java.util.Date;
-import java.math.BigDecimal;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import lombok.Data;
 import com.fasterxml.jackson.annotation.JsonFormat;
-import org.springframework.format.annotation.DateTimeFormat;
-import org.jeecgframework.poi.excel.annotation.Excel;
-import org.jeecg.common.aspect.annotation.Dict;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
+import org.jeecg.common.aspect.annotation.Dict;
+import org.jeecgframework.poi.excel.annotation.Excel;
+import org.springframework.format.annotation.DateTimeFormat;
+
+import java.io.Serializable;
+import java.util.Date;
+import java.util.Objects;
 
 /**
  * @Description: 手输保单
  * @Author: jeecg-boot
- * @Date:   2021-06-05
+ * @Date:   2021-06-09
  * @Version: V1.0
  */
 @Data
@@ -29,7 +29,55 @@ import lombok.experimental.Accessors;
 @EqualsAndHashCode(callSuper = false)
 @ApiModel(value="insurance_in_hand对象", description="手输保单")
 public class InsuranceInHand implements Serializable {
-    private static final long serialVersionUID = 1L;
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (!(o instanceof InsuranceInHand)) return false;
+		InsuranceInHand that = (InsuranceInHand) o;
+		return Objects.equals(getId(), that.getId()) &&
+//				Objects.equals(getCreateBy(), that.getCreateBy()) &&
+//				Objects.equals(getCreateTime(), that.getCreateTime()) &&
+//				Objects.equals(getUpdateBy(), that.getUpdateBy()) &&
+//				Objects.equals(getUpdateTime(), that.getUpdateTime()) &&
+				Objects.equals(getInsuranceDate(), that.getInsuranceDate()) &&
+				Objects.equals(getSalesman(), that.getSalesman()) &&
+				Objects.equals(getVehicleLicense(), that.getVehicleLicense()) &&
+				Objects.equals(getCustomer(), that.getCustomer()) &&
+				Objects.equals(getVehicleIdentity(), that.getVehicleIdentity()) &&
+				Objects.equals(getCompulsoryInsurCode(), that.getCompulsoryInsurCode()) &&
+				Objects.equals(getCompulsoryInsurFee(), that.getCompulsoryInsurFee()) &&
+				Objects.equals(getCommercialInsurCode(), that.getCommercialInsurCode()) &&
+				Objects.equals(getCommercialInsurFee(), that.getCommercialInsurFee()) &&
+				Objects.equals(getVehicleVesselTax(), that.getVehicleVesselTax()) &&
+				Objects.equals(getInsuranceTotalFee(), that.getInsuranceTotalFee()) &&
+				Objects.equals(getTotalServiceFee(), that.getTotalServiceFee()) &&
+				Objects.equals(getRenewalType(), that.getRenewalType()) &&
+				Objects.equals(getCarUsageType(), that.getCarUsageType()) &&
+				Objects.equals(getDistributionChannelId(), that.getDistributionChannelId()) &&
+				Objects.equals(getRemark(), that.getRemark()) &&
+				Objects.equals(getInsuranceTeam(), that.getInsuranceTeam()) &&
+				Objects.equals(getThirdPartyInsured(), that.getThirdPartyInsured()) &&
+				Objects.equals(getDriverLiabilityInsure(), that.getDriverLiabilityInsure()) &&
+				Objects.equals(getCarDamageInsured(), that.getCarDamageInsured()) &&
+				Objects.equals(getPassengerLiability(), that.getPassengerLiability()) &&
+				Objects.equals(getRegisterDate(), that.getRegisterDate()) &&
+				Objects.equals(getIsTransfer(), that.getIsTransfer()) &&
+				Objects.equals(getSeatsNum(), that.getSeatsNum()) &&
+				Objects.equals(getCompulsoryInsuranceRebate(), that.getCompulsoryInsuranceRebate()) &&
+				Objects.equals(getCommercialInsuranceRebate(), that.getCommercialInsuranceRebate()) &&
+				Objects.equals(getIsPayCommission(), that.getIsPayCommission()) &&
+				Objects.equals(getIsChecked(), that.getIsChecked()) &&
+				Objects.equals(getSeatBonus(), that.getSeatBonus()) &&
+				Objects.equals(getPaymentWay(), that.getPaymentWay());
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(getId(),  /*getCreateBy(), getCreateTime(), getUpdateBy(),getUpdateTime(),*/ getInsuranceDate(), getSalesman(), getVehicleLicense(), getCustomer(), getVehicleIdentity(), getCompulsoryInsurCode(), getCompulsoryInsurFee(), getCommercialInsurCode(), getCommercialInsurFee(), getVehicleVesselTax(), getInsuranceTotalFee(), getTotalServiceFee(), getRenewalType(), getCarUsageType(), getDistributionChannelId(), getRemark(), getInsuranceTeam(), getThirdPartyInsured(), getDriverLiabilityInsure(), getCarDamageInsured(), getPassengerLiability(), getRegisterDate(), getIsTransfer(), getSeatsNum(), getCompulsoryInsuranceRebate(), getCommercialInsuranceRebate(), getIsPayCommission(), getIsChecked(), getSeatBonus(), getPaymentWay());
+	}
+
+	private static final long serialVersionUID = 1L;
 
 	/**主键*/
 	@TableId(type = IdType.ASSIGN_ID)
@@ -60,6 +108,10 @@ public class InsuranceInHand implements Serializable {
 	/**出单员*/
 	@Excel(name = "出单员", width = 15)
     @ApiModelProperty(value = "出单员")
+    private String billMan;
+	/**业务员*/
+	@Excel(name = "业务员", width = 15)
+    @ApiModelProperty(value = "业务员")
     private String salesman;
 	/**车牌号*/
 	@Excel(name = "车牌号", width = 15)
@@ -116,10 +168,6 @@ public class InsuranceInHand implements Serializable {
 	@Dict(dictTable = "distribution_channel", dicText = "channel_name", dicCode = "channel_type")
     @ApiModelProperty(value = "渠道名称")
     private Integer distributionChannelId;
-	/**备注*/
-	@Excel(name = "备注", width = 15)
-    @ApiModelProperty(value = "备注")
-    private String remark;
 	/**所属团队*/
 	@Excel(name = "所属团队", width = 15, dictTable = "insurance_team", dicText = "team_name", dicCode = "team_code")
 	@Dict(dictTable = "insurance_team", dicText = "team_name", dicCode = "team_code")
@@ -152,10 +200,6 @@ public class InsuranceInHand implements Serializable {
 	@Dict(dicCode = "is_transfer")
     @ApiModelProperty(value = "是否过户")
     private Integer isTransfer;
-	/**签单手续费*/
-	@Excel(name = "签单手续费", width = 15)
-    @ApiModelProperty(value = "签单手续费")
-    private Double signFee;
 	/**座位数*/
 	@Excel(name = "座位数", width = 15)
     @ApiModelProperty(value = "座位数")
@@ -187,4 +231,8 @@ public class InsuranceInHand implements Serializable {
 	@Dict(dicCode = "rebate_way")
     @ApiModelProperty(value = "返点支付方式")
     private Integer paymentWay;
+	/**备注*/
+	@Excel(name = "备注", width = 15)
+    @ApiModelProperty(value = "备注")
+    private String remark;
 }

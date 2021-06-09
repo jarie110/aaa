@@ -11,4 +11,6 @@ import org.jeecg.modules.demo.proxyInsurance.entity.InsuranceInHand;
  */
 public interface IInsuranceInHandService extends IService<InsuranceInHand> {
     void setAllArgs(InsuranceInHand insuranceInHand);
+
+    boolean isEquals(InsuranceInHand OldInsuranceInHand);
 }

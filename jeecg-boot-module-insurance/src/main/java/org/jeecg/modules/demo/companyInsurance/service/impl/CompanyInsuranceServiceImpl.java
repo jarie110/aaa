@@ -22,11 +22,22 @@ public class CompanyInsuranceServiceImpl extends ServiceImpl<CompanyInsuranceMap
     @Autowired
     private CompanyInsuranceMapper companyInsuranceMapper;
 
+    /**
+     * 根据车架号查询
+     * @param vehicleIdentity
+     * @return
+     */
     @Override
     public List<CompanyInsurance> getCompanyInsuranceByVehicleIdentity(String vehicleIdentity) {
         QueryWrapper<CompanyInsurance> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("vehicle_identity", vehicleIdentity);
         return companyInsuranceMapper.selectList(queryWrapper);
+    }
 
+    @Override
+    public CompanyInsurance getInstanceByCommerialInsurCode(String commercialInsurCode) {
+        QueryWrapper<CompanyInsurance> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("insurance_num",commercialInsurCode);
+        return companyInsuranceMapper.selectOne(queryWrapper);
     }
 }

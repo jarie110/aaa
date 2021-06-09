@@ -9,7 +9,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 /**
  * @Description: 手输保单
  * @Author: jeecg-boot
- * @Date:   2021-05-31
+ * @Date:   2021-06-09
  * @Version: V1.0
  */
 public interface InsuranceInHandMapper extends BaseMapper<InsuranceInHand> {

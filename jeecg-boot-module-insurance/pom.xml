@@ -22,6 +22,12 @@
             <artifactId>jeecg-system-local-api</artifactId>
             <version>2.4.3</version>
         </dependency>
+
+        <dependency>
+            <groupId>cn.hutool</groupId>
+            <artifactId>hutool-captcha</artifactId>
+            <version>5.3.9</version>
+        </dependency>
         <!--引入微服务启动依赖 starter
       <dependency>
           <groupId>org.jeecgframework.boot</groupId>

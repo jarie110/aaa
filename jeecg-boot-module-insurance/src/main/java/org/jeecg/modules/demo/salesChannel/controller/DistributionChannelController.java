@@ -5,13 +5,13 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.jeecg.modules.demo.salesChannel.entity.DistributionChannel;
-import org.jeecg.modules.demo.salesChannel.service.IDistributionChannelService;
 import lombok.extern.slf4j.Slf4j;
 import org.jeecg.common.api.vo.Result;
 import org.jeecg.common.aspect.annotation.AutoLog;
 import org.jeecg.common.system.base.controller.JeecgController;
 import org.jeecg.common.system.query.QueryGenerator;
+import org.jeecg.modules.demo.salesChannel.entity.DistributionChannel;
+import org.jeecg.modules.demo.salesChannel.service.IDistributionChannelService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
@@ -19,8 +19,10 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
- /**
+/**
  * @Description: 渠道表
  * @Author: jeecg-boot
  * @Date:   2021-05-24
@@ -54,6 +56,19 @@ public class DistributionChannelController extends JeecgController<DistributionC
 		Page<DistributionChannel> page = new Page<DistributionChannel>(pageNo, pageSize);
 		IPage<DistributionChannel> pageList = distributionChannelService.page(page, queryWrapper);
 		return Result.OK(pageList);
+	}
+
+	/**
+	 * 查询渠道名
+	 * @return
+	 */
+	@AutoLog(value = "渠道表-列表查询")
+	@ApiOperation(value="渠道表-列表查询", notes="渠道表-列表查询")
+	@GetMapping("/channelList")
+	public Result<?> queryChannelName(){
+		List<DistributionChannel> list = distributionChannelService.list();
+		List<String> stringList = list.stream().map(DistributionChannel::getChannelName).collect(Collectors.toList());
+		return Result.OK(stringList);
 	}
 
 	/**

@@ -13,4 +13,6 @@ import java.util.List;
 public interface ICompanyInsuranceService extends IService<CompanyInsurance> {
 
     List<CompanyInsurance> getCompanyInsuranceByVehicleIdentity(String vehicleIdentity);
+
+    CompanyInsurance getInstanceByCommerialInsurCode(String commercialInsurCode);
 }

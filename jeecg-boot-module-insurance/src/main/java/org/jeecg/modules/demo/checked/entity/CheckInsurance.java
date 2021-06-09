@@ -1,26 +1,25 @@
 package org.jeecg.modules.demo.checked.entity;
 
-import java.io.Serializable;
-import java.io.UnsupportedEncodingException;
-import java.util.Date;
-import java.math.BigDecimal;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import lombok.Data;
 import com.fasterxml.jackson.annotation.JsonFormat;
-import org.springframework.format.annotation.DateTimeFormat;
-import org.jeecgframework.poi.excel.annotation.Excel;
-import org.jeecg.common.aspect.annotation.Dict;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
+import org.jeecg.common.aspect.annotation.Dict;
+import org.jeecgframework.poi.excel.annotation.Excel;
+import org.springframework.format.annotation.DateTimeFormat;
+
+import java.io.Serializable;
+import java.util.Date;
 
 /**
  * @Description: 核对的保单
  * @Author: jeecg-boot
- * @Date:   2021-06-05
+ * @Date:   2021-06-08
  * @Version: V1.0
  */
 @Data
@@ -76,6 +75,10 @@ public class CheckInsurance implements Serializable {
 	/**出单员*/
 	@Excel(name = "出单员", width = 15)
     @ApiModelProperty(value = "出单员")
+    private String billMan;
+	/**业务员*/
+	@Excel(name = "业务员", width = 15)
+    @ApiModelProperty(value = "业务员")
     private String salesman;
 	/**所属团队*/
 	@Excel(name = "所属团队", width = 15)
@@ -156,7 +159,7 @@ public class CheckInsurance implements Serializable {
 	/**三责保额*/
 	@Excel(name = "三责保额", width = 15)
     @ApiModelProperty(value = "三责保额")
-    private Integer thirdPartyInsured;
+    private Double thirdPartyInsured;
 	/**车损险保额*/
 	@Excel(name = "车损险保额", width = 15)
     @ApiModelProperty(value = "车损险保额")
@@ -172,11 +175,11 @@ public class CheckInsurance implements Serializable {
 	/**司机责任险保额*/
 	@Excel(name = "司机责任险保额", width = 15)
     @ApiModelProperty(value = "司机责任险保额")
-    private Integer driverLiabilityInsure;
+    private Double driverLiabilityInsure;
 	/**乘客责任险保额*/
 	@Excel(name = "乘客责任险保额", width = 15)
     @ApiModelProperty(value = "乘客责任险保额")
-    private Integer passengerLiability;
+    private Double passengerLiability;
 	/**手续费总额*/
 	@Excel(name = "手续费总额", width = 15)
     @ApiModelProperty(value = "手续费总额")

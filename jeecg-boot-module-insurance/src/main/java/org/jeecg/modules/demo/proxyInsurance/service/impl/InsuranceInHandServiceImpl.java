@@ -6,6 +6,8 @@ import org.jeecg.common.util.DateUtils;
 import org.jeecg.enumUtil.IsTransfer;
 import org.jeecg.enumUtil.RebateType;
 import org.jeecg.enumUtil.RenewalTypeEnum;
+import org.jeecg.modules.demo.companyInsurance.entity.CompanyInsurance;
+import org.jeecg.modules.demo.companyInsurance.service.ICompanyInsuranceService;
 import org.jeecg.modules.demo.proxyInsurance.entity.InsuranceInHand;
 import org.jeecg.modules.demo.proxyInsurance.mapper.InsuranceInHandMapper;
 import org.jeecg.modules.demo.proxyInsurance.service.IInsuranceInHandService;
@@ -18,6 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @Description: 录入的保单
@@ -28,11 +31,18 @@ import java.util.*;
 @Service
 public class InsuranceInHandServiceImpl extends ServiceImpl<InsuranceInHandMapper, InsuranceInHand> implements IInsuranceInHandService {
     public final Integer FIXED_VALUE = 20000;//司机责任险最小值
+    private final  double  COEFFICIENT = 1.06; //系数
     @Autowired
     private IInsuranceUsageService usageService;
 
     @Autowired
     private IInsuranceRebateRatioService rebateRatioService;
+
+    @Autowired
+    private InsuranceInHandMapper insuranceInHandMapper;
+
+    @Autowired
+    private ICompanyInsuranceService companyInsuranceService;
 
     /**
      * 计算总返点比例
@@ -42,6 +52,7 @@ public class InsuranceInHandServiceImpl extends ServiceImpl<InsuranceInHandMappe
     @Transactional
     @Override
     public void setAllArgs(InsuranceInHand insuranceInHand) {
+
         /*设置商业险返点佣金*/
         List<Double> percentList = new ArrayList<>();
         //		1.使用性质（根据使用性质类型，查询对应的返点比例）
@@ -126,9 +137,10 @@ public class InsuranceInHandServiceImpl extends ServiceImpl<InsuranceInHandMappe
         ) {
             addPercent(percentList, RebateType.OVERLAPPING_REBATE.getType());
         }
-//		7.判断是否为跟单0比例(签单手续费为0)
-        Double signFee = insuranceInHand.getSignFee();
-        if (signFee == 0) {
+//		7.判断是否为跟单0比例(保险公司提供的数据中签单手续费为0)
+//        根据商业险保单判断
+        CompanyInsurance companyInsurance =  companyInsuranceService.getInstanceByCommerialInsurCode(insuranceInHand.getCommercialInsurCode());
+        if (companyInsurance.getSignServiceHarge()== 0) {
             addPercent(percentList, RebateType.FOLLOW_UP_REBATE.getType());
         }
 //		8.判断是否为座位保（使用性质，司机责任保额，乘客责任保额，是否达标）
@@ -150,12 +162,12 @@ public class InsuranceInHandServiceImpl extends ServiceImpl<InsuranceInHandMappe
             insuranceInHand.setSeatBonus(bonus);
         }
 //        计算返点比例总和
-//        Double rebateAll = percentList.stream().collect(Collectors.summingDouble(Double::doubleValue));
         Double rebateAll = 0.0;
-        for (Double aDouble : percentList) {
-            rebateAll += aDouble;
-        }
-        insuranceInHand.setCommercialInsuranceRebate(rebateAll);
+        rebateAll = percentList.stream().collect(Collectors.summingDouble(Double::doubleValue));
+//        for (Double aDouble : percentList) {
+//            rebateAll += aDouble;
+//        }
+//        insuranceInHand.setCommercialInsuranceRebate(rebateAll);
 
 //计算手续费总额 = 交强险手续费+商业险手续费
 
@@ -166,9 +178,19 @@ public class InsuranceInHandServiceImpl extends ServiceImpl<InsuranceInHandMappe
         insuranceInHand.setInsuranceTotalFee(commercialInsurFee + compulsoryInsurFee + vehicleVesselTax);
 
         /* 计算返点佣金 = 商业险 * 商业险返点 + 交强险 * 交强险返点比 + 座位保奖金+签单手续费*/
-        double totalServiceFee = commercialInsurFee * (rebateAll / 100) + compulsoryInsurFee * (insuranceInHand.getCompulsoryInsuranceRebate() / 100) + insuranceInHand.getSeatBonus() + signFee;
+        double totalServiceFee  = commercialInsurFee / COEFFICIENT * (rebateAll / 100) + compulsoryInsurFee / COEFFICIENT * (insuranceInHand.getCompulsoryInsuranceRebate() / 100) + insuranceInHand.getSeatBonus();
         insuranceInHand.setTotalServiceFee(totalServiceFee);
+    }
 
+    /**
+     * 判断是否修改过数据
+     * @param insuranceInHandFromForm
+     * @return
+     */
+    @Override
+    public boolean isEquals(InsuranceInHand insuranceInHandFromForm) {
+        InsuranceInHand insuranceInHand = insuranceInHandMapper.selectById(insuranceInHandFromForm.getId());
+        return insuranceInHand.equals(insuranceInHandFromForm);
     }
 
     /**
