@@ -125,6 +125,17 @@ public class Result<T> implements Serializable {
 		return r;
 	}
 
+//自定义返回错误信息，并带上数据
+	public static<T> Result<T> error(int code,String msg, T data) {
+		Result<T> r = new Result<T>();
+		r.setCode(code);
+		r.setSuccess(false);
+		r.setCode(CommonConstant.SC_INTERNAL_SERVER_ERROR_500);
+		r.setMessage(msg);
+		r.setResult(data);
+		return r;
+	}
+
 	public Result<T> error500(String message) {
 		this.message = message;
 		this.code = CommonConstant.SC_INTERNAL_SERVER_ERROR_500;

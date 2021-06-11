@@ -12,7 +12,7 @@ public class InsuranceException extends Exception {
     private InsuranceExceptionEnum exceptionEnum;
     private String msg;
     private Integer exceptionCode;
-    InsuranceException(InsuranceExceptionEnum exceptionEnum){
+    public InsuranceException(InsuranceExceptionEnum exceptionEnum){
         this.exceptionCode = exceptionEnum.getExceptionCode();
         this.msg = exceptionEnum.getMsg();
     }

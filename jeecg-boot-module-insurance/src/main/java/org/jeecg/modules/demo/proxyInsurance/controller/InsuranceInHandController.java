@@ -5,14 +5,14 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.jeecg.enumUtil.IsChecked;
-import org.jeecg.modules.demo.proxyInsurance.entity.InsuranceInHand;
-import org.jeecg.modules.demo.proxyInsurance.service.IInsuranceInHandService;
 import lombok.extern.slf4j.Slf4j;
 import org.jeecg.common.api.vo.Result;
 import org.jeecg.common.aspect.annotation.AutoLog;
 import org.jeecg.common.system.base.controller.JeecgController;
 import org.jeecg.common.system.query.QueryGenerator;
+import org.jeecg.enumUtil.IsChecked;
+import org.jeecg.modules.demo.proxyInsurance.entity.InsuranceInHand;
+import org.jeecg.modules.demo.proxyInsurance.service.IInsuranceInHandService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
@@ -34,6 +34,14 @@ import java.util.Arrays;
 public class InsuranceInHandController extends JeecgController<InsuranceInHand, IInsuranceInHandService> {
 	@Autowired
 	private IInsuranceInHandService insuranceInHandService;
+
+	 @AutoLog(value = "核对的保单-计算手续费")
+	 @ApiOperation(value="核对的保单-计算手续费", notes="核对的保单-计算手续费")
+	 @GetMapping(value = "/calculate")
+	 public Result<?> calculateServiceFee(String id) throws Exception {
+		 InsuranceInHand insuranceInHand = insuranceInHandService.getById(id);
+		 return insuranceInHandService.serviceTotalFee(insuranceInHand);
+	 }
 
 	/**
 	 * 分页列表查询
@@ -68,11 +76,10 @@ public class InsuranceInHandController extends JeecgController<InsuranceInHand, 
 	@PostMapping(value = "/add")
 	public Result<?> add(@RequestBody InsuranceInHand insuranceInHand) {
 //		完善所有数据
-		insuranceInHandService.setAllArgs(insuranceInHand);
+//		insuranceInHandService.setAllArgs(insuranceInHand);
 		insuranceInHandService.save(insuranceInHand);
 		return Result.OK("添加成功！");
 	}
-
 	/**
 	 *  编辑
 	 *
@@ -92,7 +99,7 @@ public class InsuranceInHandController extends JeecgController<InsuranceInHand, 
 //		相等则什么也不做
 //		如果修改了输入保单信息，则需要将比对状态设置为未比对
 		//		完善所有数据
-		insuranceInHandService.setAllArgs(insuranceInHand);
+//		insuranceInHandService.setAllArgs(insuranceInHand);
 		insuranceInHandService.updateById(insuranceInHand);
 		return Result.OK("编辑成功!");
 	}

@@ -14,6 +14,7 @@ import org.jeecgframework.poi.excel.annotation.Excel;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.Objects;
 
@@ -157,12 +158,12 @@ public class InsuranceInHand implements Serializable {
 	@Excel(name = "新续保标志", width = 15, dicCode = "renewal_symbol")
 	@Dict(dicCode = "renewal_symbol")
     @ApiModelProperty(value = "新续保标志")
-    private Integer renewalType;
+    private String renewalType;
 	/**使用性质*/
 	@Excel(name = "使用性质", width = 15, dictTable = "insurance_usage", dicText = "usage_name", dicCode = "usage_type")
 	@Dict(dictTable = "insurance_usage", dicText = "usage_name", dicCode = "usage_type")
     @ApiModelProperty(value = "使用性质")
-    private Integer carUsageType;
+    private String carUsageType;
 	/**渠道名称*/
 	@Excel(name = "渠道名称", width = 15, dictTable = "distribution_channel", dicText = "channel_name", dicCode = "channel_type")
 	@Dict(dictTable = "distribution_channel", dicText = "channel_name", dicCode = "channel_type")
@@ -207,7 +208,7 @@ public class InsuranceInHand implements Serializable {
 	/**交强险返点比*/
 	@Excel(name = "交强险返点比", width = 15)
     @ApiModelProperty(value = "交强险返点比")
-    private Double compulsoryInsuranceRebate;
+    private BigDecimal compulsoryInsuranceRebate;
 	/**商业险返点比*/
 	@Excel(name = "商业险返点比", width = 15)
     @ApiModelProperty(value = "商业险返点比")
@@ -225,7 +226,7 @@ public class InsuranceInHand implements Serializable {
 	/**座位保奖励金*/
 	@Excel(name = "座位保奖励金", width = 15)
     @ApiModelProperty(value = "座位保奖励金")
-    private Double seatBonus;
+    private BigDecimal seatBonus;
 	/**返点支付方式*/
 	@Excel(name = "返点支付方式", width = 15, dicCode = "rebate_way")
 	@Dict(dicCode = "rebate_way")

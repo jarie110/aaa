@@ -1,7 +1,10 @@
 package org.jeecg.modules.demo.proxyInsurance.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import org.jeecg.common.api.vo.Result;
 import org.jeecg.modules.demo.proxyInsurance.entity.InsuranceInHand;
+
+import java.text.ParseException;
 
 /**
  * @Description: 录入的保单
@@ -10,7 +13,6 @@ import org.jeecg.modules.demo.proxyInsurance.entity.InsuranceInHand;
  * @Version: V1.0
  */
 public interface IInsuranceInHandService extends IService<InsuranceInHand> {
-    void setAllArgs(InsuranceInHand insuranceInHand);
-
+    Result<?> serviceTotalFee(InsuranceInHand insuranceInHand) throws ParseException;
     boolean isEquals(InsuranceInHand OldInsuranceInHand);
 }

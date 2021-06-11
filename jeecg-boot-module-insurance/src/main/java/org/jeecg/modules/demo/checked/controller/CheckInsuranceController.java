@@ -69,6 +69,7 @@ public class CheckInsuranceController extends JeecgController<CheckInsurance, IC
 		return Result.OK(pageList);
 	}
 
+
 	/**
 	 *   添加
 	 *

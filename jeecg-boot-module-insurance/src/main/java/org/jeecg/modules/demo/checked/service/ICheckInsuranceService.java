@@ -16,4 +16,5 @@ public interface ICheckInsuranceService extends IService<CheckInsurance> {
 
     Result<?> checkAndSaveInsuracne(InsuranceInHand insuranceInHand);
 
+    CheckInsurance selectByCommercialInsurCode(String commercialInsurCode);
 }

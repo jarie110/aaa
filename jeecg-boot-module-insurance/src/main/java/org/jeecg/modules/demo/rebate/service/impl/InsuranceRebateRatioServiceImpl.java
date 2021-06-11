@@ -1,15 +1,13 @@
 package org.jeecg.modules.demo.rebate.service.impl;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.jeecg.modules.demo.rebate.entity.InsuranceRebateRatio;
 import org.jeecg.modules.demo.rebate.mapper.InsuranceRebateRatioMapper;
 import org.jeecg.modules.demo.rebate.service.IInsuranceRebateRatioService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-
 import javax.annotation.Resource;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -23,10 +21,20 @@ public class InsuranceRebateRatioServiceImpl extends ServiceImpl<InsuranceRebate
 
    @Resource
     private InsuranceRebateRatioMapper rebateRatioMapper;
+
+    /**
+     * 根据类型code和时间查询返点类型
+      * @param type
+     * @param zbTime
+     * @return
+     */
+   @Override
+    public List<InsuranceRebateRatio> getInsuranceRebateRatioByTypeAndInsuranceDate(Integer type, Date zbTime) {
+        return rebateRatioMapper.selectInsuranceRebateRatioByTypeAndInsuranceDate(type,zbTime);
+    }
+
     @Override
-    public List<InsuranceRebateRatio> getInsuranceRebateRatioByType(Integer type) {
-        QueryWrapper<InsuranceRebateRatio> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("rebate_ratio_type",type);
-        return rebateRatioMapper.selectList(queryWrapper);
+    public InsuranceRebateRatio getInsuranceRebateRatioByTypeAndUsageTypeAndInsuranceDate(Integer type, String usageType, Date zbTime) {
+        return rebateRatioMapper.selectInsuranceRebateRatioByTypeAndUsageTypeAndInsuranceDate(type,usageType,zbTime);
     }
 }

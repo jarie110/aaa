@@ -1,8 +1,9 @@
 package org.jeecg.modules.demo.rebate.service;
 
-import org.jeecg.modules.demo.rebate.entity.InsuranceRebateRatio;
 import com.baomidou.mybatisplus.extension.service.IService;
+import org.jeecg.modules.demo.rebate.entity.InsuranceRebateRatio;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -13,5 +14,7 @@ import java.util.List;
  */
 public interface IInsuranceRebateRatioService extends IService<InsuranceRebateRatio> {
 
-    List<InsuranceRebateRatio> getInsuranceRebateRatioByType(Integer type);
+    List<InsuranceRebateRatio> getInsuranceRebateRatioByTypeAndInsuranceDate(Integer code, Date zbTime);
+
+    InsuranceRebateRatio getInsuranceRebateRatioByTypeAndUsageTypeAndInsuranceDate(Integer type, String usageType, Date zbTime);
 }

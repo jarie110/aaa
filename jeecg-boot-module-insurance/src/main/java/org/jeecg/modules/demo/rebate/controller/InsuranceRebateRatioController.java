@@ -18,6 +18,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
 import java.util.Arrays;
 
 /**
@@ -46,6 +47,15 @@ public class InsuranceRebateRatioController extends JeecgController<InsuranceReb
 	 }
 
 
+	@AutoLog(value = "返点比例-批量设置")
+	@ApiOperation(value="返点比例-批量设置", notes="返点比例-批量设置")
+	@PostMapping(value = "/batchSetting")
+	public Result<?> batchSetting(@RequestBody ArrayList<InsuranceRebateRatio> list) {
+		if(insuranceRebateRatioService.saveOrUpdateBatch(list)){
+			return Result.OK("批量设置成功");
+		}
+			return Result.error("批量设置失败");
+	}
 
 
 

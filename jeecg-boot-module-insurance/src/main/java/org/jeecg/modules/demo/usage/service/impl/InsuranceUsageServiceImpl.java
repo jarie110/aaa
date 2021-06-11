@@ -19,9 +19,10 @@ public class InsuranceUsageServiceImpl extends ServiceImpl<InsuranceUsageMapper,
     @Autowired
     private InsuranceUsageMapper usageMapper;
     @Override
-    public InsuranceUsage selectByUserType(Integer usageType) {
+    public InsuranceUsage selectByUserType(String usageType) {
         QueryWrapper<InsuranceUsage> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("usage_type",usageType);
         return usageMapper.selectOne(queryWrapper);
     }
+
 }

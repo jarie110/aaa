@@ -14,6 +14,7 @@ import org.jeecgframework.poi.excel.annotation.Excel;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 
 /**
@@ -81,8 +82,9 @@ public class CheckInsurance implements Serializable {
     @ApiModelProperty(value = "业务员")
     private String salesman;
 	/**所属团队*/
-	@Excel(name = "所属团队", width = 15)
+	@Excel(name = "所属团队", width = 15,dictTable="insurance_team",dicCode = "team_code",dicText = "team_name")
     @ApiModelProperty(value = "所属团队")
+    @Dict(dictTable="insurance_team",dicCode = "team_code",dicText = "team_name")
     private String insuranceTeam;
 	/**客户名称*/
 	@Excel(name = "客户名称", width = 15)
@@ -103,7 +105,7 @@ public class CheckInsurance implements Serializable {
 	/**交强险保费*/
 	@Excel(name = "交强险保费", width = 15)
     @ApiModelProperty(value = "交强险保费")
-    private Double compulsoryInsurFee;
+    private BigDecimal compulsoryInsurFee;
 	/**保费总额*/
 	@Excel(name = "保费总额", width = 15)
     @ApiModelProperty(value = "保费总额")
@@ -183,7 +185,7 @@ public class CheckInsurance implements Serializable {
 	/**手续费总额*/
 	@Excel(name = "手续费总额", width = 15)
     @ApiModelProperty(value = "手续费总额")
-    private Double totalServiceFee;
+    private BigDecimal totalServiceFee;
 	/**是否返点*/
 	@Excel(name = "是否返点", width = 15, dicCode = "is_paid_rebate")
 	@Dict(dicCode = "is_paid_rebate")
@@ -207,7 +209,7 @@ public class CheckInsurance implements Serializable {
 	/**商业险保费*/
 	@Excel(name = "商业险保费", width = 15)
     @ApiModelProperty(value = "商业险保费")
-    private Double commercialInsurFee;
+    private BigDecimal commercialInsurFee;
 	/**车船税*/
 	@Excel(name = "车船税", width = 15)
     @ApiModelProperty(value = "车船税")

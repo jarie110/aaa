@@ -12,5 +12,5 @@ import org.jeecg.modules.demo.usage.entity.InsuranceUsage;
  */
 public interface IInsuranceUsageService extends IService<InsuranceUsage> {
 
-    InsuranceUsage selectByUserType(Integer usageType);
+    InsuranceUsage selectByUserType(String usageType);
 }

@@ -5,7 +5,10 @@ package org.jeecg.common.exceptionEnum;
  */
 public enum InsuranceExceptionEnum {
 // 自定义异常信息
-    INSURANCE_EXCEPTION(400,"保单错误");
+    INSURANCE_EXCEPTION(400,"保单错误"),
+    UNDEFINED_NATURE_OF_USE(400,"未设置当天使用性质，请先设置然后再计算"),
+
+
     ;
     private Integer exceptionCode;
     private String msg;

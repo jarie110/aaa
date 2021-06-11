@@ -82,6 +82,7 @@ public class CompanyInsurance implements Serializable {
 	@JsonFormat(timezone = "GMT+8",pattern = "yyyy-MM-dd")
     @DateTimeFormat(pattern="yyyy-MM-dd")
     @ApiModelProperty(value = "转保单时间")
+//  转保时间就是出单时间
     private Date zbTime;
 	/**转保单日期*/
 	@Excel(name = "转保单日期", width = 20, format = "yyyy-MM-dd HH:mm:ss")
@@ -134,8 +135,9 @@ public class CompanyInsurance implements Serializable {
     @ApiModelProperty(value = "签单手续费")
     private Double signServiceHarge;
 	/**新续保标志*/
-	@Excel(name = "新续保标志", width = 15)
+	@Excel(name = "新续保标志", width = 15,dicCode = "renewal_symbol")
     @ApiModelProperty(value = "新续保标志")
+    @Dict(dicCode = "renewal_symbol")
     private String renewalType;
 	/**出单员*/
 	@Excel(name = "出单员", width = 15)
@@ -156,7 +158,8 @@ public class CompanyInsurance implements Serializable {
     @ApiModelProperty(value = "初登日期")
     private Date registerDate;
 	/**使用性质*/
-	@Excel(name = "使用性质", width = 15)
+	@Excel(name = "使用性质", width = 15,dictTable = "insurance_usage", dicText = "usage_name", dicCode = "usage_type")
+    @Dict(dictTable = "insurance_usage", dicText = "usage_name", dicCode = "usage_type")
     @ApiModelProperty(value = "使用性质")
     private String carUsageType;
 	/**车辆种类*/
