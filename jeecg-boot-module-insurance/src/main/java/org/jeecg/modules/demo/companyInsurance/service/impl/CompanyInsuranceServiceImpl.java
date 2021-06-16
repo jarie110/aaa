@@ -40,4 +40,10 @@ public class CompanyInsuranceServiceImpl extends ServiceImpl<CompanyInsuranceMap
         queryWrapper.eq("insurance_num",commercialInsurCode);
         return companyInsuranceMapper.selectOne(queryWrapper);
     }
+
+    @Override
+    public List<CompanyInsurance> selectListByDateDiff(Integer days) {
+        List<CompanyInsurance> companyInsuranceList = companyInsuranceMapper.selectListByDateDiff(days);
+        return null;
+    }
 }

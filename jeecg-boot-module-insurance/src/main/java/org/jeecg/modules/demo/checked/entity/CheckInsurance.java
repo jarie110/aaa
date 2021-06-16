@@ -214,6 +214,10 @@ public class CheckInsurance implements Serializable {
 	@Excel(name = "车船税", width = 15)
     @ApiModelProperty(value = "车船税")
     private Double vehicleVesselTax;
+    /**总返点比*/
+    @Excel(name = "总返点比", width = 15)
+    @ApiModelProperty(value = "总返点比")
+    private BigDecimal totalRebate;
 	/**备注*/
 	@Excel(name = "备注", width = 15)
     @ApiModelProperty(value = "备注")

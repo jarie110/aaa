@@ -21,7 +21,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.Arrays;
 
  /**
- * @Description: insurance_usage
+ * @Description: 使用性质
  * @Author: jeecg-boot
  * @Date:   2021-05-24
  * @Version: V1.0

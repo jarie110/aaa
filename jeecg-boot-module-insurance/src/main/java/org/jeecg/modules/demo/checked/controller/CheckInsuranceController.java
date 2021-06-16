@@ -21,8 +21,9 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Arrays;
+import java.util.List;
 
- /**
+/**
  * @Description: 核对的保单
  * @Author: jeecg-boot
  * @Date:   2021-05-27
@@ -67,6 +68,28 @@ public class CheckInsuranceController extends JeecgController<CheckInsurance, IC
 		Page<CheckInsurance> page = new Page<CheckInsurance>(pageNo, pageSize);
 		IPage<CheckInsurance> pageList = checkInsuranceService.page(page, queryWrapper);
 		return Result.OK(pageList);
+	}
+
+
+	/**
+	 *   根据日期查询
+	 *
+	 * @param
+	 * @return
+	 */
+	@AutoLog(value = "比对的保单-根据出单/录入日期查询")
+	@ApiOperation(value="比对的保单-根据出单/录入日期查询", notes="比对的保单-根据出单/录入日期查询")
+	@GetMapping(value = "/sortBy/{sortBy}")
+	public Result<?> sortBy(@PathVariable(name="sortBy") Integer sortBy) {
+		List<CheckInsurance> checkInsuranceList = null;
+		if(sortBy == 1){
+//			1.按照出单日期倒叙
+			checkInsuranceList = checkInsuranceService.sortByInsuranceDay();
+		}else if(sortBy == 2){
+//			2.按照录入时间倒叙
+			checkInsuranceList = checkInsuranceService.sortByInputTime();
+		}
+		return Result.OK(checkInsuranceList);
 	}
 
 

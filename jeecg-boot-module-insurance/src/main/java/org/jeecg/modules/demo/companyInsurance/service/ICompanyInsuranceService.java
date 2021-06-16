@@ -15,4 +15,6 @@ public interface ICompanyInsuranceService extends IService<CompanyInsurance> {
     List<CompanyInsurance> getCompanyInsuranceByVehicleIdentity(String vehicleIdentity);
 
     CompanyInsurance getInstanceByCommerialInsurCode(String commercialInsurCode);
+
+    List<CompanyInsurance> selectListByDateDiff(Integer days);
 }

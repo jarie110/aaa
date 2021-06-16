@@ -1,10 +1,10 @@
 package org.jeecg.modules.demo.companyInsurance.mapper;
 
-import java.util.List;
-
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Param;
 import org.jeecg.modules.demo.companyInsurance.entity.CompanyInsurance;
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+
+import java.util.List;
 
 /**
  * @Description: 保险公司保单
@@ -14,4 +14,5 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  */
 public interface CompanyInsuranceMapper extends BaseMapper<CompanyInsurance> {
 
+    List<CompanyInsurance> selectListByDateDiff(@Param("days") Integer days);
 }

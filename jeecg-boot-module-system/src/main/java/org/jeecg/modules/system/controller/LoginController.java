@@ -1,7 +1,6 @@
 package org.jeecg.modules.system.controller;
 
 import cn.hutool.core.util.RandomUtil;
-import cn.hutool.crypto.SecureUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.aliyuncs.exceptions.ClientException;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -10,16 +9,18 @@ import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.SecurityUtils;
 import org.jeecg.common.api.vo.Result;
+import org.jeecg.common.aspect.annotation.AutoLog;
 import org.jeecg.common.constant.CacheConstant;
 import org.jeecg.common.constant.CommonConstant;
 import org.jeecg.common.system.api.ISysBaseAPI;
-import org.jeecg.modules.base.service.BaseCommonService;
 import org.jeecg.common.system.util.JwtUtil;
 import org.jeecg.common.system.vo.LoginUser;
 import org.jeecg.common.util.*;
 import org.jeecg.common.util.encryption.EncryptedString;
+import org.jeecg.modules.base.service.BaseCommonService;
 import org.jeecg.modules.system.entity.SysDepart;
 import org.jeecg.modules.system.entity.SysUser;
+import org.jeecg.modules.system.entity.WxLoginModel;
 import org.jeecg.modules.system.model.SysLoginModel;
 import org.jeecg.modules.system.service.ISysDepartService;
 import org.jeecg.modules.system.service.ISysDictService;
@@ -61,6 +62,88 @@ public class LoginController {
 
 	private static final String BASE_CHECK_CODES = "qwertyuiplkjhgfdsazxcvbnmQWERTYUPLKJHGFDSAZXCVBNM1234567890";
 
+//	小程序登录
+	/**
+	 * 小程序登录
+	 *
+	 * @param wxLoginModel
+	 * @return
+	 * @throws Exception
+	 */
+	@AutoLog(value = "接口0002:小程序登录接口!")
+	@ApiOperation(value = "接口0002:小程序登录接口!")
+	@RequestMapping(value = "/wxLogin", method = RequestMethod.POST)
+	public Result<JSONObject> wxLogin(@RequestBody WxLoginModel wxLoginModel) throws Exception {
+		Result<JSONObject> result = new Result<JSONObject>();
+		String username = wxLoginModel.getUsername();
+		String password = wxLoginModel.getPassword();
+		//1. 校验用户是否有效
+		SysUser sysUser = sysUserService.getUserByName(username);
+		result = sysUserService.checkUserIsEffective(sysUser);
+		if (!result.isSuccess()) {
+			return result;
+		}
+		//2. 校验用户名或密码是否正确
+		String userpassword = PasswordUtil.encrypt(username, password, sysUser.getSalt());
+		String syspassword = sysUser.getPassword();
+		if (!syspassword.equals(userpassword)) {
+			result.error500("用户名或密码错误");
+			return result;
+		}
+   /* String orgCode = sysUser.getOrgCode();
+    if (oConvertUtils.isEmpty(orgCode)) {
+        //如果当前用户无选择部门 查看部门关联信息
+        List<SysDepart> departs = sysDepartService.queryUserDeparts(sysUser.getId());
+        if (departs == null || departs.size() == 0) {
+            result.error500("用户暂未归属部门,不可登录!");
+            return result;
+        }
+        orgCode = departs.get(0).getOrgCode();
+        sysUser.setOrgCode(orgCode);
+        this.sysUserService.updateUserDepart(username, orgCode);
+    }*/
+		JSONObject obj = new JSONObject();
+		//用户登录信息
+		obj.put("userInfo", sysUser);
+
+		// 生成token
+		String token = JwtUtil.sign(username, syspassword);
+		// 设置超时时间
+		redisUtil.set(CommonConstant.PREFIX_USER_TOKEN + token, token);
+		redisUtil.expire(CommonConstant.PREFIX_USER_TOKEN + token, JwtUtil.EXPIRE_TIME * 2 / 1000);
+
+		//token 信息
+		obj.put("token", token);
+		result.setResult(obj);
+		result.setSuccess(true);
+		result.setCode(200);
+		baseCommonService.addLog("用户名: " + username + ",登录成功[微信小程序]！", CommonConstant.LOG_TYPE_1, null);
+		return result;
+	}
+
+
+	/**
+	 * 修改用户信息
+	 * @param user
+	 * @return
+	 */
+	@AutoLog(value = "小程序:修改用户信息!")
+	@ApiOperation(value = "小程序:修改用户信息!")
+	@RequestMapping(value = "/user/editUser",method = RequestMethod.POST)
+	public Result<?> editUser(@RequestBody SysUser user) {
+		SysUser userInstance = sysUserService.getById(user.getId());
+		if(userInstance != null){
+			boolean update = sysUserService.saveOrUpdate(userInstance);
+			if(update){
+				return Result.OK("修改成功");
+			}
+		}
+		return Result.error("修改失败");
+	}
+
+
+
+
 	@ApiOperation("登录接口")
 	@RequestMapping(value = "/login", method = RequestMethod.POST)
 	public Result<JSONObject> login(@RequestBody SysLoginModel sysLoginModel){
@@ -72,6 +155,9 @@ public class LoginController {
 		//password = AesEncryptUtil.desEncrypt(sysLoginModel.getPassword().replaceAll("%2B", "\\+")).trim();//密码解密
 		//update-begin--Author:scott  Date:20190805 for：暂时注释掉密码加密逻辑，有点问题
 		//update-begin-author:taoyan date:20190828 for:校验验证码
+
+
+
         String captcha = sysLoginModel.getCaptcha();
         if(captcha==null){
             result.error500("验证码无效");
@@ -80,12 +166,12 @@ public class LoginController {
         String lowerCaseCaptcha = captcha.toLowerCase();
 		String realKey = MD5Util.MD5Encode(lowerCaseCaptcha+sysLoginModel.getCheckKey(), "utf-8");
 		Object checkCode = redisUtil.get(realKey);
-		//当进入登录页时，有一定几率出现验证码错误 #1714
+//		当进入登录页时，有一定几率出现验证码错误 #1714
 		if(checkCode==null || !checkCode.toString().equals(lowerCaseCaptcha)) {
 			result.error500("验证码错误");
 			return result;
 		}
-		//update-end-author:taoyan date:20190828 for:校验验证码
+//		update-end-author:taoyan date:20190828 for:校验验证码
 
 		//1. 校验用户是否有效
 		//update-begin-author:wangshuai date:20200601 for: 登录代码验证用户是否注销bug，if条件永远为false

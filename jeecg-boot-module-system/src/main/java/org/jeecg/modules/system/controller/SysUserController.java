@@ -10,20 +10,23 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.jeecg.common.api.vo.Result;
 import org.jeecg.common.aspect.annotation.PermissionData;
 import org.jeecg.common.constant.CommonConstant;
 import org.jeecg.common.system.api.ISysBaseAPI;
-import org.jeecg.modules.base.service.BaseCommonService;
 import org.jeecg.common.system.query.QueryGenerator;
 import org.jeecg.common.system.util.JwtUtil;
 import org.jeecg.common.system.vo.LoginUser;
-import org.jeecg.common.util.*;
+import org.jeecg.common.util.ImportExcelUtil;
+import org.jeecg.common.util.PasswordUtil;
+import org.jeecg.common.util.RedisUtil;
+import org.jeecg.common.util.oConvertUtils;
+import org.jeecg.modules.base.service.BaseCommonService;
 import org.jeecg.modules.system.entity.*;
 import org.jeecg.modules.system.model.DepartIdModel;
 import org.jeecg.modules.system.model.SysUserSysDepartModel;
@@ -59,6 +62,7 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 @RestController
+@Api(tags = "用户信息")
 @RequestMapping("/sys/user")
 public class SysUserController {
 	@Autowired
@@ -103,6 +107,7 @@ public class SysUserController {
      * @return
      */
     @PermissionData(pageComponent = "system/UserList")
+    @ApiOperation(value="用户-查询列表", notes="用户-查询列表")
 	@RequestMapping(value = "/list", method = RequestMethod.GET)
 	public Result<IPage<SysUser>> queryPageList(SysUser user,@RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
 									  @RequestParam(name="pageSize", defaultValue="10") Integer pageSize,HttpServletRequest req) {
@@ -129,8 +134,12 @@ public class SysUserController {
 		return result;
 	}
 
+
+
+
     //@RequiresRoles({"admin"})
     //@RequiresPermissions("user:add")
+    @ApiOperation(value="用户-新增", notes="用户-新增")
 	@RequestMapping(value = "/add", method = RequestMethod.POST)
 	public Result<SysUser> add(@RequestBody JSONObject jsonObject) {
 		Result<SysUser> result = new Result<SysUser>();
@@ -157,6 +166,7 @@ public class SysUserController {
 
     //@RequiresRoles({"admin"})
     //@RequiresPermissions("user:edit")
+    @ApiOperation(value="用户-修改信息", notes="用户-修改信息")
 	@RequestMapping(value = "/edit", method = RequestMethod.PUT)
 	public Result<SysUser> edit(@RequestBody JSONObject jsonObject) {
 		Result<SysUser> result = new Result<SysUser>();
@@ -188,6 +198,7 @@ public class SysUserController {
 	 * 删除用户
 	 */
 	//@RequiresRoles({"admin"})
+    @ApiOperation(value="用户-删除", notes="用户-删除")
 	@RequestMapping(value = "/delete", method = RequestMethod.DELETE)
 	public Result<?> delete(@RequestParam(name="id",required=true) String id) {
 		baseCommonService.addLog("删除用户，id： " +id ,CommonConstant.LOG_TYPE_2, 3);
@@ -298,6 +309,7 @@ public class SysUserController {
     /**
      * 修改密码
      */
+    @ApiOperation(value="用户-修改密码", notes="用户-修改密码")
     @RequestMapping(value = "/changePassword", method = RequestMethod.PUT)
     public Result<?> changePassword(@RequestBody SysUser sysUser) {
         SysUser u = this.sysUserService.getOne(new LambdaQueryWrapper<SysUser>().eq(SysUser::getUsername, sysUser.getUsername()));

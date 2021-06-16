@@ -168,7 +168,7 @@ public class InsuranceInHand implements Serializable {
 	@Excel(name = "渠道名称", width = 15, dictTable = "distribution_channel", dicText = "channel_name", dicCode = "channel_type")
 	@Dict(dictTable = "distribution_channel", dicText = "channel_name", dicCode = "channel_type")
     @ApiModelProperty(value = "渠道名称")
-    private Integer distributionChannelId;
+    private String distributionChannelId;
 	/**所属团队*/
 	@Excel(name = "所属团队", width = 15, dictTable = "insurance_team", dicText = "team_name", dicCode = "team_code")
 	@Dict(dictTable = "insurance_team", dicText = "team_name", dicCode = "team_code")
@@ -232,6 +232,28 @@ public class InsuranceInHand implements Serializable {
 	@Dict(dicCode = "rebate_way")
     @ApiModelProperty(value = "返点支付方式")
     private Integer paymentWay;
+
+	/**用户id*/
+	@Excel(name = "用户id", width = 15)
+	@ApiModelProperty(value = "用户id")
+	private String uid;
+//
+//	/**排序标识*/
+//	@Excel(name = "排序标识", width = 15)
+//	@ApiModelProperty(value = "排序标识")
+//	private Integer sortBy;
+//
+//	/**查询开始时间*/
+//	@Excel(name = "查询开始时间", width = 15)
+//	@ApiModelProperty(value = "查询开始时间")
+//	private Date  startDate;
+//
+//
+//	/**查询结束时间*/
+//	@Excel(name = "查询结束时间", width = 15)
+//	@ApiModelProperty(value = "查询结束时间")
+//	private Date  endDate;
+
 	/**备注*/
 	@Excel(name = "备注", width = 15)
     @ApiModelProperty(value = "备注")

@@ -12,6 +12,7 @@ import org.jeecg.common.system.base.controller.JeecgController;
 import org.jeecg.common.system.query.QueryGenerator;
 import org.jeecg.enumUtil.IsChecked;
 import org.jeecg.modules.demo.proxyInsurance.entity.InsuranceInHand;
+import org.jeecg.modules.demo.proxyInsurance.entity.RenewalPo;
 import org.jeecg.modules.demo.proxyInsurance.service.IInsuranceInHandService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -19,9 +20,11 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.math.BigDecimal;
 import java.util.Arrays;
+import java.util.List;
 
- /**
+/**
  * @Description: 录入的保单
  * @Author: jeecg-boot
  * @Date:   2021-05-26
@@ -43,7 +46,83 @@ public class InsuranceInHandController extends JeecgController<InsuranceInHand, 
 		 return insuranceInHandService.serviceTotalFee(insuranceInHand);
 	 }
 
-	/**
+	 /**
+	  * @param uid 用户信息
+	  * @return
+	  */
+	 @AutoLog(value = "录入保单-计算已录入保单计数")
+	 @ApiOperation(value="录入保单-计算已录入保单计数", notes="录入保单-计算已录入保单计数")
+	 @GetMapping(value = "/count")
+	 public Result<?> insuranceCount(String uid){
+		 int count = insuranceInHandService.countByUser(uid);
+		 return Result.OK(count);
+	 }
+
+	 /**
+	  * 对比后的保单计数
+	  * @return
+	  */
+	 @AutoLog(value = "录入保单-对比后的保单计数")
+	 @ApiOperation(value="录入保单-对比后的保单计数", notes="录入保单-对比后的保单计数")
+	 @GetMapping(value = "/checkedCount")
+	 public Result<?> checkNum(String uid){
+		 int count = insuranceInHandService.queryByIsCheck(uid);
+		 return  Result.OK(count);
+	 }
+
+
+
+	 /**
+	  * 已返点的保单计数
+	  * @return
+	  */
+	 @AutoLog(value = "录入保单-已返点的保单计数")
+	 @ApiOperation(value="录入保单-已返点的保单计数", notes="录入保单-已返点的保单计数")
+	 @GetMapping(value = "/paidCount")
+	 public Result<?> paidCount(String uid){
+		 int count = insuranceInHandService.queryByPaid(uid);
+		 return  Result.OK(count);
+	 }
+
+	 /**
+	  * 计算该用户所有保单保费总金额
+	  * @return
+	  */
+	 @AutoLog(value = "录入保单-保费总金额")
+	 @ApiOperation(value="录入保单-保费总金额", notes="录入保单-保费总金额")
+	 @GetMapping(value = "/totalInsuranceFee")
+	 public Result<?> totalInsuranceFee(String uid){
+		 BigDecimal totalInsuranceFee = insuranceInHandService.totalInsuranceFee(uid);
+		 return Result.OK(totalInsuranceFee);
+	 }
+
+	 /**
+	  * 计算该用户所有保单已返点总金额
+	  * @return
+	  */
+	 @AutoLog(value = "录入保单-已返点总金额")
+	 @ApiOperation(value="录入保单-已返点总金额", notes="录入保单-已返点总金额")
+	 @GetMapping(value = "/totalInsurancePaidFee")
+	 public Result<?> totalInsurancePaidFee(String uid){
+		 BigDecimal insurancePaidFee = insuranceInHandService.totalInsurancePaidFee(uid);
+		 return Result.OK(insurancePaidFee);
+	 }
+
+	 /**
+	  * 汽车使用性质列表
+	  * @return
+	  */
+	 @AutoLog(value = "录入保单-新续保标志列表")
+	 @ApiOperation(value="录入保单-新续保标志列表", notes="录入保单-新续保标志列表")
+	 @GetMapping(value = "/usageList")
+	 public Result<?> insuranceRenewalList(){
+		 List<RenewalPo> usageList = insuranceInHandService.insuranceRenewalList();
+		 return Result.OK(usageList);
+	 }
+
+
+
+	 /**
 	 * 分页列表查询
 	 *
 	 * @param insuranceInHand
@@ -75,8 +154,6 @@ public class InsuranceInHandController extends JeecgController<InsuranceInHand, 
 	@ApiOperation(value="录入的保单-添加", notes="录入的保单-添加")
 	@PostMapping(value = "/add")
 	public Result<?> add(@RequestBody InsuranceInHand insuranceInHand) {
-//		完善所有数据
-//		insuranceInHandService.setAllArgs(insuranceInHand);
 		insuranceInHandService.save(insuranceInHand);
 		return Result.OK("添加成功！");
 	}
@@ -103,6 +180,51 @@ public class InsuranceInHandController extends JeecgController<InsuranceInHand, 
 		insuranceInHandService.updateById(insuranceInHand);
 		return Result.OK("编辑成功!");
 	}
+
+
+//	/**
+//	 *   根据出单/录入日期查询
+//	 *
+//	 * @param
+//	 * @return
+//	 */
+//	@AutoLog(value = "录入的保单-根据出单/录入日期查询")
+//	@ApiOperation(value="录入的保单-根据出单/录入日期查询", notes="录入的保单-根据出单/录入日期查询")
+//	@GetMapping(value = "/sortBy/{sortBy}")
+//	public Result<?> sortBy(@PathVariable(name="sortBy") Integer sortBy) {
+//		List<InsuranceInHand> insuranceInHandList = null;
+//		if(sortBy == 1){
+////			1.按照出单日期倒叙
+//			insuranceInHandList = insuranceInHandService.sortByInsuranceDay();
+//		}else if(sortBy == 2){
+////			2.按照录入时间倒叙
+//			insuranceInHandList = insuranceInHandService.sortByInputTime();
+//		}
+//		return Result.OK(insuranceInHandList);
+//	}
+
+
+	/**
+	 *   根据日期查询
+	 *
+	 * @param
+	 * @return
+	 */
+	@AutoLog(value = "录入的保单-根据出单/录入日期查询")
+	@ApiOperation(value="录入的保单-根据出单/录入日期查询", notes="录入的保单-根据出单/录入日期查询")
+	@GetMapping(value = "/sortBy/{sortBy}")
+	public Result<?> sortBy(@PathVariable(name="sortBy") Integer sortBy) {
+		List<InsuranceInHand> insuranceInHandList = null;
+		if(sortBy == 1){
+//			1.按照出单日期倒叙
+			insuranceInHandList = insuranceInHandService.sortByInsuranceDay();
+		}else if(sortBy == 2){
+//			2.按照录入时间倒叙
+			insuranceInHandList = insuranceInHandService.sortByInputTime();
+		}
+		return Result.OK(insuranceInHandList);
+	}
+
 
 	/**
 	 *   通过id删除

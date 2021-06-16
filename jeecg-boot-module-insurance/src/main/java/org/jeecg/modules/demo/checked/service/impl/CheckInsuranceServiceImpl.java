@@ -236,6 +236,20 @@ public class CheckInsuranceServiceImpl extends ServiceImpl<CheckInsuranceMapper,
         return checkInsuranceMapper.selectOne(queryWrapper);
     }
 
+    @Override
+    public List<CheckInsurance> sortByInsuranceDay() {
+        QueryWrapper<CheckInsurance> queryWrapper = new QueryWrapper<>();
+        queryWrapper.orderByDesc("insurance_date");
+        return checkInsuranceMapper.selectList(queryWrapper);
+    }
+
+    @Override
+    public List<CheckInsurance> sortByInputTime() {
+        QueryWrapper<CheckInsurance> queryWrapper = new QueryWrapper<>();
+        queryWrapper.orderByDesc("input_insurance_date");
+        return checkInsuranceMapper.selectList(queryWrapper);
+    }
+
 
     /**
       *

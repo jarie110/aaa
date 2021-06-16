@@ -1,5 +1,6 @@
 package org.jeecg.modules.demo.proxyInsurance.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.apache.commons.collections.CollectionUtils;
 import org.jeecg.common.api.vo.Result;
@@ -13,6 +14,7 @@ import org.jeecg.modules.demo.checked.service.ICheckInsuranceService;
 import org.jeecg.modules.demo.companyInsurance.entity.CompanyInsurance;
 import org.jeecg.modules.demo.companyInsurance.service.ICompanyInsuranceService;
 import org.jeecg.modules.demo.proxyInsurance.entity.InsuranceInHand;
+import org.jeecg.modules.demo.proxyInsurance.entity.RenewalPo;
 import org.jeecg.modules.demo.proxyInsurance.mapper.InsuranceInHandMapper;
 import org.jeecg.modules.demo.proxyInsurance.service.IInsuranceInHandService;
 import org.jeecg.modules.demo.rebate.entity.InsuranceRebateRatio;
@@ -79,7 +81,7 @@ public class InsuranceInHandServiceImpl extends ServiceImpl<InsuranceInHandMappe
             //		1.使用性质（根据使用性质类型，查询对应的返点比例）
             if (companyInsurance != null) {
                 String usageType = companyInsurance.getCarUsageType();
-                InsuranceUsage insuranceUsage = usageService.selectByUserType(usageType);//查询实用性质
+                InsuranceUsage insuranceUsage = usageService.selectByUserType(usageType);//查询使用性质
                 InsuranceRebateRatio rebateRatioBase = rebateRatioService.getInsuranceRebateRatioByTypeAndUsageTypeAndInsuranceDate(RebateType.COMMERCIAL_BASIC_REBATE.getType(),usageType,zbTime);
                 if(insuranceUsage != null && rebateRatioBase != null){
                     BigDecimal ratio = rebateRatioBase.getRebateRatio();
@@ -227,6 +229,8 @@ public class InsuranceInHandServiceImpl extends ServiceImpl<InsuranceInHandMappe
 //        比对成功计算手续费总额
 //                根据商业保单号查询checkInsurance
                 CheckInsurance checkInsurance = checkInsuranceService.selectByCommercialInsurCode(insuranceInHand.getCommercialInsurCode());
+//               设置总返点比
+                checkInsurance.setTotalRebate(rebateAll);
                 BigDecimal insureCommercialFeeIncludeTax = checkInsurance.getCommercialInsurFee();//获取商业手续费
                 BigDecimal insureCompulsoryFeeIncludeTax = checkInsurance.getCompulsoryInsurFee();//获取交强手续费
 
@@ -242,6 +246,8 @@ public class InsuranceInHandServiceImpl extends ServiceImpl<InsuranceInHandMappe
                 totalServiceFee = res1.multiply(res3).add(res2.multiply(res4)).setScale(2,BigDecimal.ROUND_HALF_UP);
                 checkInsurance.setTotalServiceFee(totalServiceFee);
 
+                //设置返点支付方式
+                checkInsurance.setRebateWay(insuranceInHand.getPaymentWay());
 
                 boolean flag = checkInsuranceService.updateById(checkInsurance);
                 if(flag){
@@ -265,7 +271,113 @@ public class InsuranceInHandServiceImpl extends ServiceImpl<InsuranceInHandMappe
             return insuranceInHand.equals(insuranceInHandFromForm);
         }
 
-        /**
+    /**
+     * 比对后的保单数
+     * @return
+     */
+    @Override
+    public int queryByIsCheck(String uid) {
+        QueryWrapper<InsuranceInHand> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("is_checked",1);
+        queryWrapper.eq("uid",uid);
+        Integer count = insuranceInHandMapper.selectCount(queryWrapper);
+        return count;
+    }
+
+    /**
+     * 已支付的保单
+     * @return
+     */
+    @Override
+    public int queryByPaid(String uid) {
+        QueryWrapper<InsuranceInHand> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("is_pay_commission",1);
+        queryWrapper.eq("uid",uid);
+        Integer count = insuranceInHandMapper.selectCount(queryWrapper);
+        return count;
+    }
+
+    /**
+     * 计算当前用户下所有保单数
+     * @param uid
+     * @return
+     */
+    @Override
+    public int countByUser(String uid) {
+        QueryWrapper<InsuranceInHand> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("uid",uid);
+        Integer count = insuranceInHandMapper.selectCount(queryWrapper);
+        return count;
+
+    }
+
+    /**
+     * 计算该用户所有保单总保费
+     * @param uid
+     * @return
+     */
+    @Override
+    public BigDecimal totalInsuranceFee(String uid) {
+        QueryWrapper<InsuranceInHand> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("uid",uid);
+        List<InsuranceInHand> insuranceInHandList = insuranceInHandMapper.selectList(queryWrapper);
+        BigDecimal totalFee = new BigDecimal("0.00");
+        for (InsuranceInHand insuranceInHand : insuranceInHandList) {
+            String insuranceFeeStr = insuranceInHand.getInsuranceTotalFee().toString();
+            BigDecimal insuranceFee = new BigDecimal(insuranceFeeStr);
+            totalFee = totalFee.add(insuranceFee).setScale(2,BigDecimal.ROUND_HALF_UP);
+        }
+        return totalFee;
+    }
+
+    /**
+     * 已返点总金额
+     * @param uid
+     * @return
+     */
+    @Override
+    public BigDecimal totalInsurancePaidFee(String uid) {
+        QueryWrapper<InsuranceInHand> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("uid",uid).eq("is_pay_commission",1);
+        List<InsuranceInHand> insuranceInHandList = insuranceInHandMapper.selectList(queryWrapper);
+        BigDecimal totalFee = new BigDecimal("0.00");
+        for (InsuranceInHand insuranceInHand : insuranceInHandList) {
+            String insuranceFeeStr = insuranceInHand.getTotalServiceFee().toString();
+            BigDecimal insuranceFee = new BigDecimal(insuranceFeeStr);
+            totalFee = totalFee.add(insuranceFee).setScale(2,BigDecimal.ROUND_HALF_UP);
+        }
+        return totalFee;
+    }
+
+    @Override
+    public List<RenewalPo> insuranceRenewalList() {
+        ArrayList<RenewalPo> renewalList = new ArrayList<>();
+        renewalList.add( new RenewalPo(1,"新车续保"));
+        renewalList.add( new RenewalPo(2,"次新车续保"));
+        renewalList.add( new RenewalPo(5,"市公司续保"));
+        renewalList.add( new RenewalPo(3,"转入或其他"));
+        renewalList.add( new RenewalPo(4,"竞回续保"));
+        renewalList.add( new RenewalPo(0,"脱保续保"));
+        renewalList.add( new RenewalPo(6,"系统内续保"));
+        renewalList.add( new RenewalPo(7,"支公司续保"));
+        return renewalList;
+    }
+
+    @Override
+    public List<InsuranceInHand> sortByInsuranceDay() {
+        QueryWrapper<InsuranceInHand> queryWrapper = new QueryWrapper<>();
+        queryWrapper.orderByDesc("insurance_date");
+        return insuranceInHandMapper.selectList(queryWrapper);
+    }
+
+    @Override
+    public List<InsuranceInHand> sortByInputTime() {
+        QueryWrapper<InsuranceInHand> queryWrapper = new QueryWrapper<>();
+        queryWrapper.orderByDesc("create_time");
+        return insuranceInHandMapper.selectList(queryWrapper);
+    }
+
+    /**
          * 返点比例计算
          *
          * @param percentList
@@ -290,7 +402,7 @@ public class InsuranceInHandServiceImpl extends ServiceImpl<InsuranceInHandMappe
             Calendar registerDate = Calendar.getInstance();
             registerDate.setTime(companyInsurance.getRegisterDate());
             Calendar nowDate = Calendar.getInstance();
-            nowDate.setTime(new Date());
+            nowDate.setTime(companyInsurance.getZbDate());
             int y = DateUtils.dateDiff('y', registerDate, nowDate);
             return y;
         }
