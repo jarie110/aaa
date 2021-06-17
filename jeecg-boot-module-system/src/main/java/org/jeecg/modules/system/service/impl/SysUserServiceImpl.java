@@ -21,6 +21,7 @@ import org.jeecg.modules.system.mapper.*;
 import org.jeecg.modules.system.model.SysUserSysDepartModel;
 import org.jeecg.modules.system.service.ISysUserService;
 import org.jeecg.modules.system.vo.SysUserDepVo;
+import org.jeecg.modules.system.vo.SysUserPo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
@@ -445,6 +446,12 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
 	@Override
 	public List<SysUser> queryByDepIds(List<String> departIds, String username) {
 		return userMapper.queryByDepIds(departIds,username);
+	}
+
+	@Override
+	public SysUser getUserById(SysUserPo userPo) {
+		SysUser user = userMapper.selectById(userPo.getUid());
+		return user;
 	}
 
 }

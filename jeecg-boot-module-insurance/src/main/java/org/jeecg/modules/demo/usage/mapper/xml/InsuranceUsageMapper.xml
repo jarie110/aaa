@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="org.jeecg.modules.demo.usage.mapper.InsuranceUsageMapper">
-<!--    <select id="selectByUserTypeAndDate" resultType="org.jeecg.modules.demo.usage.entity.InsuranceUsage">-->
-<!--        select * from insurance_usage where usage_type = #{usageType} and insurance_date = #{parseDate}-->
-<!--    </select>-->
-</mapper>

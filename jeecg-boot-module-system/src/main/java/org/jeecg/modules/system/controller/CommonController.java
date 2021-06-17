@@ -2,6 +2,7 @@ package org.jeecg.modules.system.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.jeecg.common.api.vo.Result;
 import org.jeecg.common.constant.CommonConstant;
@@ -68,6 +69,7 @@ public class CommonController {
      * @param response
      * @return
      */
+    @ApiOperation(value="文件上传", notes="文件上传")
     @PostMapping(value = "/upload")
     public Result<?> upload(HttpServletRequest request, HttpServletResponse response) {
         Result<?> result = new Result<>();

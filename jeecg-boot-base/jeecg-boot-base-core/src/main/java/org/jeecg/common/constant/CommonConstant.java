@@ -1,6 +1,10 @@
 package org.jeecg.common.constant;
 
 public interface CommonConstant {
+    /**
+     * 区域文本后缀
+     */
+    String AREA_TEXT_SUFFIX = "_areaText";
 
 	/**
 	 * 正常状态

@@ -32,6 +32,7 @@ import org.jeecg.modules.system.model.DepartIdModel;
 import org.jeecg.modules.system.model.SysUserSysDepartModel;
 import org.jeecg.modules.system.service.*;
 import org.jeecg.modules.system.vo.SysDepartUsersVO;
+import org.jeecg.modules.system.vo.SysUserPo;
 import org.jeecg.modules.system.vo.SysUserRoleVO;
 import org.jeecgframework.poi.excel.ExcelImportUtil;
 import org.jeecgframework.poi.excel.def.NormalExcelConstants;
@@ -246,6 +247,7 @@ public class SysUserController {
     }
 
     @RequestMapping(value = "/queryById", method = RequestMethod.GET)
+    @ApiOperation(value="用户-查询用户信息", notes="用户-查询用户信息")
     public Result<SysUser> queryById(@RequestParam(name = "id", required = true) String id) {
         Result<SysUser> result = new Result<SysUser>();
         SysUser sysUser = sysUserService.getById(id);
@@ -319,6 +321,29 @@ public class SysUserController {
         sysUser.setId(u.getId());
         return sysUserService.changePassword(sysUser);
     }
+
+
+    /**
+     * 修改用户密码
+     */
+    @ApiOperation(value="用户-修改用户密码", notes="用户-修改用户密码")
+    @RequestMapping(value = "/changeUserPassword", method = RequestMethod.PUT)
+    public Result<?> changeUserPassword(@RequestBody SysUserPo userPo) {
+        SysUser sysUser = sysUserService.getUserById(userPo);
+        if(sysUser != null){
+            String oldpassword = sysUser.getPassword();//旧密码(加密后)
+            String salt = sysUser.getSalt();//获取盐
+            String passwodEncrypt = PasswordUtil.encrypt(sysUser.getUsername(), userPo.getOldPassword(), salt);
+            if(oldpassword.equals(passwodEncrypt)){
+                sysUser.setPassword(userPo.getNewPassword());
+                return sysUserService.changePassword(sysUser);
+            }
+        }
+        return Result.error("用户不存在！");
+//        SysUser u = this.sysUserService.getOne(new LambdaQueryWrapper<SysUser>().eq(SysUser::getId, sysUser.getId()));
+
+    }
+
 
     /**
      * 查询指定用户和部门关联的数据

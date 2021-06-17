@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.jeecg.modules.rebate.mapper.InsuranceRebateRatioMapper">
+    <select id="selectInsuranceRebateRatioByTypeAndInsuranceDate" resultType="org.jeecg.modules.rebate.entity.InsuranceRebateRatio">
+        select * from insurance_rebate_ratio where rebate_ratio_type = #{type} and create_time like concat(DATE_FORMAT(#{zbTime},'%Y-%m-%d'),"%")
+    </select>
+
+    <select id="selectInsuranceRebateRatioByTypeAndUsageTypeAndInsuranceDate" resultType="org.jeecg.modules.rebate.entity.InsuranceRebateRatio">
+        select * from insurance_rebate_ratio where rebate_ratio_type = #{type} and usage_type = #{usageType} and create_time like concat(DATE_FORMAT(#{zbTime},'%Y-%m-%d'),"%")
+    </select>
+
+</mapper>
