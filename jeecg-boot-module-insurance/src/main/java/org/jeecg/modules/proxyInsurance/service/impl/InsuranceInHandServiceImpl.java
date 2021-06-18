@@ -322,10 +322,17 @@ public class InsuranceInHandServiceImpl extends ServiceImpl<InsuranceInHandMappe
         queryWrapper.eq("uid",uid);
         List<InsuranceInHand> insuranceInHandList = insuranceInHandMapper.selectList(queryWrapper);
         BigDecimal totalFee = new BigDecimal("0.00");
+
         for (InsuranceInHand insuranceInHand : insuranceInHandList) {
-            String insuranceFeeStr = insuranceInHand.getInsuranceTotalFee().toString();
-            BigDecimal insuranceFee = new BigDecimal(insuranceFeeStr);
-            totalFee = totalFee.add(insuranceFee).setScale(2,BigDecimal.ROUND_HALF_UP);
+            BigDecimal insuranceFee = insuranceInHand.getInsuranceTotalFee();
+            String insuranceFeeStr = null;
+            if(insuranceFee != null){
+                insuranceFeeStr = insuranceFee.toString();
+            }else {
+                insuranceFeeStr = "0.00";
+            }
+            BigDecimal insuranceFee2 = new BigDecimal(insuranceFeeStr);
+            totalFee = totalFee.add(insuranceFee2).setScale(2,BigDecimal.ROUND_HALF_UP);
         }
         return totalFee;
     }

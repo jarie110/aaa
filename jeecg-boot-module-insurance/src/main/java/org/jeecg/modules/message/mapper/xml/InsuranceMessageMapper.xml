@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.jeecg.modules.message.mapper.InsuranceMessageMapper">
+    <select id="findByDayAndUid" resultType="org.jeecg.modules.message.entity.InsuranceMessage">
+        select * from insurance_message where uid = #{uid} and  create_time like concat(DATE_FORMAT(#{createDate},'%Y-%m-%d'),"%")
+    </select>
+</mapper>

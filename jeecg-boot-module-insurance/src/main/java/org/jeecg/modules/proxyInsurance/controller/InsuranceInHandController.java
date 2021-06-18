@@ -55,7 +55,7 @@ public class InsuranceInHandController extends JeecgController<InsuranceInHand, 
 	 @GetMapping(value = "/count")
 	 public Result<?> insuranceCount(String uid){
 		 int count = insuranceInHandService.countByUser(uid);
-		 return Result.OK(count);
+		 return Result.OK(String.valueOf(count));
 	 }
 
 	 /**
@@ -67,7 +67,7 @@ public class InsuranceInHandController extends JeecgController<InsuranceInHand, 
 	 @GetMapping(value = "/checkedCount")
 	 public Result<?> checkNum(String uid){
 		 int count = insuranceInHandService.queryByIsCheck(uid);
-		 return  Result.OK(count);
+		 return  Result.OK(String.valueOf(count));
 	 }
 
 
@@ -81,7 +81,7 @@ public class InsuranceInHandController extends JeecgController<InsuranceInHand, 
 	 @GetMapping(value = "/paidCount")
 	 public Result<?> paidCount(String uid){
 		 int count = insuranceInHandService.queryByPaid(uid);
-		 return  Result.OK(count);
+		 return  Result.OK(String.valueOf(count));
 	 }
 
 	 /**
@@ -93,7 +93,7 @@ public class InsuranceInHandController extends JeecgController<InsuranceInHand, 
 	 @GetMapping(value = "/totalInsuranceFee")
 	 public Result<?> totalInsuranceFee(String uid){
 		 BigDecimal totalInsuranceFee = insuranceInHandService.totalInsuranceFee(uid);
-		 return Result.OK(totalInsuranceFee);
+		 return Result.OK(totalInsuranceFee.toString());
 	 }
 
 	 /**
@@ -105,7 +105,7 @@ public class InsuranceInHandController extends JeecgController<InsuranceInHand, 
 	 @GetMapping(value = "/totalInsurancePaidFee")
 	 public Result<?> totalInsurancePaidFee(String uid){
 		 BigDecimal insurancePaidFee = insuranceInHandService.totalInsurancePaidFee(uid);
-		 return Result.OK(insurancePaidFee);
+		 return Result.OK(insurancePaidFee.toString());
 	 }
 
 	 /**

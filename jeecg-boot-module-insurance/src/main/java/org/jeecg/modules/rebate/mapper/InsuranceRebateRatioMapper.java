@@ -18,4 +18,8 @@ public interface InsuranceRebateRatioMapper extends BaseMapper<InsuranceRebateRa
     List<InsuranceRebateRatio> selectInsuranceRebateRatioByTypeAndInsuranceDate(@Param("type") Integer type, @Param("zbTime") Date zbTime);
 
     InsuranceRebateRatio selectInsuranceRebateRatioByTypeAndUsageTypeAndInsuranceDate(@Param("type") Integer type,@Param("usageType") String usageType, @Param("zbTime") Date zbTime);
+
+    InsuranceRebateRatio selectInsuranceRebateRatioByTypeAndUsageTypeAndInsuranceDateAndCarDamageInsuredZero(@Param("type") Integer type,@Param("usageType") String usageType, @Param("zbTime") Date zbTime);
+
+    InsuranceRebateRatio selectInsuranceRebateRatioByTypeAndUsageTypeAndInsuranceDateAndCarDamageInsuredNotZero(@Param("type") Integer type,@Param("usageType") String usageType, @Param("zbTime") Date zbTime);
 }

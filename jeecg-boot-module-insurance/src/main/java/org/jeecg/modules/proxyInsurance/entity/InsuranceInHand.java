@@ -149,11 +149,11 @@ public class InsuranceInHand implements Serializable {
 	/**保费总额*/
 	@Excel(name = "保费总额", width = 15)
     @ApiModelProperty(value = "保费总额")
-    private Double insuranceTotalFee;
+    private BigDecimal insuranceTotalFee;
 	/**手续费总额*/
 	@Excel(name = "手续费总额", width = 15)
     @ApiModelProperty(value = "手续费总额")
-    private Double totalServiceFee;
+    private BigDecimal totalServiceFee;
 	/**新续保标志*/
 	@Excel(name = "新续保标志", width = 15, dicCode = "renewal_symbol")
 	@Dict(dicCode = "renewal_symbol")
@@ -237,6 +237,17 @@ public class InsuranceInHand implements Serializable {
 	@Excel(name = "用户id", width = 15)
 	@ApiModelProperty(value = "用户id")
 	private String uid;
+
+	/**起保日期*/
+	@Excel(name = "起保日期", width = 15)
+	@ApiModelProperty(value = "起保日期")
+	private Date insureStartDate;
+
+
+	/**返点比例*/
+	@Excel(name = "返点比例", width = 15)
+	@ApiModelProperty(value = "返点比例")
+	private BigDecimal totalServiceRebate;
 //
 //	/**排序标识*/
 //	@Excel(name = "排序标识", width = 15)

@@ -19,4 +19,6 @@ public interface IInsuranceRebateRatioService extends IService<InsuranceRebateRa
 
     InsuranceRebateRatio getInsuranceRebateRatioByTypeAndUsageTypeAndInsuranceDate(Integer type, String usageType, Date zbTime);
     boolean insertBatch(List<RebatePo> rebates);
+
+    boolean isAlreadyExist(InsuranceRebateRatio insuranceRebateRatio);
 }

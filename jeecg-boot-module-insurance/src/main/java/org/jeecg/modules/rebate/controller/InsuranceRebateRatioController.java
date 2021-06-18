@@ -91,8 +91,12 @@ public class InsuranceRebateRatioController extends JeecgController<InsuranceReb
 	@ApiOperation(value="返点比例-添加", notes="返点比例-添加")
 	@PostMapping(value = "/add")
 	public Result<?> add(@RequestBody InsuranceRebateRatio insuranceRebateRatio) {
-		insuranceRebateRatioService.save(insuranceRebateRatio);
-		return Result.OK("添加成功！");
+		boolean isExist = insuranceRebateRatioService.isAlreadyExist(insuranceRebateRatio);
+		if(!isExist){
+			insuranceRebateRatioService.save(insuranceRebateRatio);
+			return Result.OK("添加成功！");
+		}
+		return Result.error("已有该类型返点比例");
 	}
 
 	/**
@@ -105,8 +109,12 @@ public class InsuranceRebateRatioController extends JeecgController<InsuranceReb
 	@ApiOperation(value="返点比例-编辑", notes="返点比例-编辑")
 	@PutMapping(value = "/edit")
 	public Result<?> edit(@RequestBody InsuranceRebateRatio insuranceRebateRatio) {
-		insuranceRebateRatioService.updateById(insuranceRebateRatio);
-		return Result.OK("编辑成功!");
+		boolean isExist = insuranceRebateRatioService.isAlreadyExist(insuranceRebateRatio);
+		if(!isExist){
+			insuranceRebateRatioService.updateById(insuranceRebateRatio);
+			return Result.OK("编辑成功!");
+		}
+		return Result.error("已有该类型返点比例");
 	}
 
 	/**
@@ -176,5 +184,7 @@ public class InsuranceRebateRatioController extends JeecgController<InsuranceReb
     public Result<?> importExcel(HttpServletRequest request, HttpServletResponse response) {
         return super.importExcel(request, response, InsuranceRebateRatio.class);
     }
+
+
 
 }

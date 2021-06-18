@@ -207,7 +207,9 @@ public class CheckInsuranceServiceImpl extends ServiceImpl<CheckInsuranceMapper,
                                     if (checkInsuranceMapper.updateById(checkObj) == 1) {
 //                           flag = true;
                                         insuranceInHand.setIsChecked(1);//0：未比对  1：已比对
-//                                        是否需要用保司保单的数据覆盖手输保单的其他数据 todo
+                                        // TODO: 2021/6/18 0018
+                                        insuranceInHand.setInsureStartDate(companyInsurance.getInsureStartDate());
+//                                        是否需要用保司保单的数据覆盖手输保单的其他数据
                                         insuranceInHandService.updateById(insuranceInHand);
                                         return Result.OK("比对成功", insuranceInHand);
                                     }
