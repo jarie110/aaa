@@ -2,7 +2,6 @@ package org.jeecg.modules.rebate.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.apache.commons.collections.CollectionUtils;
-import org.jeecg.BeanUtils.MyBeanUtil;
 import org.jeecg.common.util.DateUtils;
 import org.jeecg.enumUtil.RebateType;
 import org.jeecg.modules.rebate.entity.InsuranceRebateRatio;
@@ -12,6 +11,7 @@ import org.jeecg.pojo.RebatePo;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -25,7 +25,7 @@ import java.util.List;
  */
 @Service
 public class InsuranceRebateRatioServiceImpl extends ServiceImpl<InsuranceRebateRatioMapper, InsuranceRebateRatio> implements IInsuranceRebateRatioService {
-
+public static  Integer DRIVER_LIABILITY_INSURED = 20000;
    @Resource
     private InsuranceRebateRatioMapper rebateRatioMapper;
 
@@ -54,27 +54,101 @@ public class InsuranceRebateRatioServiceImpl extends ServiceImpl<InsuranceRebate
     public boolean insertBatch(List<RebatePo> rebates) {
 //        String sql ="INSERT INTO insurance_rebate_ratio (`create_time`,`rebate_ratio_type`,`insurance_usage`,`third_party_insured`,`car_damage_insured`,`driver_liability_insured`,`passenger_liability`,`rebate_ratio`,`bonus`)VALUES(?,?,?,?,?,?,?,?,?)";
         ArrayList<InsuranceRebateRatio> rebateRatios = new ArrayList<>();
-        for (RebatePo rebate : rebates) {
+
+        for (RebatePo rebatePo : rebates) {
+//            遍历传进来的集合
+//            获取开始时间
             Calendar timeBegin = Calendar.getInstance();
-            timeBegin.setTime(rebate.getCreateTimeBegin());
+            timeBegin.setTime(rebatePo.getCreateTimeBegin());
 
+//            获取结束时间
             Calendar timeEnd = Calendar.getInstance();
-            timeEnd.setTime(rebate.getCreateTimeEnd());
+            timeEnd.setTime(rebatePo.getCreateTimeEnd());
 
+//            计算有多少天
             int days = DateUtils.dateDiff('d', timeBegin, timeEnd);
+
             Calendar createTime = Calendar.getInstance();
             Long millis = null;
 
             InsuranceRebateRatio rebateRatio = new InsuranceRebateRatio();
 
-            Long oneDay = 24 * 60 * 60 * 1000l;
+            Long oneDay = 24 * 60 * 60 * 1000l; //一天有多少秒
 
             for (int i = 0; i < days; i++) {
-                createTime.setTime(rebate.getCreateTime());
-                millis = DateUtils.getMillis(createTime) + oneDay ;
+                createTime.setTime(rebatePo.getCreateTimeBegin());
+                millis = DateUtils.getMillis(createTime) + oneDay * i ;
                 Date date = new Date(DateUtils.formatDate(millis));
-                rebate.setCreateTime(date);
-                MyBeanUtil.copyPropertiesIgnoreNull(rebate, rebateRatio);
+                rebateRatio.setCreateTime(date);//设置创建时间
+//商业基础险
+                if(rebatePo.getRebateType() == 0){
+                    rebateRatio.setRebateRatioType(rebatePo.getRebateType());
+                    rebateRatio.setRebateRatio(rebatePo.getRebateRatio());
+                    rebateRatio.setUsageType(rebatePo.getUsageType());
+                }
+//                三者险
+                if(rebatePo.getRebateType() == 1 && rebatePo.getCarDamageInsuredZero().equals("0")){
+                    rebateRatio.setRebateRatioType(rebatePo.getRebateType());
+                    rebateRatio.setRebateRatio(rebatePo.getRebateRatio());
+                    rebateRatio.setUsageType(rebatePo.getUsageType());
+                    rebateRatio.setCarDamageInsured("0");
+                    rebateRatio.setThirdPartyInsured(rebatePo.getThirdPartyInsuredZero());
+                }else if (rebatePo.getRebateType() == 1 && Integer.valueOf(rebatePo.getCarDamageInsuredZero()) != 0){
+                    rebateRatio.setRebateRatioType(rebatePo.getRebateType());
+                    rebateRatio.setRebateRatio(rebatePo.getRebateRatio());
+                    rebateRatio.setUsageType(rebatePo.getUsageType());
+                    rebateRatio.setCarDamageInsured(rebatePo.getCarDamageInsured());
+                    rebateRatio.setThirdPartyInsured(rebatePo.getThirdPartyInsured());
+                }
+//次新车返点数据
+                if(rebatePo.getRebateType() == 2){
+                    rebateRatio.setRebateRatioType(rebatePo.getRebateType());
+                    rebateRatio.setRebateRatio(rebatePo.getRebateRatio());
+                }
+//                新车
+                if(rebatePo.getRebateType() == 3){
+                    rebateRatio.setRebateRatioType(rebatePo.getRebateType());
+                    rebateRatio.setRebateRatio(rebatePo.getRebateRatio());
+                }
+//                 竞回返点比
+                if(rebatePo.getRebateType() == 4){
+                    rebateRatio.setRebateRatioType(rebatePo.getRebateType());
+                    rebateRatio.setRebateRatio(rebatePo.getRebateRatio());
+                }
+
+                //过户返点比
+                if(rebatePo.getRebateType() == 5){
+                    rebateRatio.setRebateRatioType(rebatePo.getRebateType());
+                    rebateRatio.setRebateRatio(rebatePo.getRebateRatio());
+                    rebateRatio.setIsTransfer(rebatePo.getIsTransfer());
+                }
+                // 交叉返点比
+                if(rebatePo.getRebateType() == 6){
+                    rebateRatio.setRebateRatioType(rebatePo.getRebateType());
+                    rebateRatio.setRebateRatio(rebatePo.getRebateRatio());
+                    rebateRatio.setIsTransfer(rebatePo.getIsTransfer());
+                }
+                // 跟单0返点比
+                if(rebatePo.getRebateType() == 7){
+                    rebateRatio.setRebateRatioType(rebatePo.getRebateType());
+                    rebateRatio.setRebateRatio(rebatePo.getRebateRatio());
+                    rebateRatio.setSignFee(new BigDecimal(rebatePo.getSignFee()));
+                }
+
+                // 座位保
+                if(rebatePo.getRebateType() == 8){
+                    rebateRatio.setRebateRatioType(rebatePo.getRebateType());
+                    rebateRatio.setRebateRatio(rebatePo.getRebateRatio());
+                    rebateRatio.setUsageType(rebatePo.getUsageType());
+                    rebateRatio.setPassengerLiability(rebatePo.getPassengerLiabilityInsured());
+                    rebateRatio.setBonus(rebatePo.getBonus());
+                }
+                // 其他
+                if(rebatePo.getRebateType() == 9){
+                    rebateRatio.setRebateRatioType(rebatePo.getRebateType());
+                    rebateRatio.setRebateRatio(rebatePo.getRebateRatio());
+                }
+//                MyBeanUtil.copyPropertiesIgnoreNull(rebatePo, rebateRatio);
                 rebateRatios.add(rebateRatio);
             }
         }

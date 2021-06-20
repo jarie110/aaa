@@ -12,6 +12,7 @@ import org.jeecg.common.system.base.controller.JeecgController;
 import org.jeecg.common.system.query.QueryGenerator;
 import org.jeecg.modules.rebate.entity.InsuranceRebateRatio;
 import org.jeecg.modules.rebate.service.IInsuranceRebateRatioService;
+import org.jeecg.pojo.RebatePo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
@@ -20,6 +21,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * @Description: 返点比例
@@ -98,6 +100,24 @@ public class InsuranceRebateRatioController extends JeecgController<InsuranceReb
 		}
 		return Result.error("已有该类型返点比例");
 	}
+
+	/**
+	 *  批量新增
+	 *
+	 * @param rebatePos
+	 * @return
+	 */
+	@AutoLog(value = "返点比例-批量新增")
+	@ApiOperation(value="返点比例-批量新增", notes="返点比例-批量新增")
+	@PutMapping(value = "/insertBatch")
+	public Result<?> insertBatch(@RequestBody List<RebatePo> rebatePos) {
+		boolean b = insuranceRebateRatioService.insertBatch(rebatePos);
+		if(b){
+			return Result.OK("批量保存成功!");
+		}
+		return Result.error("批量保存失败");
+	}
+
 
 	/**
 	 *  编辑
