@@ -87,6 +87,9 @@ public class QueryGenerator {
 		return queryWrapper;
 	}
 
+
+
+
 	/**
 	 * 组装Mybatis Plus 查询条件
 	 * <p>使用此方法 需要有如下几点注意:   

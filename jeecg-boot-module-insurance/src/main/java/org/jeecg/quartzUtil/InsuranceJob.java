@@ -4,10 +4,10 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.jeecg.common.util.DateUtils;
-import org.jeecg.modules.message.entity.InsuranceMessage;
-import org.jeecg.modules.message.service.IInsuranceMessageService;
 import org.jeecg.modules.companyInsurance.entity.CompanyInsurance;
 import org.jeecg.modules.companyInsurance.service.impl.CompanyInsuranceServiceImpl;
+import org.jeecg.modules.message.entity.InsuranceMessage;
+import org.jeecg.modules.message.service.IInsuranceMessageService;
 import org.jeecg.modules.proxyInsurance.entity.InsuranceInHand;
 import org.jeecg.modules.proxyInsurance.service.impl.InsuranceInHandServiceImpl;
 import org.quartz.Job;
@@ -23,7 +23,7 @@ public class InsuranceJob implements Job {
 	@Autowired
 	private IInsuranceMessageService messageService;
 
-	public static final Integer DAYS = 30;
+	public static final Integer DAYS = 100;
 
 	@Autowired
 	CompanyInsuranceServiceImpl companyInsuranceService;
@@ -52,7 +52,7 @@ public class InsuranceJob implements Job {
 				InsuranceInHand insuranceInHand = insuranceInHandService.getOne(queryWrapper);
 				if(insuranceInHand != null){
 					String uid = insuranceInHand.getUid();
-					msg = String.format("温馨提示："+this.parameter)+"交强险保单号为："+ insuranceNum + new Date();
+					msg = String.format("温馨提示："+this.parameter)+"交强险保单号为："+ insuranceNum + "     到期时间："+DateUtils.formatDate(insurance.getLastYearInvalid());
 					message.setMsg(msg);
 					message.setUid(uid);
 					messageService.save(message);
@@ -61,7 +61,7 @@ public class InsuranceJob implements Job {
 					InsuranceInHand one = insuranceInHandService.getOne(queryWrapper);
 					if(one != null){
 						String uid = one.getUid();
-						msg = String.format("温馨提示："+this.parameter)+"商业险保单号为："+ insuranceNum + new Date();
+						msg = String.format("温馨提示："+this.parameter)+"商业险保单号为："+ insuranceNum + "     到期时间："+DateUtils.formatDate(insurance.getLastYearInvalid());
 						message.setMsg(msg);
 						message.setUid(uid);
 						messageService.save(message);

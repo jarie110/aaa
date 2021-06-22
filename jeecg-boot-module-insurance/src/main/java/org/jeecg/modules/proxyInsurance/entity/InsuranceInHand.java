@@ -243,30 +243,14 @@ public class InsuranceInHand implements Serializable {
 	@ApiModelProperty(value = "起保日期")
 	private Date insureStartDate;
 
-
 	/**返点比例*/
 	@Excel(name = "返点比例", width = 15)
 	@ApiModelProperty(value = "返点比例")
 	private BigDecimal totalServiceRebate;
-//
-//	/**排序标识*/
-//	@Excel(name = "排序标识", width = 15)
-//	@ApiModelProperty(value = "排序标识")
-//	private Integer sortBy;
-//
-//	/**查询开始时间*/
-//	@Excel(name = "查询开始时间", width = 15)
-//	@ApiModelProperty(value = "查询开始时间")
-//	private Date  startDate;
-//
-//
-//	/**查询结束时间*/
-//	@Excel(name = "查询结束时间", width = 15)
-//	@ApiModelProperty(value = "查询结束时间")
-//	private Date  endDate;
+
 
 	/**备注*/
-	@Excel(name = "备注", width = 15)
+	@Excel(name = "备注", width = 300)
     @ApiModelProperty(value = "备注")
     private String remark;
 }

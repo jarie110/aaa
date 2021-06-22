@@ -39,7 +39,6 @@ import java.util.stream.Collectors;
  */
 @Service
 public class InsuranceInHandServiceImpl extends ServiceImpl<InsuranceInHandMapper, InsuranceInHand> implements IInsuranceInHandService {
-    public final Integer FIXED_VALUE = 20000;//司机责任险最小值
     @Autowired
     private IInsuranceUsageService usageService;
 
@@ -75,7 +74,7 @@ public class InsuranceInHandServiceImpl extends ServiceImpl<InsuranceInHandMappe
             CompanyInsurance companyInsurance = companyInsuranceService.getInstanceByCommerialInsurCode(commercialInsurCode);
             Date zbTime = companyInsurance.getZbTime();
 //            String startDate = DateUtils.formatDate(zbTime)+ "00:00:00";
-
+            BigDecimal bonus = new BigDecimal("0.00");
             /*设置商业险返点佣金*/
             List<BigDecimal> percentList = new ArrayList<>();
             //		1.使用性质（根据使用性质类型，查询对应的返点比例）
@@ -88,13 +87,14 @@ public class InsuranceInHandServiceImpl extends ServiceImpl<InsuranceInHandMappe
                     percentList.add(ratio);
                 }else {
                     // TODO: 2021/6/11 0011
-                    return Result.error(400,"未设置当天使用性质，请先设置然后再计算",RebateType.COMMERCIAL_BASIC_REBATE.getType());//将返点比例类型传递前台
+                    return Result.error(400,"未设置当天商业基础险，请先设置然后再计算",RebateType.COMMERCIAL_BASIC_REBATE.getType());//将返点比例类型传递前台
                 }
 //        2.获取用户的三者险保额、车损险保额，司机责任险保额，乘客责任险保额
                 Double thirdPartyInsured = companyInsurance.getThirdPartyInsured() == null ? 0 : companyInsurance.getThirdPartyInsured();//三者险保额
                 Double carDamageInsured = companyInsurance.getCarDamageInsured() == null ? 0 : companyInsurance.getCarDamageInsured();//车损险保额
                 Double driverLiabilityInsured = companyInsurance.getDriverLiabilityInsure() == null ? 0 : companyInsurance.getDriverLiabilityInsure();//司机责任险保额
                 Double passengerLiabilityInsured = companyInsurance.getPassengerLiability() == null ? 0 : companyInsurance.getPassengerLiability();//乘客责任险保额
+
 //		三者保额比例（使用性质，三者保额，车损保额是否达标）
                 List<InsuranceRebateRatio> insuranceRebateRatioList = rebateRatioService.getInsuranceRebateRatioByTypeAndInsuranceDate(RebateType.THIRD_PARTY_REBATE.getType(),zbTime);
                 ArrayList<Double> insureds = new ArrayList<>();
@@ -108,9 +108,11 @@ public class InsuranceInHandServiceImpl extends ServiceImpl<InsuranceInHandMappe
                         }
                     }
                     //输入保单的三者保额小于最小保额
-                    if (thirdPartyInsured != null && thirdPartyInsured < Collections.min(insureds)) {
+                    if (thirdPartyInsured != null && thirdPartyInsured < Collections.min(insureds) ) {
                         for (InsuranceRebateRatio insuranceRebateRatio : insuranceRebateRatioList) {
-                            if (!insuranceRebateRatio.getThirdPartyInsured().equals("-") && Double.valueOf(insuranceRebateRatio.getThirdPartyInsured()).toString().equals(Collections.min(insureds).toString())) {
+                            if (!insuranceRebateRatio.getThirdPartyInsured().equals("-")
+                                    && Double.valueOf(insuranceRebateRatio.getThirdPartyInsured()).toString().equals(Collections.min(insureds).toString())
+                                    && Integer.parseInt(usageType) == Integer.valueOf(insuranceRebateRatio.getUsageType())) {
                                 thirdPartyRebate = insuranceRebateRatio.getRebateRatio();
                             }
                         }
@@ -119,15 +121,35 @@ public class InsuranceInHandServiceImpl extends ServiceImpl<InsuranceInHandMappe
                     //保单的三者保额大于或等于最大保额,且车损险为0
                     if (carDamageInsured == 0 && thirdPartyInsured >= Collections.max(insureds)) {
                         for (InsuranceRebateRatio insuranceRebateRatio : insuranceRebateRatioList) {
-                            if (!insuranceRebateRatio.getCarDamageInsured().equals("-") && Double.valueOf(insuranceRebateRatio.getCarDamageInsured()) == 0 && Double.valueOf(insuranceRebateRatio.getThirdPartyInsured()) == Collections.max(insureds)) {
+                            if (!insuranceRebateRatio.getCarDamageInsured().equals("-")
+                                    && Double.valueOf(insuranceRebateRatio.getCarDamageInsured()) == 0
+                                    && Double.valueOf(insuranceRebateRatio.getThirdPartyInsured()) == Collections.max(insureds)
+                                    && Integer.parseInt(usageType) == Integer.valueOf(insuranceRebateRatio.getUsageType())) {
                                 thirdPartyRebate = insuranceRebateRatio.getRebateRatio();
                             }
                         }
                     }
+
                     //保单的三者保额大于或等于最大保额,且车损险不为0
                     if (carDamageInsured != 0 && thirdPartyInsured >= Collections.max(insureds)) {
                         for (InsuranceRebateRatio insuranceRebateRatio : insuranceRebateRatioList) {
-                            if (!insuranceRebateRatio.getCarDamageInsured().equals("-") && Double.valueOf(insuranceRebateRatio.getCarDamageInsured()) != 0 && Double.valueOf(insuranceRebateRatio.getThirdPartyInsured()) == Collections.max(insureds)) {
+                            if (!insuranceRebateRatio.getCarDamageInsured().equals("-")
+                                    && Double.valueOf(insuranceRebateRatio.getCarDamageInsured()) != 0
+                                    && Double.valueOf(insuranceRebateRatio.getThirdPartyInsured()) == Collections.max(insureds)
+                                    && Integer.parseInt(usageType) == Integer.valueOf(insuranceRebateRatio.getUsageType())) {
+                                thirdPartyRebate = insuranceRebateRatio.getRebateRatio();
+                            }
+                        }
+                    }
+
+//                    todo
+                    //保单的三者保额处于中间段,且车损险不为0
+                    if (carDamageInsured != 0 && thirdPartyInsured > Collections.min(insureds) && thirdPartyInsured < Collections.max(insureds)) {
+                        for (InsuranceRebateRatio insuranceRebateRatio : insuranceRebateRatioList) {
+                            if (!insuranceRebateRatio.getCarDamageInsured().equals("-")
+                                    && Double.valueOf(insuranceRebateRatio.getCarDamageInsured()) != 0
+                                /*&& Double.valueOf(insuranceRebateRatio.getThirdPartyInsured()) == Collections.max(insureds)*/
+                                    && Integer.parseInt(usageType) == Integer.valueOf(insuranceRebateRatio.getUsageType())) {
                                 thirdPartyRebate = insuranceRebateRatio.getRebateRatio();
                             }
                         }
@@ -206,22 +228,40 @@ public class InsuranceInHandServiceImpl extends ServiceImpl<InsuranceInHandMappe
                     }
                 }
 //		8.判断是否为座位保（使用性质，司机责任保额，乘客责任保额，是否达标）
-                Integer seatsNum = companyInsurance.getSeatsNum();//获取车座位数
-                BigDecimal bonus = new BigDecimal("0.00");
-                if (driverLiabilityInsured >= FIXED_VALUE
-                        && passengerLiabilityInsured >= (seatsNum - 1) * driverLiabilityInsured) {
-                    List<InsuranceRebateRatio> rebateRatioList = rebateRatioService.getInsuranceRebateRatioByTypeAndInsuranceDate(RebateType.SEAT_INSURANCE.getType(),zbTime);
-                    for (InsuranceRebateRatio rebateRatio : rebateRatioList) {
+//                如果乘客险和司机险不为零则查询座位保返点
+                if(driverLiabilityInsured != 0 && passengerLiabilityInsured != 0){
+                    Integer seatsNum = companyInsurance.getSeatsNum();//获取车座位数
+
+                    if (passengerLiabilityInsured >= (seatsNum - 1) * driverLiabilityInsured) {
+                        List<InsuranceRebateRatio> rebateRatioList = rebateRatioService.getInsuranceRebateRatioByTypeAndInsuranceDate(RebateType.SEAT_INSURANCE.getType(),zbTime);
+                        for (InsuranceRebateRatio rebateRatio : rebateRatioList) {
 //                      这里需要客户自定根据使用性质设置座位保奖励（需要对每种汽车使用性质进行设置）
-                        if (!rebateRatio.getUsageType().equals("-") && Integer.parseInt(usageType) == Integer.valueOf(rebateRatio.getUsageType())) {
-                            //座位保奖金
-                            bonus = rebateRatio.getBonus();
-                            insuranceInHand.setSeatBonus(bonus);
+                            if (!rebateRatio.getUsageType().equals("-") && Integer.parseInt(usageType) == Integer.valueOf(rebateRatio.getUsageType())) {
+                                //座位保奖金
+                                bonus = rebateRatio.getBonus();
+                                insuranceInHand.setSeatBonus(bonus);
+                                try {
+                                    addPercent(percentList,RebateType.SEAT_INSURANCE.getType(),zbTime);
+                                } catch (InsuranceException e) {
+                                    return Result.error(400,"未设置座位保返点比例，请先设置再计算",RebateType.SEAT_INSURANCE.getType());
+                                }
+                            }
                         }
-                    }
-                } else {
+                    } else {
 //            修改数据时，不满足则奖金为零
-                    insuranceInHand.setSeatBonus(bonus);
+                        insuranceInHand.setSeatBonus(bonus);
+                    }
+                }
+
+                //		9.其他或转入 todo
+//        根据新续保标志判断是否为转入保单
+                if (Integer.parseInt(renewalType) == RenewalTypeEnum.REPLACEMENT_RENEWAL.getType()) {
+                    try {
+                        addPercent(percentList, RebateType.CHANGE_INTO_INSURANCE.getType(),zbTime);
+                    } catch (InsuranceException e) {
+                        // TODO: 2021/6/11 0011
+                        return Result.error(400,"未设置转入保单返点比例，请先设置在计算",RebateType.CHANGE_INTO_INSURANCE.getType());
+                    }
                 }
 
 //        计算返点比例总和
@@ -229,21 +269,35 @@ public class InsuranceInHandServiceImpl extends ServiceImpl<InsuranceInHandMappe
 //        比对成功计算手续费总额
 //                根据商业保单号查询checkInsurance
                 CheckInsurance checkInsurance = checkInsuranceService.selectByCommercialInsurCode(insuranceInHand.getCommercialInsurCode());
-//               设置总返点比
-                checkInsurance.setTotalRebate(rebateAll);
-                BigDecimal insureCommercialFeeIncludeTax = checkInsurance.getCommercialInsurFee();//获取商业手续费
-                BigDecimal insureCompulsoryFeeIncludeTax = checkInsurance.getCompulsoryInsurFee();//获取交强手续费
 
-                BigDecimal totalServiceFee = new BigDecimal("0.00");
+
+                BigDecimal insureCommercialFeeIncludeTax = checkInsurance.getCommercialInsurFee();//获取商业保费
+                BigDecimal insureCompulsoryFeeIncludeTax = checkInsurance.getCompulsoryInsurFee();//获取交强保费
+
+                BigDecimal totalServiceFee = new BigDecimal("0.00");//总服务费
+//                商业险保费 ÷ 1.06
                 BigDecimal  res1 = new BigDecimal(String.valueOf(insureCommercialFeeIncludeTax.doubleValue()+"0"))
                         .divide(coefficient,2);
+
+//                商业险总返点百分比
                 BigDecimal res3 = rebateAll.divide(new BigDecimal("100"),2,BigDecimal.ROUND_UNNECESSARY);
 
+
+                //                交强险保费 ÷ 1.06
                 BigDecimal  res2 = new BigDecimal(String.valueOf(insureCompulsoryFeeIncludeTax.doubleValue())+"0")
                         .divide(coefficient,2);
-                BigDecimal res4 = insuranceInHand.getCompulsoryInsuranceRebate().divide(new BigDecimal("100"), 2);
 
-                totalServiceFee = res1.multiply(res3).add(res2.multiply(res4)).setScale(2,BigDecimal.ROUND_HALF_UP);
+                //交强险返点比
+
+                BigDecimal res4 = insuranceInHand.getCompulsoryInsuranceRebate().divide(new BigDecimal("100"));
+                try{
+                    //               设置总返点比
+                    checkInsurance.setTotalRebate(rebateAll.add(insuranceInHand.getCompulsoryInsuranceRebate()).setScale(2,BigDecimal.ROUND_UNNECESSARY));
+                }catch (NullPointerException e){
+                    return Result.error("比对后的保单不存在");
+                }
+
+                totalServiceFee = res1.multiply(res3).add(res2.multiply(res4)).add(bonus).setScale(2,BigDecimal.ROUND_HALF_UP);
                 checkInsurance.setTotalServiceFee(totalServiceFee);
 
                 //设置返点支付方式
@@ -384,6 +438,15 @@ public class InsuranceInHandServiceImpl extends ServiceImpl<InsuranceInHandMappe
         return insuranceInHandMapper.selectList(queryWrapper);
     }
 
+    @Override
+    public boolean queryByCompulsoryInsurCodeOrCommercialInsurCode(InsuranceInHand insuranceInHand) {
+        InsuranceInHand insurance = insuranceInHandMapper.queryByCompulsoryInsurCodeOrCommercialInsurCode(insuranceInHand.getCompulsoryInsurCode(), insuranceInHand.getCommercialInsurCode());
+        if(insurance != null){
+            return true;
+        }
+        return false;
+    }
+
     /**
          * 返点比例计算
          *
@@ -409,8 +472,8 @@ public class InsuranceInHandServiceImpl extends ServiceImpl<InsuranceInHandMappe
             Calendar registerDate = Calendar.getInstance();
             registerDate.setTime(companyInsurance.getRegisterDate());
             Calendar nowDate = Calendar.getInstance();
-            nowDate.setTime(companyInsurance.getZbDate());
-            int y = DateUtils.dateDiff('y', registerDate, nowDate);
+//            nowDate.setTime(companyInsurance.getZbDate());
+            int y = DateUtils.dateDiff('y', nowDate,registerDate);
             return y;
         }
 }

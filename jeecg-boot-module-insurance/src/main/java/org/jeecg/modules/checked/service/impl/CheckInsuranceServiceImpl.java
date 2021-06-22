@@ -5,12 +5,13 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.apache.commons.collections.CollectionUtils;
 import org.jeecg.BeanUtils.MyBeanUtil;
 import org.jeecg.common.api.vo.Result;
+import org.jeecg.common.util.DateUtils;
 import org.jeecg.enumUtil.IsTransfer;
 import org.jeecg.modules.checked.entity.CheckInsurance;
 import org.jeecg.modules.checked.mapper.CheckInsuranceMapper;
 import org.jeecg.modules.checked.service.ICheckInsuranceService;
-import org.jeecg.modules.companyInsurance.service.ICompanyInsuranceService;
 import org.jeecg.modules.companyInsurance.entity.CompanyInsurance;
+import org.jeecg.modules.companyInsurance.service.ICompanyInsuranceService;
 import org.jeecg.modules.proxyInsurance.entity.InsuranceInHand;
 import org.jeecg.modules.proxyInsurance.service.impl.InsuranceInHandServiceImpl;
 import org.jeecg.modules.team.service.IInsuranceTeamService;
@@ -24,14 +25,14 @@ import java.util.Date;
 import java.util.List;
 
 /**
- *
  * 底层共通业务接口说明（新创建Maven模块项目）
- *
+ * <p>
  * jeecg-boot-module-system 项目禁止其他独立模块直接引用，如果需要共通API或者调用系统信息接口请使用
- *
+ * <p>
  * 统一的业务接口： jeecg-boot-base-common/org.jeecg.common.system.api.ISysBaseAPI(所有子模块需要的接口都在这里定义)
  * 接口实现类在system里： jeecg-boot-module-system/org.jeecg.modules.system.service.impl.SysBaseApiImpl
  * jeecg-boot-module-system不让直接引用的目的是，防止相互调用，另外让子模块项目更轻量，如果调用system，随着项目累计，会导致乱也不好维护。
+ *
  * @Description: 核对的保单
  * @Author: jeecg-boot
  * @Date: 2021-05-27
@@ -58,7 +59,7 @@ public class CheckInsuranceServiceImpl extends ServiceImpl<CheckInsuranceMapper,
 //    private InsuranceInHandMapper insuranceInHandMapper;
 
     public final Integer FIXED_VALUE = 20000;//司机责任险最小值
-    private final  double  COEFFICIENT = 1.06; //系数
+    private final double COEFFICIENT = 1.06; //系数
 
 
     /**
@@ -71,7 +72,7 @@ public class CheckInsuranceServiceImpl extends ServiceImpl<CheckInsuranceMapper,
      */
     @Override
     @Transactional
-    public Result<?> checkAndSaveInsuracne(InsuranceInHand insuranceInHand) {
+    public synchronized Result<?> checkAndSaveInsuracne(InsuranceInHand insuranceInHand) {
 
 //        根据录入保单和保司保单比较生成对比结果数据保单
         CheckInsurance checkInsurance = new CheckInsurance();
@@ -101,7 +102,7 @@ public class CheckInsuranceServiceImpl extends ServiceImpl<CheckInsuranceMapper,
             if (CollectionUtils.isNotEmpty(companyInsuranceList)) {
 //                1.核对交强险保单号
                 for (CompanyInsurance companyInsurance : companyInsuranceList) {
-                    if (compulsoryInsurCode.equals(companyInsurance.getInsuranceNum())) {//如果是交强险保单
+                    if (companyInsurance.getInsuranceNum().equals(compulsoryInsurCode)) {//如果是交强险保单
 //                        封装数据，从保司保单中获取数据
                         if (insuranceDate.equals(companyInsurance.getZbTime()) && billMan.equals(companyInsurance.getSalesMan())) {
                             //交强险保单号
@@ -114,9 +115,9 @@ public class CheckInsuranceServiceImpl extends ServiceImpl<CheckInsuranceMapper,
                         }
                     }
 //                    2.核对商业险保单号
-                    if (commercialInsurCode.equals(companyInsurance.getInsuranceNum())) {//如果是商业险保单
+                    if (companyInsurance.getInsuranceNum().equals(commercialInsurCode)) {//如果是商业险保单
 //                        封装数据，从保司保单中获取数据
-                        if (insuranceDate.equals(companyInsurance.getZbTime()) && billMan.equals(companyInsurance.getSalesMan())) {
+                        if (DateUtils.formatDate(insuranceDate, "yyyy-MM-dd").equals(DateUtils.formatDate(companyInsurance.getZbTime(), "yyyy-MM-dd")) && billMan.equals(companyInsurance.getSalesMan())) {
                             //商业险保单号
                             checkInsurance.setCommercialInsurCode(companyInsurance.getInsuranceNum());
 //                            商业险保费
@@ -182,59 +183,61 @@ public class CheckInsuranceServiceImpl extends ServiceImpl<CheckInsuranceMapper,
                             checkInsurance.setPassengerLiability(companyInsurance.getPassengerLiability());
 //                           备注
                             checkInsurance.setRemarks(insuranceInHand.getRemark());
+//                            起保日期
+                            insuranceInHand.setInsureStartDate(companyInsurance.getInsureStartDate());
 ////                            是否返点
 //                            checkInsurance.setIsRebate(insuranceInHand.getIsPayCommission());
                             res = true;
                         }
 
-                            if (res) {
+                    }
+                }
+                if (res) {
 //                保费总额=交强险签单保费+商业险签单保费+车船税（从录入保单中取）
-                                checkInsurance.setInsuranceTotalFee(insureCompulsoryFeeIncludeTax + insureCommercialFeeIncludeTax + vesselTax);
-                                checkInsurance.setSignServiceHarge(compulsoryServiceHarge + commercialServiceHarge);//保险公司提供的手续费总额
+                    checkInsurance.setInsuranceTotalFee(insureCompulsoryFeeIncludeTax + insureCommercialFeeIncludeTax + vesselTax);
+                    checkInsurance.setSignServiceHarge(compulsoryServiceHarge + commercialServiceHarge);//保险公司提供的手续费总额
 //                    设置比对时间
-                                checkInsurance.setCheckDate(new Date());
+                    checkInsurance.setCheckDate(new Date());
 //                   录入日期
-                                checkInsurance.setInputInsuranceDate(insuranceInHand.getCreateTime());
+                    checkInsurance.setInputInsuranceDate(insuranceInHand.getCreateTime());
 //                    保单编号(雪花算法)
-                                checkInsurance.setInsureNum(SnowFlakeUtil.getId().toString());
+                    checkInsurance.setInsureNum(SnowFlakeUtil.getId().toString());
 //                保存数据
 //                判断比对过的数据库是否存在该数据(根据车架号、商业保单号、交强保单号)
 //                  1. 存在则更新(判断是否是今年的保单)
-                                CheckInsurance checkObj = this.selectByVehicleIdAndCommercialInsurCodeAndCompulsoryInsurCode(checkInsurance);
-                                if (checkObj != null) {
+                    CheckInsurance checkObj = this.selectByVehicleIdAndCommercialInsurCodeAndCompulsoryInsurCode(checkInsurance);
+                    if (checkObj != null) {
 //                        将第二次比对的数据拷贝到数据库的记录中更新数据
-                                    MyBeanUtil.copyPropertiesIgnoreNull(checkInsurance, checkObj);
-                                    if (checkInsuranceMapper.updateById(checkObj) == 1) {
+                        MyBeanUtil.copyPropertiesIgnoreNull(checkInsurance, checkObj);
+                        if (checkInsuranceMapper.updateById(checkObj) == 1) {
 //                           flag = true;
-                                        insuranceInHand.setIsChecked(1);//0：未比对  1：已比对
-                                        // TODO: 2021/6/18 0018
-                                        insuranceInHand.setInsureStartDate(companyInsurance.getInsureStartDate());
+                            insuranceInHand.setIsChecked(1);//0：未比对  1：已比对
+                            // TODO: 2021/6/18 0018
+
 //                                        是否需要用保司保单的数据覆盖手输保单的其他数据
-                                        insuranceInHandService.updateById(insuranceInHand);
-                                        return Result.OK("比对成功", insuranceInHand);
-                                    }
-                                } else {
-//                  2. 不存在则新增
-                                    insert = checkInsuranceMapper.insert(checkInsurance);
-                                }
-//                 比对成功修改insuranceInhand的比对状态为已比对
-                                if (insert != 0) {
-                                    insuranceInHand.setIsChecked(1);//0：未比对  1：已比对
-                                    insuranceInHandService.updateById(insuranceInHand);
-                                    return Result.OK("比对成功", insuranceInHand);
-                                }
-                            }
+                            insuranceInHandService.updateById(insuranceInHand);
+                            return Result.OK("比对成功", insuranceInHand);
                         }
+                    } else {
+//                  2. 不存在则新增
+                        insert = checkInsuranceMapper.insert(checkInsurance);
+                    }
+//                 比对成功修改insuranceInhand的比对状态为已比对
+                    if (insert != 0) {
+                        insuranceInHand.setIsChecked(1);//0：未比对  1：已比对
+                        insuranceInHandService.updateById(insuranceInHand);
+                        return Result.OK("比对成功", insuranceInHand);
                     }
                 }
             }
-        return Result.error(400, "请检查录入的信息是否正确或保司保单是否已录入");
+        }
+        return Result.error(400, "请检查出单日期、出单员、保单号是否正确或保司保单是否已录入");
     }
 
     @Override
     public CheckInsurance selectByCommercialInsurCode(String commercialInsurCode) {
         QueryWrapper<CheckInsurance> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("commercial_insur_code",commercialInsurCode);
+        queryWrapper.eq("commercial_insur_code", commercialInsurCode);
         return checkInsuranceMapper.selectOne(queryWrapper);
     }
 
@@ -254,18 +257,16 @@ public class CheckInsuranceServiceImpl extends ServiceImpl<CheckInsuranceMapper,
 
 
     /**
-      *
-      *
      * 根据车架号，商业保单号、交强险保单号
+     *
      * @param checkInsurance
      * @return
      */
     private CheckInsurance selectByVehicleIdAndCommercialInsurCodeAndCompulsoryInsurCode(CheckInsurance checkInsurance) {
         QueryWrapper<CheckInsurance> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("vehicle_identity",checkInsurance.getVehicleIdentity()).eq("compulsory_insur_code",checkInsurance.getCompulsoryInsurCode()).eq("commercial_insur_code",checkInsurance.getCommercialInsurCode());
-        return  checkInsuranceMapper.selectOne(queryWrapper);
+        queryWrapper.eq("vehicle_identity", checkInsurance.getVehicleIdentity()).eq("compulsory_insur_code", checkInsurance.getCompulsoryInsurCode()).eq("commercial_insur_code", checkInsurance.getCommercialInsurCode());
+        return checkInsuranceMapper.selectOne(queryWrapper);
     }
-
 
 
 }

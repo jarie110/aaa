@@ -33,4 +33,6 @@ public interface IInsuranceInHandService extends IService<InsuranceInHand> {
     List<InsuranceInHand> sortByInsuranceDay();
 
     List<InsuranceInHand> sortByInputTime();
+
+    boolean queryByCompulsoryInsurCodeOrCommercialInsurCode(InsuranceInHand insuranceInHand);
 }

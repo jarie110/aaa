@@ -171,10 +171,7 @@ public static  Integer DRIVER_LIABILITY_INSURED = 20000;
         //		商业基础险判断
 //1.根据返点类型和使用性质判断
         if(usageType != null && rebateType == RebateType.COMMERCIAL_BASIC_REBATE.getType()){
-            InsuranceRebateRatio rebateRatioFromSql = rebateRatioMapper.selectInsuranceRebateRatioByTypeAndUsageTypeAndInsuranceDate(rebateType,usageType,createTime);
-            if(rebateRatioFromSql != null){
-                return true;
-            }
+            if (checkRebateIsExists(createTime, rebateType, usageType)) return true;
         }
 //       三者险判断
         if(rebateType == RebateType.THIRD_PARTY_REBATE.getType() && !carDamageInsured.equals("-") && Integer.parseInt(carDamageInsured) != 0){
@@ -197,11 +194,52 @@ public static  Integer DRIVER_LIABILITY_INSURED = 20000;
             }
         }
 //        其他但返点类型判断
-        if(rebateType != RebateType.THIRD_PARTY_REBATE.getType()){
-            List<InsuranceRebateRatio> rebateRatioFromSqls = rebateRatioMapper.selectInsuranceRebateRatioByTypeAndInsuranceDate(rebateType,createTime);
-            if(CollectionUtils.isNotEmpty(rebateRatioFromSqls)){
-                return true;
-            }
+//        竞回返点
+        if(rebateType == RebateType.COMPETITION_REBATE.getType()){
+            if (checkRebateIsExits(createTime, rebateType)) return true;
+        }
+//跟单零
+        if(rebateType == RebateType.FOLLOW_UP_REBATE.getType()){
+            if (checkRebateIsExits(createTime, rebateType)) return true;
+        }
+//过户
+        if(rebateType == RebateType.IS_TRANSFER_REBATE.getType()){
+            if (checkRebateIsExits(createTime, rebateType)) return true;
+        }
+//        交叉
+        if(rebateType == RebateType.OVERLAPPING_REBATE.getType()){
+            if (checkRebateIsExits(createTime, rebateType)) return true;
+        }
+
+        //        新车
+        if(rebateType == RebateType.NEW_CAR_REBATE.getType()){
+            if (checkRebateIsExits(createTime, rebateType)) return true;
+        }
+
+        //        次新车
+        if(rebateType == RebateType.LAST_YEAR_CAR_REBATE.getType()){
+            if (checkRebateIsExits(createTime, rebateType)) return true;
+        }
+
+        //        其他
+        if(rebateType == RebateType.CHANGE_INTO_INSURANCE.getType()){
+            if (checkRebateIsExits(createTime, rebateType)) return true;
+        }
+        return false;
+    }
+
+    private boolean checkRebateIsExits(Date createTime, Integer rebateType) {
+        List<InsuranceRebateRatio> rebateRatioFromSqls = rebateRatioMapper.selectInsuranceRebateRatioByTypeAndInsuranceDate(rebateType, createTime);
+        if (CollectionUtils.isNotEmpty(rebateRatioFromSqls)) {
+            return true;
+        }
+        return false;
+    }
+
+    private boolean checkRebateIsExists(Date createTime, Integer rebateType, String usageType) {
+        InsuranceRebateRatio rebateRatioFromSql = rebateRatioMapper.selectInsuranceRebateRatioByTypeAndUsageTypeAndInsuranceDate(rebateType,usageType,createTime);
+        if(rebateRatioFromSql != null){
+            return true;
         }
         return false;
     }

@@ -59,8 +59,6 @@ public class InsuranceRebateRatioController extends JeecgController<InsuranceReb
 			return Result.error("批量设置失败");
 	}
 
-
-
 	 /**
 	 * 分页列表查询
 	 *
@@ -129,12 +127,12 @@ public class InsuranceRebateRatioController extends JeecgController<InsuranceReb
 	@ApiOperation(value="返点比例-编辑", notes="返点比例-编辑")
 	@PutMapping(value = "/edit")
 	public Result<?> edit(@RequestBody InsuranceRebateRatio insuranceRebateRatio) {
-		boolean isExist = insuranceRebateRatioService.isAlreadyExist(insuranceRebateRatio);
-		if(!isExist){
+//		boolean isExist = insuranceRebateRatioService.isAlreadyExist(insuranceRebateRatio);
+//		if(!isExist){
 			insuranceRebateRatioService.updateById(insuranceRebateRatio);
 			return Result.OK("编辑成功!");
-		}
-		return Result.error("已有该类型返点比例");
+//		}
+//		return Result.error("已有该类型返点比例");
 	}
 
 	/**

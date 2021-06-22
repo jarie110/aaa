@@ -66,6 +66,12 @@ public class InsuranceUsageController extends JeecgController<InsuranceUsage, II
 	@ApiOperation(value="insurance_usage-添加", notes="insurance_usage-添加")
 	@PostMapping(value = "/add")
 	public Result<?> add(@RequestBody InsuranceUsage insuranceUsage) {
+		QueryWrapper<InsuranceUsage> queryWrapper = new QueryWrapper<>();
+		queryWrapper.eq("usage_type",insuranceUsage.getUsageType());
+		InsuranceUsage one = insuranceUsageService.getOne(queryWrapper);
+		if(one != null){
+			return Result.error("已存在该使用性质！");
+		}
 		insuranceUsageService.save(insuranceUsage);
 		return Result.OK("添加成功！");
 	}

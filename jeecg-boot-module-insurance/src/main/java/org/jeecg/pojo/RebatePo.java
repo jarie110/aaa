@@ -26,61 +26,6 @@ public class RebatePo  {
     public RebatePo() {
     }
 
-    public RebatePo(Integer rebateType, String thirdPartyInsuredZero, String thirdPartyInsured, String carDamageInsured, String carDamageInsuredZero, String renewalName, BigDecimal rebateRatio, BigDecimal rebateRatioZero, String isTransfer, Integer signFee, BigDecimal bonus, String usageType, Date createTimeBegin, Date createTimeEnd) {
-        this.rebateType = rebateType;
-        this.thirdPartyInsuredZero = thirdPartyInsuredZero;
-        this.thirdPartyInsured = thirdPartyInsured;
-        this.carDamageInsured = carDamageInsured;
-        this.carDamageInsuredZero = carDamageInsuredZero;
-        this.renewalName = renewalName;
-        this.rebateRatio = rebateRatio;
-        this.rebateRatioZero = rebateRatioZero;
-        this.isTransfer = isTransfer;
-        this.signFee = signFee;
-        this.bonus = bonus;
-        this.usageType = usageType;
-        this.createTimeBegin = createTimeBegin;
-        this.createTimeEnd = createTimeEnd;
-    }
-
-    public String getDriverLiabilityInsured() {
-        return driverLiabilityInsured;
-    }
-
-    public void setDriverLiabilityInsured(String driverLiabilityInsured) {
-        this.driverLiabilityInsured = driverLiabilityInsured;
-    }
-
-    public String getPassengerLiabilityInsured() {
-        return passengerLiabilityInsured;
-    }
-
-    public void setPassengerLiabilityInsured(String passengerLiabilityInsured) {
-        this.passengerLiabilityInsured = passengerLiabilityInsured;
-    }
-
-    public RebatePo(Date createTimeBegin, Date createTimeEnd) {
-        super();
-        this.createTimeBegin = createTimeBegin;
-        this.createTimeEnd = createTimeEnd;
-    }
-
-    public Date getCreateTimeBegin() {
-        return createTimeBegin;
-    }
-
-    public void setCreateTimeBegin(Date createTimeBegin) {
-        this.createTimeBegin = createTimeBegin;
-    }
-
-    public Date getCreateTimeEnd() {
-        return createTimeEnd;
-    }
-
-    public void setCreateTimeEnd(Date createTimeEnd) {
-        this.createTimeEnd = createTimeEnd;
-    }
-
     public Integer getRebateType() {
         return rebateType;
     }
@@ -97,21 +42,17 @@ public class RebatePo  {
         this.thirdPartyInsuredZero = thirdPartyInsuredZero;
     }
 
-
     public String getThirdPartyInsured() {
         return thirdPartyInsured;
     }
-
 
     public void setThirdPartyInsured(String thirdPartyInsured) {
         this.thirdPartyInsured = thirdPartyInsured;
     }
 
-
     public String getCarDamageInsured() {
         return carDamageInsured;
     }
-
 
     public void setCarDamageInsured(String carDamageInsured) {
         this.carDamageInsured = carDamageInsured;
@@ -133,11 +74,25 @@ public class RebatePo  {
         this.renewalName = renewalName;
     }
 
+    public String getDriverLiabilityInsured() {
+        return driverLiabilityInsured;
+    }
+
+    public void setDriverLiabilityInsured(String driverLiabilityInsured) {
+        this.driverLiabilityInsured = driverLiabilityInsured;
+    }
+
+    public String getPassengerLiabilityInsured() {
+        return passengerLiabilityInsured;
+    }
+
+    public void setPassengerLiabilityInsured(String passengerLiabilityInsured) {
+        this.passengerLiabilityInsured = passengerLiabilityInsured;
+    }
 
     public BigDecimal getRebateRatio() {
         return rebateRatio;
     }
-
 
     public void setRebateRatio(BigDecimal rebateRatio) {
         this.rebateRatio = rebateRatio;
@@ -151,7 +106,6 @@ public class RebatePo  {
         this.rebateRatioZero = rebateRatioZero;
     }
 
-
     public String getIsTransfer() {
         return isTransfer;
     }
@@ -159,7 +113,6 @@ public class RebatePo  {
     public void setIsTransfer(String isTransfer) {
         this.isTransfer = isTransfer;
     }
-
 
     public Integer getSignFee() {
         return signFee;
@@ -169,11 +122,9 @@ public class RebatePo  {
         this.signFee = signFee;
     }
 
-
     public BigDecimal getBonus() {
         return bonus;
     }
-
 
     public void setBonus(BigDecimal bonus) {
         this.bonus = bonus;
@@ -185,5 +136,21 @@ public class RebatePo  {
 
     public void setUsageType(String usageType) {
         this.usageType = usageType;
+    }
+
+    public Date getCreateTimeBegin() {
+        return createTimeBegin;
+    }
+
+    public void setCreateTimeBegin(Date createTimeBegin) {
+        this.createTimeBegin = createTimeBegin;
+    }
+
+    public Date getCreateTimeEnd() {
+        return createTimeEnd;
+    }
+
+    public void setCreateTimeEnd(Date createTimeEnd) {
+        this.createTimeEnd = createTimeEnd;
     }
 }

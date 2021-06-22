@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="org.jeecg.modules.proxyInsurance.mapper.InsuranceInHandMapper">
-
+    <select id="queryByCompulsoryInsurCodeOrCommercialInsurCode" resultType="org.jeecg.modules.proxyInsurance.entity.InsuranceInHand">
+        select * from  insurance_in_hand where  compulsory_insur_code = #{compulsoryInsurCode} or commercial_insur_code = #{commercialInsurCode}
+    </select>
 </mapper>

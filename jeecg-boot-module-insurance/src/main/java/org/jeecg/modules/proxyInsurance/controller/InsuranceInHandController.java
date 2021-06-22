@@ -139,11 +139,25 @@ public class InsuranceInHandController extends JeecgController<InsuranceInHand, 
 								   @RequestParam(name="pageSize", defaultValue="10") Integer pageSize,
 								   HttpServletRequest req) {
 		QueryWrapper<InsuranceInHand> queryWrapper = QueryGenerator.initQueryWrapper(insuranceInHand, req.getParameterMap());
+//		queryWrapper.orderByDesc("insurance_date");
 		Page<InsuranceInHand> page = new Page<InsuranceInHand>(pageNo, pageSize);
 		IPage<InsuranceInHand> pageList = insuranceInHandService.page(page, queryWrapper);
 		return Result.OK(pageList);
 	}
 
+
+//	@AutoLog(value = "录入的保单-分页列表查询排序")
+//	@ApiOperation(value="录入的保单-分页列表查询排序", notes="录入的保单-分页列表查询排序")
+//	@GetMapping(value = "/list")
+//	public Result<?> queryPageList(InsuranceInHand insuranceInHand,
+//								   @RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
+//								   @RequestParam(name="pageSize", defaultValue="10") Integer pageSize,
+//								   HttpServletRequest req) {
+//		QueryWrapper<InsuranceInHand> queryWrapper = QueryGenerator.initQueryWrapper(insuranceInHand, req.getParameterMap());
+//		Page<InsuranceInHand> page = new Page<InsuranceInHand>(pageNo, pageSize);
+//		IPage<InsuranceInHand> pageList = insuranceInHandService.page(page, queryWrapper);
+//		return Result.OK(pageList);
+//	}
 	/**
 	 *   添加
 	 *
@@ -154,6 +168,11 @@ public class InsuranceInHandController extends JeecgController<InsuranceInHand, 
 	@ApiOperation(value="录入的保单-添加", notes="录入的保单-添加")
 	@PostMapping(value = "/add")
 	public Result<?> add(@RequestBody InsuranceInHand insuranceInHand) {
+//		根据保单号判断数据库中是否有该保单号
+		boolean exits = insuranceInHandService.queryByCompulsoryInsurCodeOrCommercialInsurCode(insuranceInHand);
+		if(exits){
+			return Result.OK("添加失败，已存在该保单");
+		}
 		insuranceInHandService.save(insuranceInHand);
 		return Result.OK("添加成功！");
 	}
