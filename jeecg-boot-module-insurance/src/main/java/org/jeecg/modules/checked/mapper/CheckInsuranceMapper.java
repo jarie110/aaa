@@ -1,5 +1,6 @@
 package org.jeecg.modules.checked.mapper;
 
+import org.apache.ibatis.annotations.Param;
 import org.jeecg.modules.checked.entity.CheckInsurance;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
@@ -11,4 +12,5 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  */
 public interface CheckInsuranceMapper extends BaseMapper<CheckInsurance> {
 
+    CheckInsurance selectByVehicleIdAndCommercialInsurCodeAndCompulsoryInsurCode(@Param("vehicleIdentity") String vehicleIdentity, @Param("compulsoryInsurCode") String compulsoryInsurCode, @Param("commercialInsurCode") String commercialInsurCode);
 }

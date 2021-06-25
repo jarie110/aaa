@@ -85,9 +85,9 @@ public class CheckInsuranceServiceImpl extends ServiceImpl<CheckInsuranceMapper,
         Double commercialServiceHarge = 0.0;//商业险手续费
 //        boolean flag = false;//标志是否更新或插入成功
 //        交强险签单保费（含税）
-        double insureCompulsoryFeeIncludeTax = 0.0;
+        Double insureCompulsoryFeeIncludeTax = null;
 //        商业险签单保费（含税）
-        double insureCommercialFeeIncludeTax = 0.0;
+        Double insureCommercialFeeIncludeTax = null;
 //        根据手输保单车架号，查询保司保单的交强险保单号和商业险保单号
 //        比对的字段在两张表中不能为空
 //        1.查到则获取保司保单，比对数据
@@ -104,7 +104,7 @@ public class CheckInsuranceServiceImpl extends ServiceImpl<CheckInsuranceMapper,
                 for (CompanyInsurance companyInsurance : companyInsuranceList) {
                     if (companyInsurance.getInsuranceNum().equals(compulsoryInsurCode)) {//如果是交强险保单
 //                        封装数据，从保司保单中获取数据
-                        if (insuranceDate.equals(companyInsurance.getZbTime()) && billMan.equals(companyInsurance.getSalesMan())) {
+                        /* if (insuranceDate.equals(companyInsurance.getZbTime()) && billMan.equals(companyInsurance.getSalesMan())) {*/
                             //交强险保单号
                             checkInsurance.setCompulsoryInsurCode(companyInsurance.getInsuranceNum());
 //                            交强险保费
@@ -112,7 +112,8 @@ public class CheckInsuranceServiceImpl extends ServiceImpl<CheckInsuranceMapper,
                             checkInsurance.setCompulsoryInsurFee(new BigDecimal(insureCompulsoryFeeIncludeTax));
 //                            交强险签单手续费
                             compulsoryServiceHarge = companyInsurance.getSignServiceHarge();
-                        }
+//                        }
+                        res = true;
                     }
 //                    2.核对商业险保单号
                     if (companyInsurance.getInsuranceNum().equals(commercialInsurCode)) {//如果是商业险保单
@@ -131,9 +132,9 @@ public class CheckInsuranceServiceImpl extends ServiceImpl<CheckInsuranceMapper,
                             checkInsurance.setBillMan(companyInsurance.getSalesMan());
 //                           业务员
                             checkInsurance.setSalesman(insuranceInHand.getSalesman());
-//                           团队
-                            String teamName = teamService.getTeamNameByCode(insuranceInHand.getInsuranceTeam());
-                            checkInsurance.setInsuranceTeam(teamName);
+////                           团队
+//                            String teamName = teamService.getTeamNameByCode(insuranceInHand.getInsuranceTeam());
+//                            checkInsurance.setInsuranceTeam(teamName);
 //                           车牌号
                             checkInsurance.setVehicleLicense(companyInsurance.getVehicleLicense());
 //                           客户名称
@@ -144,13 +145,6 @@ public class CheckInsuranceServiceImpl extends ServiceImpl<CheckInsuranceMapper,
                             checkInsurance.setVehicleVesselTax(vesselTax);
 //                           商业险保费
                             checkInsurance.setCommercialInsurFee(new BigDecimal(insureCommercialFeeIncludeTax));
-//
-////                           交强险手续费比例
-//                            checkInsurance.setCompulsoryInsuranceRebate(insuranceInHand.getCompulsoryInsuranceRebate());
-////                           商业险手续费比例
-//                            checkInsurance.setCommercialInsuranceRebate(insuranceInHand.getCommercialInsuranceRebate());
-//                           额外奖励金额
-//                            checkInsurance.setBonus(insuranceInHand.getSeatBonus());
 //                           渠道名称
                             checkInsurance.setDistributionChannelId(companyInsurance.getDistributionChannelName());
 //                           起保日期
@@ -193,9 +187,19 @@ public class CheckInsuranceServiceImpl extends ServiceImpl<CheckInsuranceMapper,
                     }
                 }
                 if (res) {
-//                保费总额=交强险签单保费+商业险签单保费+车船税（从录入保单中取）
-                    checkInsurance.setInsuranceTotalFee(insureCompulsoryFeeIncludeTax + insureCommercialFeeIncludeTax + vesselTax);
-                    checkInsurance.setSignServiceHarge(compulsoryServiceHarge + commercialServiceHarge);//保险公司提供的手续费总额
+//                保费总额=交强险签单保费+商业险签单保费
+                    if(insureCompulsoryFeeIncludeTax != null && insureCommercialFeeIncludeTax != null){
+                        checkInsurance.setInsuranceTotalFee(insureCompulsoryFeeIncludeTax + insureCommercialFeeIncludeTax);
+                        checkInsurance.setSignServiceHarge(compulsoryServiceHarge + commercialServiceHarge);//保险公司提供的手续费总额
+                    }
+                    if(insureCompulsoryFeeIncludeTax == null && insureCommercialFeeIncludeTax != null){//没有交强险，有商业险
+                        checkInsurance.setInsuranceTotalFee(insureCommercialFeeIncludeTax);//取商业险保费
+                        checkInsurance.setSignServiceHarge(commercialServiceHarge);//保险公司提供的手续费总额
+                    }
+                    if(insureCompulsoryFeeIncludeTax != null && insureCommercialFeeIncludeTax == null){//有交强险，没有商业险
+                        checkInsurance.setInsuranceTotalFee(insureCompulsoryFeeIncludeTax);//取交强险保费
+                        checkInsurance.setSignServiceHarge(compulsoryServiceHarge);//保险公司提供的手续费总额
+                    }
 //                    设置比对时间
                     checkInsurance.setCheckDate(new Date());
 //                   录入日期
@@ -263,9 +267,10 @@ public class CheckInsuranceServiceImpl extends ServiceImpl<CheckInsuranceMapper,
      * @return
      */
     private CheckInsurance selectByVehicleIdAndCommercialInsurCodeAndCompulsoryInsurCode(CheckInsurance checkInsurance) {
-        QueryWrapper<CheckInsurance> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("vehicle_identity", checkInsurance.getVehicleIdentity()).eq("compulsory_insur_code", checkInsurance.getCompulsoryInsurCode()).eq("commercial_insur_code", checkInsurance.getCommercialInsurCode());
-        return checkInsuranceMapper.selectOne(queryWrapper);
+        String vehicleIdentity = checkInsurance.getVehicleIdentity();
+        String compulsoryInsurCode = checkInsurance.getCompulsoryInsurCode();
+        String commercialInsurCode = checkInsurance.getCommercialInsurCode();
+        return checkInsuranceMapper.selectByVehicleIdAndCommercialInsurCodeAndCompulsoryInsurCode(vehicleIdentity,compulsoryInsurCode,commercialInsurCode);
     }
 
 

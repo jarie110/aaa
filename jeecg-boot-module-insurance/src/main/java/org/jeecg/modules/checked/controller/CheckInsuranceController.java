@@ -10,6 +10,7 @@ import org.jeecg.common.api.vo.Result;
 import org.jeecg.common.aspect.annotation.AutoLog;
 import org.jeecg.common.system.base.controller.JeecgController;
 import org.jeecg.common.system.query.QueryGenerator;
+import org.jeecg.common.util.DateUtils;
 import org.jeecg.modules.checked.entity.CheckInsurance;
 import org.jeecg.modules.checked.service.ICheckInsuranceService;
 import org.jeecg.modules.proxyInsurance.entity.InsuranceInHand;
@@ -21,6 +22,7 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -65,6 +67,7 @@ public class CheckInsuranceController extends JeecgController<CheckInsurance, IC
 								   @RequestParam(name="pageSize", defaultValue="10") Integer pageSize,
 								   HttpServletRequest req) {
 		QueryWrapper<CheckInsurance> queryWrapper = QueryGenerator.initQueryWrapper(checkInsurance, req.getParameterMap());
+		queryWrapper.orderByDesc("check_date");
 		Page<CheckInsurance> page = new Page<CheckInsurance>(pageNo, pageSize);
 		IPage<CheckInsurance> pageList = checkInsuranceService.page(page, queryWrapper);
 		return Result.OK(pageList);
@@ -117,8 +120,17 @@ public class CheckInsuranceController extends JeecgController<CheckInsurance, IC
 	@ApiOperation(value="核对的保单-编辑", notes="核对的保单-编辑")
 	@PutMapping(value = "/edit")
 	public Result<?> edit(@RequestBody CheckInsurance checkInsurance) {
-		checkInsuranceService.updateById(checkInsurance);
-		return Result.OK("编辑成功!");
+		//		判断如果设置了返点支付时间，则返点支付时间需要大于出单日期
+		Date paymentDate = checkInsurance.getRebatePaymentDate();//支付日期
+		long paymentMillis = DateUtils.getMillis(paymentDate);
+
+		Date insuranceDate = checkInsurance.getInsuranceDate();//出单日期
+		long insuranceDateMillis = DateUtils.getMillis(insuranceDate);
+		if(paymentDate != null && paymentMillis > insuranceDateMillis ){
+			checkInsuranceService.updateById(checkInsurance);
+			return Result.OK("编辑成功!");
+		}
+		return Result.error("支付时间不应小于出单日期");
 	}
 
 	/**

@@ -91,6 +91,10 @@ public class InsuranceRebateRatio implements Serializable {
 	@Excel(name = "返点比例", width = 15)
     @ApiModelProperty(value = "返点比例")
     private BigDecimal rebateRatio;
+	/**座位数*/
+	@Excel(name = "座位数", width = 15)
+    @ApiModelProperty(value = "座位数")
+    private Integer seatNum;
 	/**奖金*/
 	@Excel(name = "奖金", width = 15)
     @ApiModelProperty(value = "奖金")

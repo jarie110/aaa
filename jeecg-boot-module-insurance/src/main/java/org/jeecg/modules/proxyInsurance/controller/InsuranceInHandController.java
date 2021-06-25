@@ -139,7 +139,7 @@ public class InsuranceInHandController extends JeecgController<InsuranceInHand, 
 								   @RequestParam(name="pageSize", defaultValue="10") Integer pageSize,
 								   HttpServletRequest req) {
 		QueryWrapper<InsuranceInHand> queryWrapper = QueryGenerator.initQueryWrapper(insuranceInHand, req.getParameterMap());
-//		queryWrapper.orderByDesc("insurance_date");
+		queryWrapper.orderByDesc("insurance_date");
 		Page<InsuranceInHand> page = new Page<InsuranceInHand>(pageNo, pageSize);
 		IPage<InsuranceInHand> pageList = insuranceInHandService.page(page, queryWrapper);
 		return Result.OK(pageList);
@@ -171,7 +171,7 @@ public class InsuranceInHandController extends JeecgController<InsuranceInHand, 
 //		根据保单号判断数据库中是否有该保单号
 		boolean exits = insuranceInHandService.queryByCompulsoryInsurCodeOrCommercialInsurCode(insuranceInHand);
 		if(exits){
-			return Result.OK("添加失败，已存在该保单");
+			return Result.error("添加失败，已存在该保单");
 		}
 		insuranceInHandService.save(insuranceInHand);
 		return Result.OK("添加成功！");

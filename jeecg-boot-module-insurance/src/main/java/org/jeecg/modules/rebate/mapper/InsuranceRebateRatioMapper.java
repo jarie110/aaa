@@ -19,7 +19,17 @@ public interface InsuranceRebateRatioMapper extends BaseMapper<InsuranceRebateRa
 
     InsuranceRebateRatio selectInsuranceRebateRatioByTypeAndUsageTypeAndInsuranceDate(@Param("type") Integer type,@Param("usageType") String usageType, @Param("zbTime") Date zbTime);
 
-    InsuranceRebateRatio selectInsuranceRebateRatioByTypeAndUsageTypeAndInsuranceDateAndCarDamageInsuredZero(@Param("type") Integer type,@Param("usageType") String usageType, @Param("zbTime") Date zbTime);
+    InsuranceRebateRatio selectInsuranceRebateRatioByTypeAndUsageTypeAndInsuranceDateAndCarDamageInsuredZeroAndThirdPartyInsured(@Param("type") Integer type,@Param("usageType") String usageType,@Param("thirdPartyInsured") String thirdPartyInsured, @Param("zbTime") Date zbTime);
 
-    InsuranceRebateRatio selectInsuranceRebateRatioByTypeAndUsageTypeAndInsuranceDateAndCarDamageInsuredNotZero(@Param("type") Integer type,@Param("usageType") String usageType, @Param("zbTime") Date zbTime);
+    InsuranceRebateRatio selectInsuranceRebateRatioByTypeAndUsageTypeAndInsuranceDateAndCarDamageInsuredNotZeroAndThirdPartyInsured(@Param("type") Integer type,@Param("usageType") String usageType,@Param("thirdPartyInsured") String thirdPartyInsured, @Param("zbTime") Date zbTime);
+
+//    InsuranceRebateRatio selectInsuranceRebateRatioByTypeAndUsageTypeAndSeatNumAndInsuranceDate(@Param("type") Integer rebateType, @Param("usageType")String usageType, @Param("seatNum") Integer seatNum,@Param("zbTime") Date createTime);
+
+    InsuranceRebateRatio selectByUsageTypeAndRebateType(@Param("usageType") String usageType, @Param("rebateRatioType") Integer rebateRatioType);
+
+    InsuranceRebateRatio selectByUsageTypeAndRebateTypeAndCarDamageInsuredAndThirdPartyInsuredAndDate(@Param("usageType") String usageType, @Param("rebateRatioType") Integer rebateRatioType, @Param("carDamageInsured") String carDamageInsured, @Param("thirdPartyInsured") String thirdPartyInsured,@Param("zbTime") Date zbTime);
+
+    InsuranceRebateRatio selectByUsageTypeAndRebateTypeAndDriverLiabilityInsuredAndPassengerLiabilityAndSeatNum(@Param("usageType") String usageType,  @Param("rebateRatioType")Integer rebateRatioType, @Param("driverLiabilityInsured") String driverLiabilityInsured, @Param("passengerLiability") String passengerLiability,@Param("seatNum") Integer seatNum);
+
+    InsuranceRebateRatio selectByUsageTypeAndRebateTypeAndDriverLiabilityInsuredAndPassengerLiabilityAndSeatNumAndInsuranceDate(@Param("usageType") String usageType,  @Param("rebateRatioType")Integer rebateRatioType, @Param("driverLiabilityInsured") String driverLiabilityInsured, @Param("passengerLiability") String passengerLiability,@Param("seatNum") Integer seatNum, @Param("zbTime") Date zbTime);
 }

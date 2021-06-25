@@ -81,11 +81,11 @@ public class CheckInsurance implements Serializable {
 	@Excel(name = "业务员", width = 15)
     @ApiModelProperty(value = "业务员")
     private String salesman;
-	/**所属团队*/
-	@Excel(name = "所属团队", width = 15,dictTable="insurance_team",dicCode = "team_code",dicText = "team_name")
-    @ApiModelProperty(value = "所属团队")
-    @Dict(dictTable="insurance_team",dicCode = "team_code",dicText = "team_name")
-    private String insuranceTeam;
+//	/**所属团队*/
+//	@Excel(name = "所属团队", width = 15,dictTable="insurance_team",dicCode = "team_code",dicText = "team_name")
+//    @ApiModelProperty(value = "所属团队")
+//    @Dict(dictTable="insurance_team",dicCode = "team_code",dicText = "team_name")
+//    private String insuranceTeam;
 	/**客户名称*/
 	@Excel(name = "客户名称", width = 15)
     @ApiModelProperty(value = "客户名称")

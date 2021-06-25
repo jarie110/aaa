@@ -2,7 +2,6 @@ package org.jeecg.pojo;
 
 
 import java.math.BigDecimal;
-import java.util.Date;
 
 public class RebatePo  {
     private Integer rebateType;
@@ -20,8 +19,8 @@ public class RebatePo  {
     private Integer signFee;
     private BigDecimal bonus;
     private String usageType;
-    private Date createTimeBegin;
-    private Date createTimeEnd;
+    private String createTimeBegin;
+    private String createTimeEnd;
 
     public RebatePo() {
     }
@@ -138,19 +137,19 @@ public class RebatePo  {
         this.usageType = usageType;
     }
 
-    public Date getCreateTimeBegin() {
+    public String getCreateTimeBegin() {
         return createTimeBegin;
     }
 
-    public void setCreateTimeBegin(Date createTimeBegin) {
+    public void setCreateTimeBegin(String createTimeBegin) {
         this.createTimeBegin = createTimeBegin;
     }
 
-    public Date getCreateTimeEnd() {
+    public String getCreateTimeEnd() {
         return createTimeEnd;
     }
 
-    public void setCreateTimeEnd(Date createTimeEnd) {
+    public void setCreateTimeEnd(String createTimeEnd) {
         this.createTimeEnd = createTimeEnd;
     }
 }

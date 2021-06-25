@@ -21,4 +21,6 @@ public interface IInsuranceRebateRatioService extends IService<InsuranceRebateRa
     boolean insertBatch(List<RebatePo> rebates);
 
     boolean isAlreadyExist(InsuranceRebateRatio insuranceRebateRatio);
+
+    boolean editCheck(InsuranceRebateRatio insuranceRebateRatio);
 }

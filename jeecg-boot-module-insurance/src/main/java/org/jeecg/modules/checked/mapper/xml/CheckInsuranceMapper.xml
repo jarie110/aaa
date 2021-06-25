@@ -1,5 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="org.jeecg.modules.checked.mapper.CheckInsuranceMapper">
-
+    <select id="selectByVehicleIdAndCommercialInsurCodeAndCompulsoryInsurCode" resultType="org.jeecg.modules.checked.entity.CheckInsurance">
+        select * from check_insurance where  vehicle_identity = #{vehicleIdentity}
+        <if test="compulsoryInsurCode != null">
+            and compulsory_insurCode = #{compulsoryInsurCode}
+        </if>
+        <if test="commercialInsurCode != null">
+            and commercial_insurCode = #{commercialInsurCode}
+        </if>
+    </select>
 </mapper>

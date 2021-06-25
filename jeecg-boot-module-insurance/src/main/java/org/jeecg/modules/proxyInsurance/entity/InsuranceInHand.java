@@ -57,7 +57,7 @@ public class InsuranceInHand implements Serializable {
 				Objects.equals(getCarUsageType(), that.getCarUsageType()) &&
 				Objects.equals(getDistributionChannelId(), that.getDistributionChannelId()) &&
 				Objects.equals(getRemark(), that.getRemark()) &&
-				Objects.equals(getInsuranceTeam(), that.getInsuranceTeam()) &&
+//				Objects.equals(getInsuranceTeam(), that.getInsuranceTeam()) &&
 				Objects.equals(getThirdPartyInsured(), that.getThirdPartyInsured()) &&
 				Objects.equals(getDriverLiabilityInsure(), that.getDriverLiabilityInsure()) &&
 				Objects.equals(getCarDamageInsured(), that.getCarDamageInsured()) &&
@@ -75,7 +75,7 @@ public class InsuranceInHand implements Serializable {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(getId(),  /*getCreateBy(), getCreateTime(), getUpdateBy(),getUpdateTime(),*/ getInsuranceDate(), getSalesman(), getVehicleLicense(), getCustomer(), getVehicleIdentity(), getCompulsoryInsurCode(), getCompulsoryInsurFee(), getCommercialInsurCode(), getCommercialInsurFee(), getVehicleVesselTax(), getInsuranceTotalFee(), getTotalServiceFee(), getRenewalType(), getCarUsageType(), getDistributionChannelId(), getRemark(), getInsuranceTeam(), getThirdPartyInsured(), getDriverLiabilityInsure(), getCarDamageInsured(), getPassengerLiability(), getRegisterDate(), getIsTransfer(), getSeatsNum(), getCompulsoryInsuranceRebate(), getCommercialInsuranceRebate(), getIsPayCommission(), getIsChecked(), getSeatBonus(), getPaymentWay());
+		return Objects.hash(getId(),  /*getCreateBy(), getCreateTime(), getUpdateBy(),getUpdateTime(),*/ getInsuranceDate(), getSalesman(), getVehicleLicense(), getCustomer(), getVehicleIdentity(), getCompulsoryInsurCode(), getCompulsoryInsurFee(), getCommercialInsurCode(), getCommercialInsurFee(), getVehicleVesselTax(), getInsuranceTotalFee(), getTotalServiceFee(), getRenewalType(), getCarUsageType(), getDistributionChannelId(), getRemark(),/* getInsuranceTeam(),*/ getThirdPartyInsured(), getDriverLiabilityInsure(), getCarDamageInsured(), getPassengerLiability(), getRegisterDate(), getIsTransfer(), getSeatsNum(), getCompulsoryInsuranceRebate(), getCommercialInsuranceRebate(), getIsPayCommission(), getIsChecked(), getSeatBonus(), getPaymentWay());
 	}
 
 	private static final long serialVersionUID = 1L;
@@ -169,11 +169,11 @@ public class InsuranceInHand implements Serializable {
 	@Dict(dictTable = "distribution_channel", dicText = "channel_name", dicCode = "channel_type")
     @ApiModelProperty(value = "渠道类型")
     private String distributionChannelId;
-	/**所属团队*/
-	@Excel(name = "所属团队", width = 15, dictTable = "insurance_team", dicText = "team_name", dicCode = "team_code")
-	@Dict(dictTable = "insurance_team", dicText = "team_name", dicCode = "team_code")
-    @ApiModelProperty(value = "所属团队")
-    private Integer insuranceTeam;
+//	/**所属团队*/
+//	@Excel(name = "所属团队", width = 15, dictTable = "insurance_team", dicText = "team_name", dicCode = "team_code")
+//	@Dict(dictTable = "insurance_team", dicText = "team_name", dicCode = "team_code")
+//    @ApiModelProperty(value = "所属团队")
+//    private Integer insuranceTeam;
 	/**三者责任险保额*/
 	@Excel(name = "三者责任险保额", width = 15)
     @ApiModelProperty(value = "三者责任险保额")

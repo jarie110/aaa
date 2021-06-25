@@ -76,6 +76,7 @@ public class InsuranceRebateRatioController extends JeecgController<InsuranceReb
 								   @RequestParam(name="pageSize", defaultValue="10") Integer pageSize,
 								   HttpServletRequest req) {
 		QueryWrapper<InsuranceRebateRatio> queryWrapper = QueryGenerator.initQueryWrapper(insuranceRebateRatio, req.getParameterMap());
+		queryWrapper.orderByDesc("create_time");
 		Page<InsuranceRebateRatio> page = new Page<InsuranceRebateRatio>(pageNo, pageSize);
 		IPage<InsuranceRebateRatio> pageList = insuranceRebateRatioService.page(page, queryWrapper);
 		return Result.OK(pageList);
@@ -127,12 +128,15 @@ public class InsuranceRebateRatioController extends JeecgController<InsuranceReb
 	@ApiOperation(value="返点比例-编辑", notes="返点比例-编辑")
 	@PutMapping(value = "/edit")
 	public Result<?> edit(@RequestBody InsuranceRebateRatio insuranceRebateRatio) {
-//		boolean isExist = insuranceRebateRatioService.isAlreadyExist(insuranceRebateRatio);
-//		if(!isExist){
-			insuranceRebateRatioService.updateById(insuranceRebateRatio);
-			return Result.OK("编辑成功!");
+//		判断三者险和座位保修改数据
+		boolean isExist = insuranceRebateRatioService.editCheck(insuranceRebateRatio);
+		if(isExist){
+			return Result.error("该返点比例已存在!");
+		}
+		insuranceRebateRatioService.updateById(insuranceRebateRatio);
+		return Result.OK("编辑成功!");
 //		}
-//		return Result.error("已有该类型返点比例");
+//
 	}
 
 	/**

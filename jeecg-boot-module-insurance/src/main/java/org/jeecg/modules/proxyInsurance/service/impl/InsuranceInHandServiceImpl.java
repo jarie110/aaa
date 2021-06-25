@@ -255,6 +255,16 @@ public class InsuranceInHandServiceImpl extends ServiceImpl<InsuranceInHandMappe
 
                 //		9.其他或转入 todo
 //        根据新续保标志判断是否为转入保单
+                if (Integer.parseInt(renewalType) == RenewalTypeEnum.BRANCH_RENEWAL.getType()) {
+                    try {
+                        addPercent(percentList, RebateType.BATCH_REBATE.getType(),zbTime);
+                    } catch (InsuranceException e) {
+                        // TODO: 2021/6/11 0011
+                        return Result.error(400,"未设置支公司续保返点比例，请先设置在计算",RebateType.BATCH_REBATE.getType());
+                    }
+                }
+
+//                10.支公司续保返点
                 if (Integer.parseInt(renewalType) == RenewalTypeEnum.REPLACEMENT_RENEWAL.getType()) {
                     try {
                         addPercent(percentList, RebateType.CHANGE_INTO_INSURANCE.getType(),zbTime);
@@ -263,6 +273,7 @@ public class InsuranceInHandServiceImpl extends ServiceImpl<InsuranceInHandMappe
                         return Result.error(400,"未设置转入保单返点比例，请先设置在计算",RebateType.CHANGE_INTO_INSURANCE.getType());
                     }
                 }
+
 
 //        计算返点比例总和
                 rebateAll = new BigDecimal(percentList.stream().collect(Collectors.summingDouble(BigDecimal::doubleValue)));

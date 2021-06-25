@@ -7,7 +7,7 @@
 		<version>2.4.3</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
-
+	<packaging>war</packaging>
 	<artifactId>jeecg-boot-module-system</artifactId>
 
 	<repositories>
@@ -54,15 +54,16 @@
 	</dependencies>
 
 	<build>
+		<finalName>insurance</finalName>
 		<plugins>
-			<plugin>
+			<!--<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 				<configuration>
-					<!--微服务模式下修改为true,跳过此打包插件，否则微服务模块无法引用-->
+					&lt;!&ndash;微服务模式下修改为true,跳过此打包插件，否则微服务模块无法引用&ndash;&gt;
 					<skip>false</skip>
 				</configuration>
-			</plugin>
+			</plugin>-->
 		</plugins>
 	</build>
 </project>
