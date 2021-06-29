@@ -51,31 +51,31 @@ public class InsuranceInHand implements Serializable {
 				Objects.equals(getCommercialInsurCode(), that.getCommercialInsurCode()) &&
 				Objects.equals(getCommercialInsurFee(), that.getCommercialInsurFee()) &&
 				Objects.equals(getVehicleVesselTax(), that.getVehicleVesselTax()) &&
-				Objects.equals(getInsuranceTotalFee(), that.getInsuranceTotalFee()) &&
-				Objects.equals(getTotalServiceFee(), that.getTotalServiceFee()) &&
-				Objects.equals(getRenewalType(), that.getRenewalType()) &&
-				Objects.equals(getCarUsageType(), that.getCarUsageType()) &&
+//				Objects.equals(getInsuranceTotalFee(), that.getInsuranceTotalFee()) &&
+//				Objects.equals(getTotalServiceFee(), that.getTotalServiceFee()) &&
+//				Objects.equals(getRenewalType(), that.getRenewalType()) &&
+//				Objects.equals(getCarUsageType(), that.getCarUsageType()) &&
 				Objects.equals(getDistributionChannelId(), that.getDistributionChannelId()) &&
 				Objects.equals(getRemark(), that.getRemark()) &&
 //				Objects.equals(getInsuranceTeam(), that.getInsuranceTeam()) &&
-				Objects.equals(getThirdPartyInsured(), that.getThirdPartyInsured()) &&
-				Objects.equals(getDriverLiabilityInsure(), that.getDriverLiabilityInsure()) &&
-				Objects.equals(getCarDamageInsured(), that.getCarDamageInsured()) &&
-				Objects.equals(getPassengerLiability(), that.getPassengerLiability()) &&
-				Objects.equals(getRegisterDate(), that.getRegisterDate()) &&
-				Objects.equals(getIsTransfer(), that.getIsTransfer()) &&
-				Objects.equals(getSeatsNum(), that.getSeatsNum()) &&
-				Objects.equals(getCompulsoryInsuranceRebate(), that.getCompulsoryInsuranceRebate()) &&
-				Objects.equals(getCommercialInsuranceRebate(), that.getCommercialInsuranceRebate()) &&
-				Objects.equals(getIsPayCommission(), that.getIsPayCommission()) &&
-				Objects.equals(getIsChecked(), that.getIsChecked()) &&
-				Objects.equals(getSeatBonus(), that.getSeatBonus()) &&
-				Objects.equals(getPaymentWay(), that.getPaymentWay());
+//				Objects.equals(getThirdPartyInsured(), that.getThirdPartyInsured()) &&
+//				Objects.equals(getDriverLiabilityInsure(), that.getDriverLiabilityInsure()) &&
+//				Objects.equals(getCarDamageInsured(), that.getCarDamageInsured()) &&
+//				Objects.equals(getPassengerLiability(), that.getPassengerLiability()) &&
+//				Objects.equals(getRegisterDate(), that.getRegisterDate()) &&
+//				Objects.equals(getIsTransfer(), that.getIsTransfer()) &&
+//				Objects.equals(getSeatsNum(), that.getSeatsNum()) &&
+//				Objects.equals(getCompulsoryInsuranceRebate(), that.getCompulsoryInsuranceRebate()) &&
+//				Objects.equals(getCommercialInsuranceRebate(), that.getCommercialInsuranceRebate()) &&
+//				Objects.equals(getIsPayCommission(), that.getIsPayCommission()) &&
+				Objects.equals(getIsChecked(), that.getIsChecked());
+//				Objects.equals(getSeatBonus(), that.getSeatBonus()) &&
+//				Objects.equals(getPaymentWay(), that.getPaymentWay());
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(getId(),  /*getCreateBy(), getCreateTime(), getUpdateBy(),getUpdateTime(),*/ getInsuranceDate(), getSalesman(), getVehicleLicense(), getCustomer(), getVehicleIdentity(), getCompulsoryInsurCode(), getCompulsoryInsurFee(), getCommercialInsurCode(), getCommercialInsurFee(), getVehicleVesselTax(), getInsuranceTotalFee(), getTotalServiceFee(), getRenewalType(), getCarUsageType(), getDistributionChannelId(), getRemark(),/* getInsuranceTeam(),*/ getThirdPartyInsured(), getDriverLiabilityInsure(), getCarDamageInsured(), getPassengerLiability(), getRegisterDate(), getIsTransfer(), getSeatsNum(), getCompulsoryInsuranceRebate(), getCommercialInsuranceRebate(), getIsPayCommission(), getIsChecked(), getSeatBonus(), getPaymentWay());
+		return Objects.hash(getId(),  /*getCreateBy(), getCreateTime(), getUpdateBy(),getUpdateTime(),*/ getInsuranceDate(), getSalesman(), getVehicleLicense(), getCustomer(), getVehicleIdentity(), getCompulsoryInsurCode(), getCompulsoryInsurFee(), getCommercialInsurCode(), getCommercialInsurFee(), getVehicleVesselTax(),/*, getInsuranceTotalFee(), getTotalServiceFee(), getRenewalType(), getCarUsageType(),*/ getDistributionChannelId(), getRemark(),/* getInsuranceTeam(), getThirdPartyInsured(), getDriverLiabilityInsure(), getCarDamageInsured(), getPassengerLiability(), getRegisterDate(), getIsTransfer(), getSeatsNum(), getCompulsoryInsuranceRebate(), getCommercialInsuranceRebate(), getIsPayCommission(),*/ getIsChecked()/* getSeatBonus(), getPaymentWay()*/);
 	}
 
 	private static final long serialVersionUID = 1L;
@@ -106,10 +106,10 @@ public class InsuranceInHand implements Serializable {
     @DateTimeFormat(pattern="yyyy-MM-dd")
     @ApiModelProperty(value = "出单日期")
     private Date insuranceDate;
-	/**出单员*/
-	@Excel(name = "出单员", width = 15)
-    @ApiModelProperty(value = "出单员")
-    private String billMan;
+//	/**出单员*/
+//	@Excel(name = "出单员", width = 15)
+//    @ApiModelProperty(value = "出单员")
+//    private String billMan;
 	/**业务员*/
 	@Excel(name = "业务员", width = 15)
     @ApiModelProperty(value = "业务员")
@@ -154,16 +154,16 @@ public class InsuranceInHand implements Serializable {
 	@Excel(name = "手续费总额", width = 15)
     @ApiModelProperty(value = "手续费总额")
     private BigDecimal totalServiceFee;
-	/**新续保标志*/
-	@Excel(name = "新续保标志", width = 15, dicCode = "renewal_symbol")
-	@Dict(dicCode = "renewal_symbol")
-    @ApiModelProperty(value = "新续保标志")
-    private String renewalType;
-	/**使用性质*/
-	@Excel(name = "使用性质", width = 15, dictTable = "insurance_usage", dicText = "usage_name", dicCode = "usage_type")
-	@Dict(dictTable = "insurance_usage", dicText = "usage_name", dicCode = "usage_type")
-    @ApiModelProperty(value = "使用性质")
-    private String carUsageType;
+//	/**新续保标志*/
+//	@Excel(name = "新续保标志", width = 15, dicCode = "renewal_symbol")
+//	@Dict(dicCode = "renewal_symbol")
+//    @ApiModelProperty(value = "新续保标志")
+//    private String renewalType;
+//	/**使用性质*/
+//	@Excel(name = "使用性质", width = 15, dictTable = "insurance_usage", dicText = "usage_name", dicCode = "usage_type")
+//	@Dict(dictTable = "insurance_usage", dicText = "usage_name", dicCode = "usage_type")
+//    @ApiModelProperty(value = "使用性质")
+//    private String carUsageType;
 	/**渠道类型*/
 	@Excel(name = "渠道类型", width = 15, dictTable = "distribution_channel", dicText = "channel_name", dicCode = "channel_type")
 	@Dict(dictTable = "distribution_channel", dicText = "channel_name", dicCode = "channel_type")
@@ -174,79 +174,79 @@ public class InsuranceInHand implements Serializable {
 //	@Dict(dictTable = "insurance_team", dicText = "team_name", dicCode = "team_code")
 //    @ApiModelProperty(value = "所属团队")
 //    private Integer insuranceTeam;
-	/**三者责任险保额*/
-	@Excel(name = "三者责任险保额", width = 15)
-    @ApiModelProperty(value = "三者责任险保额")
-    private Double thirdPartyInsured;
-	/**司机责任险保额*/
-	@Excel(name = "司机责任险保额", width = 15)
-    @ApiModelProperty(value = "司机责任险保额")
-    private Double driverLiabilityInsure;
-	/**车损险保额*/
-	@Excel(name = "车损险保额", width = 15)
-    @ApiModelProperty(value = "车损险保额")
-    private Double carDamageInsured;
-	/**乘客责任险保额*/
-	@Excel(name = "乘客责任险保额", width = 15)
-    @ApiModelProperty(value = "乘客责任险保额")
-    private Double passengerLiability;
-	/**初登日期*/
-	@Excel(name = "初登日期", width = 15, format = "yyyy-MM-dd")
-	@JsonFormat(timezone = "GMT+8",pattern = "yyyy-MM-dd")
-    @DateTimeFormat(pattern="yyyy-MM-dd")
-    @ApiModelProperty(value = "初登日期")
-    private Date registerDate;
-	/**是否过户*/
-	@Excel(name = "是否过户", width = 15, dicCode = "is_transfer")
-	@Dict(dicCode = "is_transfer")
-    @ApiModelProperty(value = "是否过户")
-    private Integer isTransfer;
-	/**座位数*/
-	@Excel(name = "座位数", width = 15)
-    @ApiModelProperty(value = "座位数")
-    private Integer seatsNum;
-	/**交强险返点比*/
-	@Excel(name = "交强险返点比", width = 15)
-    @ApiModelProperty(value = "交强险返点比")
-    private BigDecimal compulsoryInsuranceRebate;
-	/**商业险返点比*/
-	@Excel(name = "商业险返点比", width = 15)
-    @ApiModelProperty(value = "商业险返点比")
-    private Double commercialInsuranceRebate;
-	/**是否返佣*/
-	@Excel(name = "是否返佣", width = 15, dicCode = "is_paid_rebate")
-	@Dict(dicCode = "is_paid_rebate")
-    @ApiModelProperty(value = "是否返佣")
-    private Integer isPayCommission;
+//	/**三者责任险保额*/
+//	@Excel(name = "三者责任险保额", width = 15)
+//    @ApiModelProperty(value = "三者责任险保额")
+//    private Double thirdPartyInsured;
+//	/**司机责任险保额*/
+//	@Excel(name = "司机责任险保额", width = 15)
+//    @ApiModelProperty(value = "司机责任险保额")
+//    private Double driverLiabilityInsure;
+//	/**车损险保额*/
+//	@Excel(name = "车损险保额", width = 15)
+//    @ApiModelProperty(value = "车损险保额")
+//    private Double carDamageInsured;
+//	/**乘客责任险保额*/
+//	@Excel(name = "乘客责任险保额", width = 15)
+//    @ApiModelProperty(value = "乘客责任险保额")
+//    private Double passengerLiability;
+//	/**初登日期*/
+//	@Excel(name = "初登日期", width = 15, format = "yyyy-MM-dd")
+//	@JsonFormat(timezone = "GMT+8",pattern = "yyyy-MM-dd")
+//    @DateTimeFormat(pattern="yyyy-MM-dd")
+//    @ApiModelProperty(value = "初登日期")
+//    private Date registerDate;
+//	/**是否过户*/
+//	@Excel(name = "是否过户", width = 15, dicCode = "is_transfer")
+//	@Dict(dicCode = "is_transfer")
+//    @ApiModelProperty(value = "是否过户")
+//    private Integer isTransfer;
+//	/**座位数*/
+//	@Excel(name = "座位数", width = 15)
+//    @ApiModelProperty(value = "座位数")
+//    private Integer seatsNum;
+//	/**交强险返点比*/
+//	@Excel(name = "交强险返点比", width = 15)
+//    @ApiModelProperty(value = "交强险返点比")
+//    private BigDecimal compulsoryInsuranceRebate;
+//	/**商业险返点比*/
+//	@Excel(name = "商业险返点比", width = 15)
+//    @ApiModelProperty(value = "商业险返点比")
+//    private Double commercialInsuranceRebate;
+//	/**是否返佣*/
+//	@Excel(name = "是否返佣", width = 15, dicCode = "is_paid_rebate")
+//	@Dict(dicCode = "is_paid_rebate")
+//    @ApiModelProperty(value = "是否返佣")
+//    private Integer isPayCommission;
 	/**是否比对*/
 	@Excel(name = "是否比对", width = 15, dicCode = "is_checked")
 	@Dict(dicCode = "is_checked")
     @ApiModelProperty(value = "是否比对")
     private Integer isChecked;
-	/**座位保奖励金*/
-	@Excel(name = "座位保奖励金", width = 15)
-    @ApiModelProperty(value = "座位保奖励金")
-    private BigDecimal seatBonus;
-	/**返点支付方式*/
-	@Excel(name = "返点支付方式", width = 15, dicCode = "rebate_way")
-	@Dict(dicCode = "rebate_way")
-    @ApiModelProperty(value = "返点支付方式")
-    private Integer paymentWay;
+//	/**座位保奖励金*/
+//	@Excel(name = "座位保奖励金", width = 15)
+//    @ApiModelProperty(value = "座位保奖励金")
+//    private BigDecimal seatBonus;
+//	/**返点支付方式*/
+//	@Excel(name = "返点支付方式", width = 15, dicCode = "rebate_way")
+//	@Dict(dicCode = "rebate_way")
+//    @ApiModelProperty(value = "返点支付方式")
+//    private Integer paymentWay;
 
 	/**用户id*/
 	@Excel(name = "用户id", width = 15)
 	@ApiModelProperty(value = "用户id")
 	private String uid;
 
-	/**起保日期*/
-	@Excel(name = "起保日期", width = 15)
-	@ApiModelProperty(value = "起保日期")
-	private Date insureStartDate;
+//	/**起保日期*/
+//	@Excel(name = "起保日期", width = 15)
+//	@ApiModelProperty(value = "起保日期")
+//	private Date insureStartDate;
 
-	/**返点比例*/
-	@Excel(name = "返点比例", width = 15)
-	@ApiModelProperty(value = "返点比例")
-	private BigDecimal totalServiceRebate;
+//	/**返点比例*/
+//	@Excel(name = "返点比例", width = 15)
+//	@ApiModelProperty(value = "返点比例")
+//	private BigDecimal totalServiceRebate;
 
 
 	/**备注*/

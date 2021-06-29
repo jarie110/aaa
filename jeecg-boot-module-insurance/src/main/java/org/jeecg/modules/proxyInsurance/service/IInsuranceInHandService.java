@@ -5,7 +5,6 @@ import org.jeecg.common.api.vo.Result;
 import org.jeecg.modules.proxyInsurance.entity.InsuranceInHand;
 import org.jeecg.modules.proxyInsurance.entity.RenewalPo;
 
-import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.List;
 
@@ -22,9 +21,9 @@ public interface IInsuranceInHandService extends IService<InsuranceInHand> {
 
     int countByUser(String uid);
 
-    BigDecimal totalInsuranceFee(String uid);
+    String totalInsuranceFee(String uid);
 
-    BigDecimal totalInsurancePaidFee(String uid);
+    String totalInsurancePaidFee(String uid);
 
     int queryByIsCheck(String uid);
 

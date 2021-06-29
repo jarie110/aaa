@@ -11,7 +11,7 @@ public enum RebateType {
     FOLLOW_UP_REBATE(7,"跟单零返点比"),
     SEAT_INSURANCE(8,"座位保返点比"),
     CHANGE_INTO_INSURANCE(9,"转入或其他"),
-    BATCH_REBATE(10,"支公司续保返点比"),
+    COMPULSORY_REBATE(10,"交强险返点比"),
     ;
     private Integer type;
     private String RebateName;

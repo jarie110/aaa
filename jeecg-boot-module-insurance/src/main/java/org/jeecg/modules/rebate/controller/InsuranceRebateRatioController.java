@@ -1,5 +1,6 @@
 package org.jeecg.modules.rebate.controller;
 
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -11,6 +12,8 @@ import org.jeecg.common.aspect.annotation.AutoLog;
 import org.jeecg.common.system.base.controller.JeecgController;
 import org.jeecg.common.system.query.QueryGenerator;
 import org.jeecg.modules.rebate.entity.InsuranceRebateRatio;
+import org.jeecg.modules.rebate.entity.RebatePojo;
+import org.jeecg.modules.rebate.entity.Region;
 import org.jeecg.modules.rebate.service.IInsuranceRebateRatioService;
 import org.jeecg.pojo.RebatePo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -85,19 +88,18 @@ public class InsuranceRebateRatioController extends JeecgController<InsuranceReb
 	/**
 	 *   添加
 	 *
-	 * @param insuranceRebateRatio
+	 * @param rebatePojo
 	 * @return
 	 */
 	@AutoLog(value = "返点比例-添加")
 	@ApiOperation(value="返点比例-添加", notes="返点比例-添加")
 	@PostMapping(value = "/add")
-	public Result<?> add(@RequestBody InsuranceRebateRatio insuranceRebateRatio) {
-		boolean isExist = insuranceRebateRatioService.isAlreadyExist(insuranceRebateRatio);
-		if(!isExist){
-			insuranceRebateRatioService.save(insuranceRebateRatio);
-			return Result.OK("添加成功！");
-		}
-		return Result.error("已有该类型返点比例");
+	public Result<?> add(@RequestBody RebatePojo rebatePojo) {
+		String thirdPartyInsureds = rebatePojo.getThirdPartyInsureds();
+		List<Region> regions = JSONObject.parseArray(thirdPartyInsureds, Region.class);
+		rebatePojo.setRegions(regions);
+
+		return insuranceRebateRatioService.isAlreadyExist(rebatePojo);
 	}
 
 	/**

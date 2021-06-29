@@ -10,10 +10,19 @@
     </select>
 
     <select id="selectInsuranceRebateRatioByTypeAndUsageTypeAndInsuranceDateAndCarDamageInsuredZeroAndThirdPartyInsured" resultType="org.jeecg.modules.rebate.entity.InsuranceRebateRatio">
-         select * from insurance_rebate_ratio where rebate_ratio_type = #{type} and usage_type = #{usageType} and car_damage_insured = 0 and third_party_insured = #{thirdPartyInsured} and create_time like concat(DATE_FORMAT(#{zbTime},'%Y-%m-%d'),"%")
+         select * from insurance_rebate_ratio where rebate_ratio_type = #{type} and usage_type = #{usageType} and car_damage_insured = 0 and third_party_insured_start = #{thirdPartyInsuredStart}  and third_party_insured_end = #{thirdPartyInsuredEnd} and create_time like concat(DATE_FORMAT(#{zbTime},'%Y-%m-%d'),"%")
     </select>
+
+    <select id="selectInsuranceRebateRatioByTypeAndUsageTypeAndInsuranceDateAndCarDamageInsuredZero" resultType="org.jeecg.modules.rebate.entity.InsuranceRebateRatio">
+         select * from insurance_rebate_ratio where rebate_ratio_type = #{type} and usage_type = #{usageType} and car_damage_insured != 0 and create_time like concat(DATE_FORMAT(#{zbTime},'%Y-%m-%d'),"%")
+    </select>
+    <select id="selectInsuranceRebateRatioByTypeAndUsageTypeAndInsuranceDateAndCarDamageInsuredNotZero" resultType="org.jeecg.modules.rebate.entity.InsuranceRebateRatio">
+         select * from insurance_rebate_ratio where rebate_ratio_type = #{type} and usage_type = #{usageType} and car_damage_insured = 0 and create_time like concat(DATE_FORMAT(#{zbTime},'%Y-%m-%d'),"%")
+    </select>
+
+
     <select id="selectInsuranceRebateRatioByTypeAndUsageTypeAndInsuranceDateAndCarDamageInsuredNotZeroAndThirdPartyInsured" resultType="org.jeecg.modules.rebate.entity.InsuranceRebateRatio">
-         select * from insurance_rebate_ratio where rebate_ratio_type = #{type} and usage_type = #{usageType} and car_damage_insured != 0 and third_party_insured = #{thirdPartyInsured} and create_time like concat(DATE_FORMAT(#{zbTime},'%Y-%m-%d'),"%")
+         select * from insurance_rebate_ratio where rebate_ratio_type = #{type} and usage_type = #{usageType} and car_damage_insured != 0  and third_party_insured_start = #{thirdPartyInsuredStart}  and third_party_insured_end = #{thirdPartyInsuredEnd} and create_time like concat(DATE_FORMAT(#{zbTime},'%Y-%m-%d'),"%")
     </select>
 
 
@@ -26,12 +35,10 @@
     </select>
 
     <select id="selectByUsageTypeAndRebateTypeAndCarDamageInsuredAndThirdPartyInsuredAndDate" resultType="org.jeecg.modules.rebate.entity.InsuranceRebateRatio">
-         select * from insurance_rebate_ratio where usage_type = #{usageType} and rebate_ratio_type = #{rebateRatioType} and third_party_insured = #{thirdPartyInsured} and car_damage_insured=#{carDamageInsured} and create_time like concat(DATE_FORMAT(#{zbTime},'%Y-%m-%d'),"%")
+         select * from insurance_rebate_ratio where usage_type = #{usageType} and rebate_ratio_type = #{rebateRatioType} and third_party_insured_start = #{thirdPartyInsuredStart}  and third_party_insured_end = #{thirdPartyInsuredEnd} and car_damage_insured=#{carDamageInsured} and create_time like concat(DATE_FORMAT(#{zbTime},'%Y-%m-%d'),"%")
     </select>
-    <select id="selectByUsageTypeAndRebateTypeAndDriverLiabilityInsuredAndPassengerLiabilityAndSeatNum" resultType="org.jeecg.modules.rebate.entity.InsuranceRebateRatio">
-         select * from insurance_rebate_ratio where usage_type = #{usageType} and rebate_ratio_type = #{rebateRatioType} and driver_liability_insured = #{driverLiabilityInsured} and passenger_liability=#{passengerLiability} and seat_num = #{seatNum}
-    </select>
-    <select id="selectByUsageTypeAndRebateTypeAndDriverLiabilityInsuredAndPassengerLiabilityAndSeatNumAndInsuranceDate" resultType="org.jeecg.modules.rebate.entity.InsuranceRebateRatio">
-         select * from insurance_rebate_ratio where usage_type = #{usageType} and rebate_ratio_type = #{rebateRatioType} and driver_liability_insured = #{driverLiabilityInsured} and passenger_liability=#{passengerLiability} and seat_num = #{seatNum}  and create_time like concat(DATE_FORMAT(#{zbTime},'%Y-%m-%d'),"%")
+
+    <select id="selectByUsageTypeAndRebateTypeAndInsuranceDate" resultType="org.jeecg.modules.rebate.entity.InsuranceRebateRatio">
+         select * from insurance_rebate_ratio where usage_type = #{usageType} and rebate_ratio_type = #{rebateRatioType} and create_time like concat(DATE_FORMAT(#{zbTime},'%Y-%m-%d'),"%")
     </select>
 </mapper>

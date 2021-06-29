@@ -1,10 +1,13 @@
 package org.jeecg.modules.rebate.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import org.apache.commons.collections.CollectionUtils;
+import org.jeecg.BeanUtils.MyBeanUtil;
+import org.jeecg.common.api.vo.Result;
 import org.jeecg.common.util.DateUtils;
 import org.jeecg.enumUtil.RebateType;
 import org.jeecg.modules.rebate.entity.InsuranceRebateRatio;
+import org.jeecg.modules.rebate.entity.RebatePojo;
+import org.jeecg.modules.rebate.entity.Region;
 import org.jeecg.modules.rebate.mapper.InsuranceRebateRatioMapper;
 import org.jeecg.modules.rebate.service.IInsuranceRebateRatioService;
 import org.jeecg.pojo.RebatePo;
@@ -26,7 +29,6 @@ import java.util.List;
  */
 @Service
 public class InsuranceRebateRatioServiceImpl extends ServiceImpl<InsuranceRebateRatioMapper, InsuranceRebateRatio> implements IInsuranceRebateRatioService {
-//public static  Integer DRIVER_LIABILITY_INSURED = 20000;
    @Resource
     private InsuranceRebateRatioMapper rebateRatioMapper;
 
@@ -53,7 +55,6 @@ public class InsuranceRebateRatioServiceImpl extends ServiceImpl<InsuranceRebate
      */
     @Override
     public boolean insertBatch(List<RebatePo> rebates) {
-//        String sql ="INSERT INTO insurance_rebate_ratio (`create_time`,`rebate_ratio_type`,`insurance_usage`,`third_party_insured`,`car_damage_insured`,`driver_liability_insured`,`passenger_liability`,`rebate_ratio`,`bonus`)VALUES(?,?,?,?,?,?,?,?,?)";
         ArrayList<InsuranceRebateRatio> rebateRatios = new ArrayList<>();
         Date timeStart = null;
         Date timeEnd = null;
@@ -101,13 +102,13 @@ public class InsuranceRebateRatioServiceImpl extends ServiceImpl<InsuranceRebate
                     rebateRatio.setRebateRatio(rebatePo.getRebateRatio());
                     rebateRatio.setUsageType(rebatePo.getUsageType());
                     rebateRatio.setCarDamageInsured("0");
-                    rebateRatio.setThirdPartyInsured(rebatePo.getThirdPartyInsuredZero());
+//                    rebateRatio.setThirdPartyInsured(rebatePo.getThirdPartyInsuredZero());
                 }else if (rebatePo.getRebateType() == 1 && Integer.valueOf(rebatePo.getCarDamageInsuredZero()) != 0){
                     rebateRatio.setRebateRatioType(rebatePo.getRebateType());
                     rebateRatio.setRebateRatio(rebatePo.getRebateRatio());
                     rebateRatio.setUsageType(rebatePo.getUsageType());
                     rebateRatio.setCarDamageInsured(rebatePo.getCarDamageInsured());
-                    rebateRatio.setThirdPartyInsured(rebatePo.getThirdPartyInsured());
+//                    rebateRatio.setThirdPartyInsured(rebatePo.getThirdPartyInsured());
                 }
 //次新车返点数据
                 if(rebatePo.getRebateType() == 2){
@@ -169,82 +170,155 @@ public class InsuranceRebateRatioServiceImpl extends ServiceImpl<InsuranceRebate
     }
 
     @Override
-    public boolean isAlreadyExist(InsuranceRebateRatio insuranceRebateRatio) {
+    public Result<?> isAlreadyExist(RebatePojo rebatePojo) {
         //		根据出单日期、返点类型、使用性质、判断数据库是否存在
-        Date createTime = insuranceRebateRatio.getCreateTime();
-        Integer rebateType = insuranceRebateRatio.getRebateRatioType();
-
-        String carDamageInsured = insuranceRebateRatio.getCarDamageInsured();//车损险
-        String thirdPartyInsured = insuranceRebateRatio.getThirdPartyInsured();//三者险
-        String driverLiabilityInsured = insuranceRebateRatio.getDriverLiabilityInsured();//司机责任保额
-        String passengerLiability = insuranceRebateRatio.getPassengerLiability();
-        String usageType = insuranceRebateRatio.getUsageType();
-
-//        BigDecimal rebateRatio = insuranceRebateRatio.getRebateRatio();//返点比
-        //		商业基础险判断
+        Date createTime = rebatePojo.getCreateTime();
+        Integer rebateType = rebatePojo.getRebateRatioType();
+        ArrayList<InsuranceRebateRatio> rebateRatioList = new ArrayList<>();
+        String carDamageInsured = rebatePojo.getCarDamageInsured();//车损险
+        List<Region> thirdPartyInsureds = rebatePojo.getRegions();//三者险
+        String usageTypes = rebatePojo.getUsageType();
+        String[] usages = usageTypes.split(",");
+        for (String usage : usages) {
+            //		商业基础险判断
 //1.根据返点类型和使用性质判断
-        if(usageType != null && rebateType == RebateType.COMMERCIAL_BASIC_REBATE.getType()){
-            InsuranceRebateRatio rebateRatioFromSql = checkRebateIsExists(createTime, rebateType, usageType);
-            if (rebateRatioFromSql != null) return true;
-        }
-//       三者险判断
-        if(rebateType == RebateType.THIRD_PARTY_REBATE.getType() && !carDamageInsured.equals("-") && Integer.parseInt(carDamageInsured) != 0){
-            InsuranceRebateRatio rebateRatioFromSql = rebateRatioMapper.selectInsuranceRebateRatioByTypeAndUsageTypeAndInsuranceDateAndCarDamageInsuredNotZeroAndThirdPartyInsured(rebateType,usageType,thirdPartyInsured,createTime);
-            if(rebateRatioFromSql != null){
-                return true;
+            if(usage != null && rebateType == RebateType.COMMERCIAL_BASIC_REBATE.getType()){
+                InsuranceRebateRatio rebateRatioFromSql = checkRebateIsExists(createTime, rebateType, usage);
+                if (rebateRatioFromSql == null) {//数据库中没有数据
+                    InsuranceRebateRatio rebateRatio = new InsuranceRebateRatio();
+                    MyBeanUtil.copyPropertiesIgnoreNull(rebatePojo,rebateRatio);
+                    rebateRatio.setUsageType(usage);
+                    rebateRatioList.add(rebateRatio);
+                }
             }
-        }
-        if(rebateType == RebateType.THIRD_PARTY_REBATE.getType() && !carDamageInsured.equals("-") && Integer.parseInt(carDamageInsured) == 0){
-            InsuranceRebateRatio rebateRatioFromSql = rebateRatioMapper.selectInsuranceRebateRatioByTypeAndUsageTypeAndInsuranceDateAndCarDamageInsuredZeroAndThirdPartyInsured(rebateType,usageType,thirdPartyInsured,createTime);
-            if(rebateRatioFromSql != null){
-                return true;
+
+//       三者险判断
+//            1.车损险是否为0
+
+//                遍历三者险的区间集合
+        for (Region region : thirdPartyInsureds) {
+             if(rebateType == RebateType.THIRD_PARTY_REBATE.getType() && !carDamageInsured.equals("-") && Integer.parseInt(carDamageInsured) != 0){
+                InsuranceRebateRatio rebateRatioFromSql = rebateRatioMapper.selectInsuranceRebateRatioByTypeAndUsageTypeAndInsuranceDateAndCarDamageInsuredNotZeroAndThirdPartyInsured(rebateType,usage,region.getThirdPartyInsuredStart(),region.getThirdPartyInsuredEnd(),createTime);
+                if (rebateRatioFromSql == null) {//数据库中没有数据
+                    InsuranceRebateRatio rebateRatio = new InsuranceRebateRatio();
+                    MyBeanUtil.copyPropertiesIgnoreNull(rebatePojo,rebateRatio);
+                    rebateRatio.setRebateRatio(new BigDecimal(region.getRebateRatioThird()));//获取返点比例
+                    rebateRatio.setThirdPartyInsuredStart(region.getThirdPartyInsuredStart());
+                    rebateRatio.setThirdPartyInsuredEnd(region.getThirdPartyInsuredEnd());
+                    rebateRatio.setUsageType(usage);
+                    rebateRatioList.add(rebateRatio);
+                }
+             }
+
+            if(rebateType == RebateType.THIRD_PARTY_REBATE.getType() && !carDamageInsured.equals("-") && Integer.parseInt(carDamageInsured) == 0){
+                InsuranceRebateRatio rebateRatioFromSql = rebateRatioMapper.selectInsuranceRebateRatioByTypeAndUsageTypeAndInsuranceDateAndCarDamageInsuredZeroAndThirdPartyInsured(rebateType,usage,region.getThirdPartyInsuredStart(),region.getThirdPartyInsuredEnd(),createTime);
+                if (rebateRatioFromSql == null) {//数据库中没有数据
+                    InsuranceRebateRatio rebateRatio = new InsuranceRebateRatio();
+                    MyBeanUtil.copyPropertiesIgnoreNull(rebatePojo,rebateRatio);
+                    rebateRatio.setRebateRatio(new BigDecimal(region.getRebateRatioThird()));//获取返点比例
+                    rebateRatio.setThirdPartyInsuredStart(region.getThirdPartyInsuredStart());
+                    rebateRatio.setThirdPartyInsuredEnd(region.getThirdPartyInsuredEnd());
+                    rebateRatio.setUsageType(usage);
+                    rebateRatioList.add(rebateRatio);
+                }
             }
         }
 //座位保判断
         if(rebateType == RebateType.SEAT_INSURANCE.getType()){
-            Integer seatNum = insuranceRebateRatio.getSeatNum();
-            InsuranceRebateRatio rebateRatioFromSql = rebateRatioMapper.selectByUsageTypeAndRebateTypeAndDriverLiabilityInsuredAndPassengerLiabilityAndSeatNumAndInsuranceDate(usageType,rebateType,driverLiabilityInsured,passengerLiability,seatNum,createTime);
-            if(rebateRatioFromSql != null){
-                return true;
+                InsuranceRebateRatio rebateRatioFromSql = rebateRatioMapper.selectByUsageTypeAndRebateTypeAndInsuranceDate(usage,rebateType,createTime);
+                if (rebateRatioFromSql == null) {//数据库中没有数据
+                    InsuranceRebateRatio rebateRatio = new InsuranceRebateRatio();
+                    MyBeanUtil.copyPropertiesIgnoreNull(rebatePojo,rebateRatio);
+                    rebateRatio.setUsageType(usage);
+                    rebateRatioList.add(rebateRatio);
+                }
             }
+
         }
-//        其他但返点类型判断
+
+//        其他返点类型判断
 //        竞回返点
+        List<InsuranceRebateRatio> rebateRatioFromSqls = null;
         if(rebateType == RebateType.COMPETITION_REBATE.getType()){
-            if (checkRebateIsExits(createTime, rebateType)) return true;
+            rebateRatioFromSqls = checkRebateIsExits(createTime, rebateType);
+            if (rebateRatioFromSqls.get(0) == null) {//数据库中没有数据
+                InsuranceRebateRatio rebateRatio = new InsuranceRebateRatio();
+                MyBeanUtil.copyPropertiesIgnoreNull(rebatePojo,rebateRatio);
+                rebateRatioList.add(rebateRatio);
+            }
         }
 //跟单零
         if(rebateType == RebateType.FOLLOW_UP_REBATE.getType()){
-            if (checkRebateIsExits(createTime, rebateType)) return true;
+            rebateRatioFromSqls = checkRebateIsExits(createTime, rebateType);
+            if (rebateRatioFromSqls.get(0) == null) {//数据库中没有数据
+                InsuranceRebateRatio rebateRatio = new InsuranceRebateRatio();
+                MyBeanUtil.copyPropertiesIgnoreNull(rebatePojo,rebateRatio);
+                rebateRatioList.add(rebateRatio);
+            }
         }
 //过户
         if(rebateType == RebateType.IS_TRANSFER_REBATE.getType()){
-            if (checkRebateIsExits(createTime, rebateType)) return true;
+            rebateRatioFromSqls = checkRebateIsExits(createTime, rebateType);
+            if (rebateRatioFromSqls.get(0) == null) {//数据库中没有数据
+                InsuranceRebateRatio rebateRatio = new InsuranceRebateRatio();
+                MyBeanUtil.copyPropertiesIgnoreNull(rebatePojo,rebateRatio);
+                rebateRatioList.add(rebateRatio);
+            }
         }
 //        交叉
         if(rebateType == RebateType.OVERLAPPING_REBATE.getType()){
-            if (checkRebateIsExits(createTime, rebateType)) return true;
+            rebateRatioFromSqls = checkRebateIsExits(createTime, rebateType);
+            if (rebateRatioFromSqls.get(0) == null) {//数据库中没有数据
+                InsuranceRebateRatio rebateRatio = new InsuranceRebateRatio();
+                MyBeanUtil.copyPropertiesIgnoreNull(rebatePojo,rebateRatio);
+                rebateRatioList.add(rebateRatio);
+            }
         }
 
         //        新车
         if(rebateType == RebateType.NEW_CAR_REBATE.getType()){
-            if (checkRebateIsExits(createTime, rebateType)) return true;
+            rebateRatioFromSqls = checkRebateIsExits(createTime, rebateType);
+            if (rebateRatioFromSqls.get(0) == null) {//数据库中没有数据
+                InsuranceRebateRatio rebateRatio = new InsuranceRebateRatio();
+                MyBeanUtil.copyPropertiesIgnoreNull(rebatePojo,rebateRatio);
+                rebateRatioList.add(rebateRatio);
+            }
         }
 
         //        次新车
         if(rebateType == RebateType.LAST_YEAR_CAR_REBATE.getType()){
-            if (checkRebateIsExits(createTime, rebateType)) return true;
+            rebateRatioFromSqls = checkRebateIsExits(createTime, rebateType);
+            if (rebateRatioFromSqls.get(0) == null) {//数据库中没有数据
+                InsuranceRebateRatio rebateRatio = new InsuranceRebateRatio();
+                MyBeanUtil.copyPropertiesIgnoreNull(rebatePojo,rebateRatio);
+                rebateRatioList.add(rebateRatio);
+            }
         }
 
         //        其他
         if(rebateType == RebateType.CHANGE_INTO_INSURANCE.getType()){
-            if (checkRebateIsExits(createTime, rebateType)) return true;
+            rebateRatioFromSqls = checkRebateIsExits(createTime, rebateType);
+            if (rebateRatioFromSqls.get(0) == null) {//数据库中没有数据
+                InsuranceRebateRatio rebateRatio = new InsuranceRebateRatio();
+                MyBeanUtil.copyPropertiesIgnoreNull(rebatePojo,rebateRatio);
+                rebateRatioList.add(rebateRatio);
+            }
         }
-//     支公司续保返点比
-        if(rebateType == RebateType.BATCH_REBATE.getType()){
-            if (checkRebateIsExits(createTime, rebateType)) return true;
+//     交强险保返点比
+        if(rebateType == RebateType.COMPULSORY_REBATE.getType()){
+            rebateRatioFromSqls = checkRebateIsExits(createTime, rebateType);
+            if (rebateRatioFromSqls.get(0) == null) {//数据库中没有数据
+                InsuranceRebateRatio rebateRatio = new InsuranceRebateRatio();
+                MyBeanUtil.copyPropertiesIgnoreNull(rebatePojo,rebateRatio);
+                rebateRatioList.add(rebateRatio);
+            }
         }
-        return false;
+        boolean saveBatch = this.saveBatch(rebateRatioList);
+        if(saveBatch){
+            return Result.OK("保存成功");
+        }
+        return  Result.error("已存在该返点比例");
+
     }
 
 //    修改数据时三者险和座位保的数据相同时应该区别
@@ -253,26 +327,26 @@ public class InsuranceRebateRatioServiceImpl extends ServiceImpl<InsuranceRebate
         String usageType = insuranceRebateRatio.getUsageType();
         String id = insuranceRebateRatio.getId();
         Integer rebateRatioType = insuranceRebateRatio.getRebateRatioType();
-        Integer seatNum = insuranceRebateRatio.getSeatNum();
+//        Integer seatNum = insuranceRebateRatio.getSeatNum();
         Date createTime = insuranceRebateRatio.getCreateTime();
 
+//商业基础险
         if(rebateRatioType == RebateType.COMMERCIAL_BASIC_REBATE.getType()){
-            InsuranceRebateRatio insuranceRebate = rebateRatioMapper.selectByUsageTypeAndRebateType(usageType,rebateRatioType);
-            if(insuranceRebate !=null && !insuranceRebate.getId().equals(id)){
+            InsuranceRebateRatio insuranceRebate = rebateRatioMapper.selectByUsageTypeAndRebateTypeAndInsuranceDate(usageType,rebateRatioType,createTime);
+            if(insuranceRebate !=null && !insuranceRebate.getId().equals(id)){//查到的数据不是本条数据
                 return true;
             }
         }
 
         String carDamageInsured = insuranceRebateRatio.getCarDamageInsured();//车损险
-        String thirdPartyInsured = insuranceRebateRatio.getThirdPartyInsured();//三者险
-        String driverLiabilityInsured = insuranceRebateRatio.getDriverLiabilityInsured();//司机责任保额
-        String passengerLiability = insuranceRebateRatio.getPassengerLiability();
+        String thirdPartyInsuredStart = insuranceRebateRatio.getThirdPartyInsuredStart();//三者险起始值
+        String thirdPartyInsuredEnd = insuranceRebateRatio.getThirdPartyInsuredEnd();//三者险起始值
 
 
 //          三者险返点比判断
         if(rebateRatioType == RebateType.THIRD_PARTY_REBATE.getType()){
 //            根据使用性质、返点比、三者险保额、车损险保额查询
-            InsuranceRebateRatio insuranceRebate = rebateRatioMapper.selectByUsageTypeAndRebateTypeAndCarDamageInsuredAndThirdPartyInsuredAndDate(usageType,rebateRatioType,carDamageInsured,thirdPartyInsured,createTime);
+            InsuranceRebateRatio insuranceRebate = rebateRatioMapper.selectByUsageTypeAndRebateTypeAndCarDamageInsuredAndThirdPartyInsuredAndDate(usageType,rebateRatioType,carDamageInsured,thirdPartyInsuredStart,thirdPartyInsuredEnd,createTime);
             if(insuranceRebate !=null && !insuranceRebate.getId().equals(id)){
                 return true;
             }
@@ -280,7 +354,7 @@ public class InsuranceRebateRatioServiceImpl extends ServiceImpl<InsuranceRebate
 //          座位保
         if(rebateRatioType == RebateType.SEAT_INSURANCE.getType()){
 //             根据使用性质、返点比、乘客保额、司机保额查询
-            InsuranceRebateRatio insuranceRebate = rebateRatioMapper.selectByUsageTypeAndRebateTypeAndDriverLiabilityInsuredAndPassengerLiabilityAndSeatNumAndInsuranceDate(usageType,rebateRatioType,driverLiabilityInsured,passengerLiability,seatNum,createTime);
+            InsuranceRebateRatio insuranceRebate = rebateRatioMapper.selectByUsageTypeAndRebateTypeAndInsuranceDate(usageType,rebateRatioType,createTime);
             if(insuranceRebate != null && !insuranceRebate.getId().equals(id)){
                 return true;
             }
@@ -288,17 +362,23 @@ public class InsuranceRebateRatioServiceImpl extends ServiceImpl<InsuranceRebate
         return false;
     }
 
-    private boolean checkRebateIsExits(Date createTime, Integer rebateType) {
+    @Override
+    public List<InsuranceRebateRatio> getInsuranceRebateRatioByTypeAndCarDamageInsuredIsZeroInsuranceDate(Integer type, String usageType,Date zbTime) {
+        return rebateRatioMapper.selectInsuranceRebateRatioByTypeAndUsageTypeAndInsuranceDateAndCarDamageInsuredZero(type,usageType,zbTime);
+    }
+
+    @Override
+    public List<InsuranceRebateRatio> getInsuranceRebateRatioByTypeAndCarDamageInsuredIsNotZeroInsuranceDate(Integer type, String usageType, Date zbTime) {
+        return rebateRatioMapper.selectInsuranceRebateRatioByTypeAndUsageTypeAndInsuranceDateAndCarDamageInsuredNotZero(type,usageType,zbTime);
+    }
+
+    private List<InsuranceRebateRatio> checkRebateIsExits(Date createTime, Integer rebateType) {
         List<InsuranceRebateRatio> rebateRatioFromSqls = rebateRatioMapper.selectInsuranceRebateRatioByTypeAndInsuranceDate(rebateType, createTime);
-        if (CollectionUtils.isNotEmpty(rebateRatioFromSqls)) {
-            return true;
-        }
-        return false;
+        return rebateRatioFromSqls;
     }
 
     private InsuranceRebateRatio checkRebateIsExists(Date createTime, Integer rebateType, String usageType) {
         return rebateRatioMapper.selectInsuranceRebateRatioByTypeAndUsageTypeAndInsuranceDate(rebateType,usageType,createTime);
-
     }
 }
 

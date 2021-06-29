@@ -5,7 +5,6 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.apache.commons.collections.CollectionUtils;
 import org.jeecg.BeanUtils.MyBeanUtil;
 import org.jeecg.common.api.vo.Result;
-import org.jeecg.common.util.DateUtils;
 import org.jeecg.enumUtil.IsTransfer;
 import org.jeecg.modules.checked.entity.CheckInsurance;
 import org.jeecg.modules.checked.mapper.CheckInsuranceMapper;
@@ -79,7 +78,7 @@ public class CheckInsuranceServiceImpl extends ServiceImpl<CheckInsuranceMapper,
         String compulsoryInsurCode = insuranceInHand.getCompulsoryInsurCode();//交强险保单号
         String commercialInsurCode = insuranceInHand.getCommercialInsurCode();//商业险保单号
         Date insuranceDate = insuranceInHand.getInsuranceDate();//出单日期
-        String billMan = insuranceInHand.getBillMan();//出单员
+//        String billMan = insuranceInHand.getBillMan();//出单员
         Double vesselTax = insuranceInHand.getVehicleVesselTax();//车船税
         Double compulsoryServiceHarge = 0.0;//交强险手续费
         Double commercialServiceHarge = 0.0;//商业险手续费
@@ -104,7 +103,6 @@ public class CheckInsuranceServiceImpl extends ServiceImpl<CheckInsuranceMapper,
                 for (CompanyInsurance companyInsurance : companyInsuranceList) {
                     if (companyInsurance.getInsuranceNum().equals(compulsoryInsurCode)) {//如果是交强险保单
 //                        封装数据，从保司保单中获取数据
-                        /* if (insuranceDate.equals(companyInsurance.getZbTime()) && billMan.equals(companyInsurance.getSalesMan())) {*/
                             //交强险保单号
                             checkInsurance.setCompulsoryInsurCode(companyInsurance.getInsuranceNum());
 //                            交强险保费
@@ -112,75 +110,31 @@ public class CheckInsuranceServiceImpl extends ServiceImpl<CheckInsuranceMapper,
                             checkInsurance.setCompulsoryInsurFee(new BigDecimal(insureCompulsoryFeeIncludeTax));
 //                            交强险签单手续费
                             compulsoryServiceHarge = companyInsurance.getSignServiceHarge();
-//                        }
+                            //                            如果只有交强险
+                        if(companyInsuranceList.size() == 1){
+                            insuranceInHand.setCompulsoryInsurCode(companyInsurance.getInsuranceNum());//交强险保单号
+                            insuranceInHand.setCompulsoryInsurFee(companyInsurance.getInsureFeeIncludeTax());//交强险保费
+                            //                      封装数据
+                            createCheckedInsurance(insuranceInHand, checkInsurance, vesselTax, companyInsurance);
+                        }
                         res = true;
                     }
 //                    2.核对商业险保单号
                     if (companyInsurance.getInsuranceNum().equals(commercialInsurCode)) {//如果是商业险保单
 //                        封装数据，从保司保单中获取数据
-                        if (DateUtils.formatDate(insuranceDate, "yyyy-MM-dd").equals(DateUtils.formatDate(companyInsurance.getZbTime(), "yyyy-MM-dd")) && billMan.equals(companyInsurance.getSalesMan())) {
+//                        if (DateUtils.formatDate(insuranceDate, "yyyy-MM-dd").equals(DateUtils.formatDate(companyInsurance.getZbTime(), "yyyy-MM-dd")) && billMan.equals(companyInsurance.getSalesMan())) {
                             //商业险保单号
                             checkInsurance.setCommercialInsurCode(companyInsurance.getInsuranceNum());
 //                            商业险保费
                             insureCommercialFeeIncludeTax = companyInsurance.getInsureFeeIncludeTax();
+
+//                        商业险保费
+                        checkInsurance.setCommercialInsurFee(new BigDecimal(insureCommercialFeeIncludeTax));
 //                          商业签单手续费
                             commercialServiceHarge = companyInsurance.getSignServiceHarge();
 //                     封装数据checkInsurance
-//                        出单日期
-                            checkInsurance.setInsuranceDate(companyInsurance.getZbDate());
-//                           出单员
-                            checkInsurance.setBillMan(companyInsurance.getSalesMan());
-//                           业务员
-                            checkInsurance.setSalesman(insuranceInHand.getSalesman());
-////                           团队
-//                            String teamName = teamService.getTeamNameByCode(insuranceInHand.getInsuranceTeam());
-//                            checkInsurance.setInsuranceTeam(teamName);
-//                           车牌号
-                            checkInsurance.setVehicleLicense(companyInsurance.getVehicleLicense());
-//                           客户名称
-                            checkInsurance.setCustomerName(companyInsurance.getCarOwner());
-//                           车架号
-                            checkInsurance.setVehicleIdentity(companyInsurance.getVehicleIdentity());
-//                           车船税
-                            checkInsurance.setVehicleVesselTax(vesselTax);
-//                           商业险保费
-                            checkInsurance.setCommercialInsurFee(new BigDecimal(insureCommercialFeeIncludeTax));
-//                           渠道名称
-                            checkInsurance.setDistributionChannelId(companyInsurance.getDistributionChannelName());
-//                           起保日期
-                            checkInsurance.setInsureStartDate(companyInsurance.getInsureStartDate());
-//                           初登日期
-                            checkInsurance.setRegisterDate(companyInsurance.getRegisterDate());
-//                           新续保标志
-                            checkInsurance.setRenewalType(companyInsurance.getRenewalType());
-//                           使用性质
-                            checkInsurance.setCarUsageType(companyInsurance.getCarUsageType());
-//                           车辆种类
-                            checkInsurance.setVehiclesType(companyInsurance.getVehiclesType());
-//                           是否录入过户标志
-                            if (Integer.valueOf(companyInsurance.getIsTransfer()) == IsTransfer.TRANSFER.getType()) {
-                                checkInsurance.setIsTransfer(IsTransfer.TRANSFER.getText());
-                            } else {
-                                checkInsurance.setIsTransfer(IsTransfer.NO_TRANSFER.getText());
-                            }
-//                           三责保额
-                            checkInsurance.setThirdPartyInsured(companyInsurance.getThirdPartyInsured());
-//                           车损险保额
-                            checkInsurance.setCarDamageInsured(companyInsurance.getCarDamageInsured());
-//                           承保险别名称
-                            checkInsurance.setInsuranceAlias(companyInsurance.getInsuranceAlias());
-//                           座位
-                            checkInsurance.setSeatsNum(companyInsurance.getSeatsNum());
-//                           司机责任险保额
-                            checkInsurance.setDriverLiabilityInsure(companyInsurance.getDriverLiabilityInsure());
-//                           乘客责任险保额
-                            checkInsurance.setPassengerLiability(companyInsurance.getPassengerLiability());
-//                           备注
-                            checkInsurance.setRemarks(insuranceInHand.getRemark());
-//                            起保日期
-                            insuranceInHand.setInsureStartDate(companyInsurance.getInsureStartDate());
-////                            是否返点
-//                            checkInsurance.setIsRebate(insuranceInHand.getIsPayCommission());
+                        createCheckedInsurance(insuranceInHand, checkInsurance, vesselTax, companyInsurance);
+                        insuranceInHand.setCommercialInsurCode(companyInsurance.getInsuranceNum());//商业险保单号
                             res = true;
                         }
 
@@ -234,14 +188,83 @@ public class CheckInsuranceServiceImpl extends ServiceImpl<CheckInsuranceMapper,
                     }
                 }
             }
+//        }
+        return Result.error(400, "请检查保单号、车架号是否正确或保司保单是否已录入");
+    }
+
+    /**
+     * 封装比对后的数据
+     * @param insuranceInHand
+     * @param checkInsurance
+     * @param vesselTax
+     * @param companyInsurance
+     */
+    private void createCheckedInsurance(InsuranceInHand insuranceInHand, CheckInsurance checkInsurance, Double vesselTax, CompanyInsurance companyInsurance) {
+//        出单日期
+        checkInsurance.setInsuranceDate(companyInsurance.getZbDate());
+//                           出单员
+        checkInsurance.setBillMan(companyInsurance.getSalesMan());
+//                           业务员
+        checkInsurance.setSalesman(insuranceInHand.getSalesman());
+//                           车牌号
+        checkInsurance.setVehicleLicense(companyInsurance.getVehicleLicense());
+//                           客户名称
+        checkInsurance.setCustomerName(companyInsurance.getCarOwner());
+//                           车架号
+        checkInsurance.setVehicleIdentity(companyInsurance.getVehicleIdentity());
+//                           车船税
+        checkInsurance.setVehicleVesselTax(vesselTax);
+//
+//                           渠道名称
+        checkInsurance.setDistributionChannelId(companyInsurance.getDistributionChannelName());
+//                           起保日期
+        checkInsurance.setInsureStartDate(companyInsurance.getInsureStartDate());
+//                           初登日期
+        checkInsurance.setRegisterDate(companyInsurance.getRegisterDate());
+//                           新续保标志
+        checkInsurance.setRenewalType(companyInsurance.getRenewalType());
+        //                           承保险别名称
+        checkInsurance.setInsuranceAlias(companyInsurance.getInsuranceAlias());
+        //                           座位
+        checkInsurance.setSeatsNum(companyInsurance.getSeatsNum());
+        //                           备注
+        checkInsurance.setRemarks(insuranceInHand.getRemark());
+
+//                           使用性质
+        checkInsurance.setCarUsageType(companyInsurance.getCarUsageType());
+//                           车辆种类
+        checkInsurance.setVehiclesType(companyInsurance.getVehiclesType());
+//                           是否录入过户标志
+        if (Integer.valueOf(companyInsurance.getIsTransfer()) == IsTransfer.TRANSFER.getType()) {
+            checkInsurance.setIsTransfer(IsTransfer.TRANSFER.getText());
+        } else {
+            checkInsurance.setIsTransfer(IsTransfer.NO_TRANSFER.getText());
         }
-        return Result.error(400, "请检查出单日期、出单员、保单号是否正确或保司保单是否已录入");
+//                      覆盖录入保单信息
+//                      起保日期
+//        insuranceInHand.setInsureStartDate(companyInsurance.getInsureStartDate());
+            insuranceInHand.setInsuranceDate(companyInsurance.getZbTime());
+
+        insuranceInHand.setVehicleLicense(companyInsurance.getVehicleLicense());
+        insuranceInHand.setCustomer(companyInsurance.getCarOwner());
+        insuranceInHand.setVehicleIdentity(companyInsurance.getVehicleIdentity());
+        insuranceInHand.setDistributionChannelId(companyInsurance.getDistributionChannelName());
+
+
+        //                           三责保额
+        checkInsurance.setThirdPartyInsured(companyInsurance.getThirdPartyInsured());
+//                           车损险保额
+        checkInsurance.setCarDamageInsured(companyInsurance.getCarDamageInsured());
+//                           司机责任险保额
+        checkInsurance.setDriverLiabilityInsure(companyInsurance.getDriverLiabilityInsure());
+//                           乘客责任险保额
+        checkInsurance.setPassengerLiability(companyInsurance.getPassengerLiability());
     }
 
     @Override
-    public CheckInsurance selectByCommercialInsurCode(String commercialInsurCode) {
+    public CheckInsurance selectByVehicleIdentity(String vehicleIdentity) {
         QueryWrapper<CheckInsurance> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("commercial_insur_code", commercialInsurCode);
+        queryWrapper.eq("vehicle_identity", vehicleIdentity);
         return checkInsuranceMapper.selectOne(queryWrapper);
     }
 

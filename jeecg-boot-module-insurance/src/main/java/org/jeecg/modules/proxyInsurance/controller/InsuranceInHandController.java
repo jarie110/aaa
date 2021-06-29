@@ -20,7 +20,6 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 
@@ -92,8 +91,8 @@ public class InsuranceInHandController extends JeecgController<InsuranceInHand, 
 	 @ApiOperation(value="录入保单-保费总金额", notes="录入保单-保费总金额")
 	 @GetMapping(value = "/totalInsuranceFee")
 	 public Result<?> totalInsuranceFee(String uid){
-		 BigDecimal totalInsuranceFee = insuranceInHandService.totalInsuranceFee(uid);
-		 return Result.OK(totalInsuranceFee.toString());
+		 String totalInsuranceFee = insuranceInHandService.totalInsuranceFee(uid);
+		 return Result.OK(totalInsuranceFee);
 	 }
 
 	 /**
@@ -104,8 +103,8 @@ public class InsuranceInHandController extends JeecgController<InsuranceInHand, 
 	 @ApiOperation(value="录入保单-已返点总金额", notes="录入保单-已返点总金额")
 	 @GetMapping(value = "/totalInsurancePaidFee")
 	 public Result<?> totalInsurancePaidFee(String uid){
-		 BigDecimal insurancePaidFee = insuranceInHandService.totalInsurancePaidFee(uid);
-		 return Result.OK(insurancePaidFee.toString());
+		 String insurancePaidFee = insuranceInHandService.totalInsurancePaidFee(uid);
+		 return Result.OK(insurancePaidFee);
 	 }
 
 	 /**
