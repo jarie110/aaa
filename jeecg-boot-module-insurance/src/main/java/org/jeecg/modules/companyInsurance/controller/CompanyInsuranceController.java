@@ -1,25 +1,24 @@
 package org.jeecg.modules.companyInsurance.controller;
 
-import java.util.Arrays;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import org.jeecg.common.api.vo.Result;
-import org.jeecg.common.system.query.QueryGenerator;
-import org.jeecg.modules.companyInsurance.service.ICompanyInsuranceService;
-import org.jeecg.modules.companyInsurance.entity.CompanyInsurance;
-
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
-
+import org.jeecg.common.api.vo.Result;
+import org.jeecg.common.aspect.annotation.AutoLog;
 import org.jeecg.common.system.base.controller.JeecgController;
+import org.jeecg.common.system.query.QueryGenerator;
+import org.jeecg.modules.companyInsurance.entity.CompanyInsurance;
+import org.jeecg.modules.companyInsurance.service.ICompanyInsuranceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import org.jeecg.common.aspect.annotation.AutoLog;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.Arrays;
 
  /**
  * @Description: 保险公司保单
@@ -149,8 +148,8 @@ public class CompanyInsuranceController extends JeecgController<CompanyInsurance
     * @return
     */
     @RequestMapping(value = "/importExcel", method = RequestMethod.POST)
-    public Result<?> importExcel(HttpServletRequest request, HttpServletResponse response) {
-        return super.importExcel(request, response, CompanyInsurance.class);
+    public Result<?> importExcel(HttpServletRequest request, HttpServletResponse response,@RequestParam("code") int type) {
+        return super.importInsuranceExcel(request, response, CompanyInsurance.class,type);
     }
 
 }

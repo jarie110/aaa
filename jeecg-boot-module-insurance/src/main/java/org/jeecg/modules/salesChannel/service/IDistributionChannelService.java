@@ -12,4 +12,5 @@ import org.jeecg.modules.salesChannel.entity.DistributionChannel;
  */
 public interface IDistributionChannelService extends IService<DistributionChannel> {
 
+    boolean isExist(DistributionChannel distributionChannel);
 }

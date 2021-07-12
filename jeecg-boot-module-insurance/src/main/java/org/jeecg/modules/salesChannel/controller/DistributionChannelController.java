@@ -81,6 +81,10 @@ public class DistributionChannelController extends JeecgController<DistributionC
 	@ApiOperation(value="渠道表-添加", notes="渠道表-添加")
 	@PostMapping(value = "/add")
 	public Result<?> add(@RequestBody DistributionChannel distributionChannel) {
+		boolean isExist =distributionChannelService.isExist(distributionChannel);
+		if(isExist){
+			return Result.error("已存在该渠道类型");
+		}
 		distributionChannelService.save(distributionChannel);
 		return Result.OK("添加成功！");
 	}
@@ -95,6 +99,10 @@ public class DistributionChannelController extends JeecgController<DistributionC
 	@ApiOperation(value="渠道表-编辑", notes="渠道表-编辑")
 	@PutMapping(value = "/edit")
 	public Result<?> edit(@RequestBody DistributionChannel distributionChannel) {
+		boolean isExist =distributionChannelService.isExist(distributionChannel);
+		if(isExist){
+			return Result.error("已存在该渠道类型");
+		}
 		distributionChannelService.updateById(distributionChannel);
 		return Result.OK("编辑成功!");
 	}

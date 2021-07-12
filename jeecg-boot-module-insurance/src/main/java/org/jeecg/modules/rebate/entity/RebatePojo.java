@@ -42,4 +42,6 @@ public class RebatePojo implements Serializable {
     private BigDecimal signFee;
 
     private List<Region> regions;
+
+    private String uid;
 }

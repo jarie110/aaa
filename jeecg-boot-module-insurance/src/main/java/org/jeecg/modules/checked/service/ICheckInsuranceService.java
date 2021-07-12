@@ -2,7 +2,6 @@ package org.jeecg.modules.checked.service;
 
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import org.jeecg.common.api.vo.Result;
 import org.jeecg.modules.checked.entity.CheckInsurance;
 import org.jeecg.modules.proxyInsurance.entity.InsuranceInHand;
 
@@ -16,10 +15,14 @@ import java.util.List;
  */
 public interface ICheckInsuranceService extends IService<CheckInsurance> {
 
-    Result<?> checkAndSaveInsuracne(InsuranceInHand insuranceInHand);
+   boolean checkAndSaveInsuracne(InsuranceInHand insuranceInHand);
 
     CheckInsurance selectByVehicleIdentity(String VehicleIdentity);
     List<CheckInsurance> sortByInsuranceDay();
 
     List<CheckInsurance> sortByInputTime();
+
+    boolean changeInsuranceInHand(String id);
+
+    List<String> changeInsuranceInHandBatch(List<String> idList);
 }

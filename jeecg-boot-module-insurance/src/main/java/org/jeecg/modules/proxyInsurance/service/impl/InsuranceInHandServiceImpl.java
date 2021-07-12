@@ -9,10 +9,10 @@ import org.jeecg.common.util.DateUtils;
 import org.jeecg.enumUtil.IsTransfer;
 import org.jeecg.enumUtil.RebateType;
 import org.jeecg.enumUtil.RenewalTypeEnum;
-import org.jeecg.modules.companyInsurance.service.ICompanyInsuranceService;
 import org.jeecg.modules.checked.entity.CheckInsurance;
 import org.jeecg.modules.checked.service.ICheckInsuranceService;
 import org.jeecg.modules.companyInsurance.entity.CompanyInsurance;
+import org.jeecg.modules.companyInsurance.service.ICompanyInsuranceService;
 import org.jeecg.modules.proxyInsurance.entity.InsuranceInHand;
 import org.jeecg.modules.proxyInsurance.entity.RenewalPo;
 import org.jeecg.modules.proxyInsurance.mapper.InsuranceInHandMapper;
@@ -28,7 +28,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.text.ParseException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
 import java.util.stream.Collectors;
 
 /**
@@ -38,7 +41,7 @@ import java.util.stream.Collectors;
  * @Version: V1.0
  */
 @Service
-public class InsuranceInHandServiceImpl extends ServiceImpl<InsuranceInHandMapper, InsuranceInHand> implements IInsuranceInHandService {
+public class InsuranceInHandServiceImpl extends ServiceImpl<InsuranceInHandMapper, InsuranceInHand> implements IInsuranceInHandService/*, InsuranceHandler*/ {
     @Autowired
     private IInsuranceUsageService usageService;
 
@@ -56,6 +59,9 @@ public class InsuranceInHandServiceImpl extends ServiceImpl<InsuranceInHandMappe
 
     @Value("${coefficient:1.06}")
     private BigDecimal coefficient;
+
+    public static final  Integer WAN = 10000;
+
     /**
      * 计算总返点比例
      *
@@ -70,6 +76,8 @@ public class InsuranceInHandServiceImpl extends ServiceImpl<InsuranceInHandMappe
             BigDecimal rebateAll = new BigDecimal("0.00");
             //                根据车架号查询checkInsurance
             CheckInsurance checkInsurance = checkInsuranceService.selectByVehicleIdentity(insuranceInHand.getVehicleIdentity());
+//          获取业务员id
+            String uid = insuranceInHand.getUid();
             CompanyInsurance companyInsurance = null;
 //        比对成功，计算
             String compulsoryInsurCode = checkInsurance.getCompulsoryInsurCode();//交强险保单号
@@ -80,13 +88,13 @@ public class InsuranceInHandServiceImpl extends ServiceImpl<InsuranceInHandMappe
                 Date zbTime = companyInsurance.getZbTime();
 //            String startDate = DateUtils.formatDate(zbTime)+ "00:00:00";
                 BigDecimal bonus = new BigDecimal("0.00");
-                /*设置商业险返点佣金*/
+                /*设置商业险返点*/
                 List<BigDecimal> percentList = new ArrayList<>();
                 //		1.使用性质（根据使用性质类型，查询对应的返点比例）
                 if (companyInsurance != null) {
                     String usageType = companyInsurance.getCarUsageType();
                     InsuranceUsage insuranceUsage = usageService.selectByUserType(usageType);//查询使用性质
-                    InsuranceRebateRatio rebateRatioBase = rebateRatioService.getInsuranceRebateRatioByTypeAndUsageTypeAndInsuranceDate(RebateType.COMMERCIAL_BASIC_REBATE.getType(),usageType,zbTime);
+                    InsuranceRebateRatio rebateRatioBase = rebateRatioService.getInsuranceRebateRatioByTypeAndUsageTypeAndInsuranceDate(RebateType.COMMERCIAL_BASIC_REBATE.getType(),usageType,zbTime,uid);
                     if(insuranceUsage != null && rebateRatioBase != null){
                         BigDecimal ratio = rebateRatioBase.getRebateRatio();
                         percentList.add(ratio);
@@ -101,17 +109,17 @@ public class InsuranceInHandServiceImpl extends ServiceImpl<InsuranceInHandMappe
                     Double passengerLiabilityInsured = companyInsurance.getPassengerLiability() == null ? 0 : companyInsurance.getPassengerLiability();//乘客责任险保额
 
 //		三者保额比例（使用性质，三者保额，车损保额是否达标）
-                    BigDecimal thirdPartyRebate = new BigDecimal(0);
+                    BigDecimal thirdPartyRebate = new BigDecimal("0.00");
 //                  保单中是否存在第三责任险
 //                    1.第三责任险不为0，且车损为零
                     if(thirdPartyInsured != null && carDamageInsured == 0){
-                        List<InsuranceRebateRatio> insuranceRebateRatioList = rebateRatioService.getInsuranceRebateRatioByTypeAndCarDamageInsuredIsZeroInsuranceDate(RebateType.THIRD_PARTY_REBATE.getType(),usageType,zbTime);
+                        List<InsuranceRebateRatio> insuranceRebateRatioList = rebateRatioService.getInsuranceRebateRatioByTypeAndCarDamageInsuredIsZeroInsuranceDate(RebateType.THIRD_PARTY_REBATE.getType(),usageType,zbTime,uid);
 //                        遍历，获取
                         if (CollectionUtils.isNotEmpty(insuranceRebateRatioList)) {
                             for (InsuranceRebateRatio insuranceRebateRatio : insuranceRebateRatioList) {
-                                double start = Double.parseDouble(insuranceRebateRatio.getThirdPartyInsuredStart());
-                                double end = Double.parseDouble(insuranceRebateRatio.getThirdPartyInsuredEnd());
-                                if (thirdPartyInsured > start && thirdPartyInsured <= end) {
+                                double start = Double.parseDouble(insuranceRebateRatio.getThirdPartyInsuredStart())*WAN;
+                                double end = Double.parseDouble(insuranceRebateRatio.getThirdPartyInsuredEnd())*WAN;
+                                if (thirdPartyInsured > start && thirdPartyInsured <= end) {//20000需要写成19000
                                     percentList.add(insuranceRebateRatio.getRebateRatio());
                                 }else if(start == end && thirdPartyInsured == start){
                                     percentList.add(insuranceRebateRatio.getRebateRatio());
@@ -122,12 +130,12 @@ public class InsuranceInHandServiceImpl extends ServiceImpl<InsuranceInHandMappe
                     }
 //                    1.第三责任险不为0，且车损不为零
                     if(thirdPartyInsured != null && carDamageInsured != 0){
-                        List<InsuranceRebateRatio> insuranceRebateRatioList = rebateRatioService.getInsuranceRebateRatioByTypeAndCarDamageInsuredIsNotZeroInsuranceDate(RebateType.THIRD_PARTY_REBATE.getType(),usageType,zbTime);
+                        List<InsuranceRebateRatio> insuranceRebateRatioList = rebateRatioService.getInsuranceRebateRatioByTypeAndCarDamageInsuredIsNotZeroInsuranceDate(RebateType.THIRD_PARTY_REBATE.getType(),usageType,zbTime,uid);
 //                        遍历，获取
                         if (CollectionUtils.isNotEmpty(insuranceRebateRatioList)) {
                             for (InsuranceRebateRatio insuranceRebateRatio : insuranceRebateRatioList) {
-                                double start = Double.parseDouble(insuranceRebateRatio.getThirdPartyInsuredStart());
-                                double end = Double.parseDouble(insuranceRebateRatio.getThirdPartyInsuredEnd());
+                                double start = Double.parseDouble(insuranceRebateRatio.getThirdPartyInsuredStart())*WAN;
+                                double end = Double.parseDouble(insuranceRebateRatio.getThirdPartyInsuredEnd())*WAN;
                                 if (thirdPartyInsured > start && thirdPartyInsured <= end) {
                                     percentList.add(insuranceRebateRatio.getRebateRatio());
                                 }else if(start == end && thirdPartyInsured == start){
@@ -148,7 +156,7 @@ public class InsuranceInHandServiceImpl extends ServiceImpl<InsuranceInHandMappe
                     if (Integer.parseInt(renewalType) == RenewalTypeEnum.NEW_CAR_RENEWAL.getType() && y <= 1) {
 //            新车返点比
                         try {
-                            addPercent(percentList, RebateType.NEW_CAR_REBATE.getType(),zbTime);
+                            addPercent(percentList, RebateType.NEW_CAR_REBATE.getType(),zbTime,uid);
                         } catch (InsuranceException e) {
                             // TODO: 2021/6/11 0011
                             return Result.error(400,"未设置新车返点比例，请先设置在计算",RebateType.NEW_CAR_REBATE.getType());
@@ -156,7 +164,7 @@ public class InsuranceInHandServiceImpl extends ServiceImpl<InsuranceInHandMappe
                     } else if (Integer.parseInt(renewalType) == RenewalTypeEnum.LAST_YEAR_RENEWAL.getType() && y > 1 && y <= 2) {
 //            次新车返点比
                         try {
-                            addPercent(percentList, RebateType.LAST_YEAR_CAR_REBATE.getType(),zbTime);
+                            addPercent(percentList, RebateType.LAST_YEAR_CAR_REBATE.getType(),zbTime,uid);
                         }catch (InsuranceException e){
                             // TODO: 2021/6/11 0011
                             return Result.error(400,"未设置次新车返点比例，请先设置在计算",RebateType.LAST_YEAR_CAR_REBATE.getType());
@@ -166,7 +174,7 @@ public class InsuranceInHandServiceImpl extends ServiceImpl<InsuranceInHandMappe
                     if (Integer.parseInt(renewalType) == RenewalTypeEnum.COMPETITION_RENEWAL.getType()) {
 //            竞回返点比
                         try {
-                            addPercent(percentList, RebateType.COMPETITION_REBATE.getType(),zbTime);
+                            addPercent(percentList, RebateType.COMPETITION_REBATE.getType(),zbTime,uid);
                         }catch (InsuranceException e){
                             // TODO: 2021/6/11 0011
                             return Result.error(400,"未设置竟回返点比例，请先设置在计算",RebateType.COMPETITION_REBATE.getType());
@@ -176,7 +184,7 @@ public class InsuranceInHandServiceImpl extends ServiceImpl<InsuranceInHandMappe
                     if (companyInsurance.getIsTransfer() == IsTransfer.TRANSFER.getType()) {
 //            已过户
                         try {
-                            addPercent(percentList, RebateType.IS_TRANSFER_REBATE.getType(),zbTime);
+                            addPercent(percentList, RebateType.IS_TRANSFER_REBATE.getType(),zbTime,uid);
                         } catch (InsuranceException e) {
                             // TODO: 2021/6/11 0011
                             return Result.error(400,"未设置过户返点比例，请先设置在计算",RebateType.IS_TRANSFER_REBATE.getType());
@@ -191,7 +199,7 @@ public class InsuranceInHandServiceImpl extends ServiceImpl<InsuranceInHandMappe
                             && y > 2
                     ) {
                         try {
-                            addPercent(percentList, RebateType.OVERLAPPING_REBATE.getType(),zbTime);
+                            addPercent(percentList, RebateType.OVERLAPPING_REBATE.getType(),zbTime,uid);
                         } catch (InsuranceException e) {
                             // TODO: 2021/6/11 0011
                             return Result.error(400,"未设置交叉返点比例，请先设置在计算",RebateType.OVERLAPPING_REBATE.getType());
@@ -201,7 +209,7 @@ public class InsuranceInHandServiceImpl extends ServiceImpl<InsuranceInHandMappe
 //        根据商业险保单判断
                     if (companyInsurance.getSignServiceHarge() == 0) {
                         try {
-                            addPercent(percentList, RebateType.FOLLOW_UP_REBATE.getType(),zbTime);
+                            addPercent(percentList, RebateType.FOLLOW_UP_REBATE.getType(),zbTime,uid);
                         } catch (InsuranceException e) {
                             // TODO: 2021/6/11 0011
                             return Result.error(400,"未设置跟单零返点比例，请先设置在计算",RebateType.FOLLOW_UP_REBATE.getType());
@@ -211,20 +219,20 @@ public class InsuranceInHandServiceImpl extends ServiceImpl<InsuranceInHandMappe
 //                如果乘客险和司机险不为零则查询座位保返点
                     Integer seatsNum = companyInsurance.getSeatsNum();//获取车座位数
                     if(driverLiabilityInsured != 0 && passengerLiabilityInsured != 0){
-                        List<InsuranceRebateRatio> rebateRatioList = rebateRatioService.getInsuranceRebateRatioByTypeAndInsuranceDate(RebateType.SEAT_INSURANCE.getType(),zbTime);
+                        List<InsuranceRebateRatio> rebateRatioList = rebateRatioService.getInsuranceRebateRatioByTypeAndInsuranceDate(RebateType.SEAT_INSURANCE.getType(),zbTime,uid);
                         for (InsuranceRebateRatio rebateRatio : rebateRatioList) {
-//                      这里需客户自定根据使用性质设置座位保奖励（需要对每种汽车使用性质进行设置）
+
                             if (!rebateRatio.getUsageType().equals("-") && Integer.parseInt(usageType) == Integer.parseInt(rebateRatio.getUsageType())) {
-                               BigDecimal passengerInsured = new BigDecimal(rebateRatio.getPassengerLiability());//乘客险保额
-                                BigDecimal driverInsured = new BigDecimal(rebateRatio.getDriverLiabilityInsured());//司机责任险保额
-                                Integer fixed = rebateRatio.getFixed();//固定K值
+                               BigDecimal passengerInsured = new BigDecimal(Double.parseDouble(rebateRatio.getPassengerLiability())*WAN);//乘客险保额
+                                BigDecimal driverInsured = new BigDecimal(Double.parseDouble(rebateRatio.getDriverLiabilityInsured())*WAN);//司机责任险保额
+//                                Integer fixed = rebateRatio.getFixed();//固定K值
                                 //座位保奖金
                                 bonus = rebateRatio.getBonus();
 //                                todo
-                                if(new BigDecimal(fixed).doubleValue() >= driverInsured.doubleValue()
-                                        && new BigDecimal(passengerLiabilityInsured).doubleValue() >= new BigDecimal(seatsNum-1).multiply(driverInsured).doubleValue()){//k值大于等于司机责任险,并且保司保单的乘客险保额大于等于计算的值
+                                if(driverInsured.doubleValue() <= new BigDecimal(driverLiabilityInsured).doubleValue() //保司保单的司机责任险 >= 设定的司机责任险
+                                        && new BigDecimal(passengerLiabilityInsured).doubleValue() >= new BigDecimal(seatsNum-1).multiply(passengerInsured).doubleValue()){//并且保司保单的乘客险保额大于等于计算的值
                                     try {
-                                        addPercent(percentList,RebateType.SEAT_INSURANCE.getType(),zbTime);
+                                        addPercent(percentList,RebateType.SEAT_INSURANCE.getType(),zbTime,uid);
                                     } catch (InsuranceException e) {
                                         return Result.error(400,"未设置座位保返点比例，请先设置再计算",RebateType.SEAT_INSURANCE.getType());
                                     }
@@ -237,7 +245,7 @@ public class InsuranceInHandServiceImpl extends ServiceImpl<InsuranceInHandMappe
 //        根据新续保标志判断是否为转入保单
                     if (Integer.parseInt(renewalType) == RenewalTypeEnum.BRANCH_RENEWAL.getType()) {
                         try {
-                            addPercent(percentList, RebateType.CHANGE_INTO_INSURANCE.getType(),zbTime);
+                            addPercent(percentList, RebateType.CHANGE_INTO_INSURANCE.getType(),zbTime,uid);
                         } catch (InsuranceException e) {
                             // TODO: 2021/6/11 0011
                             return Result.error(400,"未设置转入比例，请先设置在计算",RebateType.CHANGE_INTO_INSURANCE.getType());
@@ -271,8 +279,10 @@ public class InsuranceInHandServiceImpl extends ServiceImpl<InsuranceInHandMappe
                 //交强险返点比
                 BigDecimal res4 = new BigDecimal("0.00");
                 if(compulsoryInsurCode != null && commercialInsurCode != null){
-                    res4 = rebateRatioService.getInsuranceRebateRatioByTypeAndInsuranceDate(RebateType.COMPULSORY_REBATE.getType(),checkInsurance.getInsuranceDate())
-                            .get(0).getRebateRatio();
+                    List<InsuranceRebateRatio> ratios = rebateRatioService.getInsuranceRebateRatioByTypeAndInsuranceDate(RebateType.COMPULSORY_REBATE.getType(), checkInsurance.getInsuranceDate(),uid);
+                   if(CollectionUtils.isNotEmpty(ratios)){
+                       res4 = ratios.get(0).getRebateRatio();
+                   }
                 }
                 try{
                     //               设置总返点比
@@ -377,7 +387,6 @@ public class InsuranceInHandServiceImpl extends ServiceImpl<InsuranceInHandMappe
 
     /**
      * 已返点总金额
-     * @param uid
      * @return
      */
     @Override
@@ -437,8 +446,8 @@ public class InsuranceInHandServiceImpl extends ServiceImpl<InsuranceInHandMappe
          * @param percentList
          * @param code
          */
-        private void addPercent (List<BigDecimal> percentList, Integer code, Date zbTime) throws InsuranceException{
-            List<InsuranceRebateRatio> rebateRatioList = rebateRatioService.getInsuranceRebateRatioByTypeAndInsuranceDate(code,zbTime);
+        private void addPercent (List<BigDecimal> percentList, Integer code, Date zbTime,String uid) throws InsuranceException{
+            List<InsuranceRebateRatio> rebateRatioList = rebateRatioService.getInsuranceRebateRatioByTypeAndInsuranceDate(code,zbTime,uid);
             if (CollectionUtils.isNotEmpty(rebateRatioList)) {
                 percentList.add(rebateRatioList.get(0).getRebateRatio());
             } else {
@@ -460,4 +469,27 @@ public class InsuranceInHandServiceImpl extends ServiceImpl<InsuranceInHandMappe
             int y = DateUtils.dateDiff('y', nowDate,registerDate);
             return y;
         }
+
+
+//    /**
+//     * 导入表格式判断数据是否重复，如果重复则取出重复数据的保单号
+//     * @param obj
+//     */
+//    public boolean isExistAndSave(Object obj,Integer code) {
+//        boolean flag = false;
+//        if(obj instanceof InsuranceInHand && code == 2){
+//            InsuranceInHand insuranceInHand = (InsuranceInHand)obj;
+//            String commercialInsurCode = insuranceInHand.getCommercialInsurCode();
+//            String compulsoryInsurCode = insuranceInHand.getCompulsoryInsurCode();
+//            InsuranceInHand insurance = insuranceInHandMapper.queryByCompulsoryInsurCodeOrCommercialInsurCode(compulsoryInsurCode,commercialInsurCode);
+//            if(insurance != null){
+////            数据库已有数据返回false
+//                flag = true;
+//            }else{
+//                this.save(insuranceInHand);
+//                flag = false;
+//            }
+//        }
+//        return flag;
+//    }
 }

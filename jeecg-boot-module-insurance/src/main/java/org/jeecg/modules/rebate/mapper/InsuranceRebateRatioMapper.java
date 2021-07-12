@@ -15,22 +15,22 @@ import java.util.List;
  */
 public interface InsuranceRebateRatioMapper extends BaseMapper<InsuranceRebateRatio> {
 
-    List<InsuranceRebateRatio> selectInsuranceRebateRatioByTypeAndInsuranceDate(@Param("type") Integer type, @Param("zbTime") Date zbTime);
+    List<InsuranceRebateRatio> selectInsuranceRebateRatioByTypeAndInsuranceDate(@Param("type") Integer type, @Param("zbTime") Date zbTime,@Param("uid") String uid);
 
-    InsuranceRebateRatio selectInsuranceRebateRatioByTypeAndUsageTypeAndInsuranceDate(@Param("type") Integer type,@Param("usageType") String usageType, @Param("zbTime") Date zbTime);
+    InsuranceRebateRatio selectInsuranceRebateRatioByTypeAndUsageTypeAndInsuranceDate(@Param("type") Integer type,@Param("usageType") String usageType, @Param("zbTime") Date zbTime,@Param("uid") String uid);
 
-    InsuranceRebateRatio selectInsuranceRebateRatioByTypeAndUsageTypeAndInsuranceDateAndCarDamageInsuredZeroAndThirdPartyInsured(@Param("type") Integer type,@Param("usageType") String usageType,@Param("thirdPartyInsuredStart") String thirdPartyInsuredStart, @Param("thirdPartyInsuredEnd") String thirdPartyInsuredEnd, @Param("zbTime") Date zbTime);
+    InsuranceRebateRatio selectInsuranceRebateRatioByTypeAndUsageTypeAndInsuranceDateAndCarDamageInsuredZeroAndThirdPartyInsured(@Param("type") Integer type,@Param("usageType") String usageType,@Param("thirdPartyInsuredStart") String thirdPartyInsuredStart, @Param("thirdPartyInsuredEnd") String thirdPartyInsuredEnd, @Param("zbTime") Date zbTime,@Param("uid")String uid);
 
-    InsuranceRebateRatio selectInsuranceRebateRatioByTypeAndUsageTypeAndInsuranceDateAndCarDamageInsuredNotZeroAndThirdPartyInsured(@Param("type") Integer type,@Param("usageType") String usageType,@Param("thirdPartyInsuredStart") String thirdPartyInsuredStart, @Param("thirdPartyInsuredEnd") String thirdPartyInsuredEnd,@Param("zbTime") Date zbTime);
+    InsuranceRebateRatio selectInsuranceRebateRatioByTypeAndUsageTypeAndInsuranceDateAndCarDamageInsuredNotZeroAndThirdPartyInsured(@Param("type") Integer type, @Param("usageType") String usageType, @Param("thirdPartyInsuredStart") String thirdPartyInsuredStart, @Param("thirdPartyInsuredEnd") String thirdPartyInsuredEnd, @Param("zbTime") Date zbTime, @Param("uid")String uid);
 
     InsuranceRebateRatio selectByUsageTypeAndRebateType(@Param("usageType") String usageType, @Param("rebateRatioType") Integer rebateRatioType);
 
     InsuranceRebateRatio selectByUsageTypeAndRebateTypeAndCarDamageInsuredAndThirdPartyInsuredAndDate(@Param("usageType") String usageType, @Param("rebateRatioType") Integer rebateRatioType, @Param("carDamageInsured") String carDamageInsured, @Param("thirdPartyInsuredStart") String thirdPartyInsuredStart, @Param("thirdPartyInsuredEnd") String thirdPartyInsuredEnd,@Param("zbTime") Date zbTime);
 
 
-    InsuranceRebateRatio selectByUsageTypeAndRebateTypeAndInsuranceDate(@Param("usageType") String usageType,  @Param("rebateRatioType")Integer rebateRatioType,@Param("zbTime") Date zbTime);
+    InsuranceRebateRatio selectByUsageTypeAndRebateTypeAndInsuranceDate(@Param("usageType") String usageType,  @Param("rebateRatioType")Integer rebateRatioType,@Param("zbTime") Date zbTime,@Param("uid")String uid);
 
-    List<InsuranceRebateRatio> selectInsuranceRebateRatioByTypeAndUsageTypeAndInsuranceDateAndCarDamageInsuredZero(@Param("type")Integer type,@Param("usageType") String usageType, @Param("zbTime")Date zbTime);
+    List<InsuranceRebateRatio> selectInsuranceRebateRatioByTypeAndUsageTypeAndInsuranceDateAndCarDamageInsuredZero(@Param("type")Integer type, @Param("usageType") String usageType, @Param("zbTime")Date zbTime, @Param("uid")String uid);
 
-    List<InsuranceRebateRatio> selectInsuranceRebateRatioByTypeAndUsageTypeAndInsuranceDateAndCarDamageInsuredNotZero(@Param("type")Integer type,@Param("usageType") String usageType, @Param("zbTime")Date zbTime);
+    List<InsuranceRebateRatio> selectInsuranceRebateRatioByTypeAndUsageTypeAndInsuranceDateAndCarDamageInsuredNotZero(@Param("type")Integer type,@Param("usageType") String usageType, @Param("zbTime")Date zbTime,@Param("uid")String uid);
 }

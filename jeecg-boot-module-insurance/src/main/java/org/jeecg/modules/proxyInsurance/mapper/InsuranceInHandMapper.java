@@ -1,8 +1,8 @@
 package org.jeecg.modules.proxyInsurance.mapper;
 
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Param;
 import org.jeecg.modules.proxyInsurance.entity.InsuranceInHand;
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
 /**
  * @Description: 手输保单
@@ -11,6 +11,5 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  * @Version: V1.0
  */
 public interface InsuranceInHandMapper extends BaseMapper<InsuranceInHand> {
-
     InsuranceInHand queryByCompulsoryInsurCodeOrCommercialInsurCode(@Param("compulsoryInsurCode") String compulsoryInsurCode, @Param("commercialInsurCode") String commercialInsurCode);
 }

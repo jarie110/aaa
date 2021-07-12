@@ -78,14 +78,10 @@ public class CheckInsurance implements Serializable {
     @ApiModelProperty(value = "出单员")
     private String billMan;
 	/**业务员*/
-	@Excel(name = "业务员", width = 15)
+	@Excel(name = "业务员", width = 15,dictTable = "sys_user",dicCode = "id",dicText = "realname")
+    @Dict(dictTable = "sys_user",dicCode = "id",dicText = "realname")
     @ApiModelProperty(value = "业务员")
-    private String salesman;
-//	/**所属团队*/
-//	@Excel(name = "所属团队", width = 15,dictTable="insurance_team",dicCode = "team_code",dicText = "team_name")
-//    @ApiModelProperty(value = "所属团队")
-//    @Dict(dictTable="insurance_team",dicCode = "team_code",dicText = "team_name")
-//    private String insuranceTeam;
+    private String uid;
 	/**客户名称*/
 	@Excel(name = "客户名称", width = 15)
     @ApiModelProperty(value = "客户名称")

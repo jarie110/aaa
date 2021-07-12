@@ -80,7 +80,7 @@ public class InsuranceRebateRatio implements Serializable {
     @ApiModelProperty(value = "三责保额档")
     private String thirdPartyInsuredEnd;
 	/**车损险保额档*/
-	@Excel(name = "车损险保额档", width = 15)
+	@Excel(name = "车损险保额档", width = 15,dicCode = "carDamageInsuredIsZero")
     @ApiModelProperty(value = "车损险保额档")
     private String carDamageInsured;
 	/**司机责任险保额档*/
@@ -99,12 +99,13 @@ public class InsuranceRebateRatio implements Serializable {
 	@Excel(name = "奖金", width = 15)
     @ApiModelProperty(value = "奖金")
     private BigDecimal bonus;
-    /**K值*/
-    @Excel(name = "奖金", width = 15)
-    @ApiModelProperty(value = "奖金")
-    private Integer fixed;
 	/**签单手续费*/
 	@Excel(name = "签单手续费", width = 15)
     @ApiModelProperty(value = "签单手续费")
     private BigDecimal signFee;
+    /**用户id*/
+    @Excel(name = "用户id", width = 15, dictTable = "sys_user", dicText = "username", dicCode = "id")
+    @Dict(dictTable = "sys_user", dicText = "username", dicCode = "id")
+    @ApiModelProperty(value = "用户id")
+    private java.lang.String uid;
 }

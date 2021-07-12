@@ -6,11 +6,13 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.CollectionUtils;
 import org.jeecg.common.api.vo.Result;
 import org.jeecg.common.aspect.annotation.AutoLog;
 import org.jeecg.common.system.base.controller.JeecgController;
 import org.jeecg.common.system.query.QueryGenerator;
 import org.jeecg.common.util.DateUtils;
+import org.jeecg.enumUtil.IsChecked;
 import org.jeecg.modules.checked.entity.CheckInsurance;
 import org.jeecg.modules.checked.service.ICheckInsuranceService;
 import org.jeecg.modules.proxyInsurance.entity.InsuranceInHand;
@@ -21,6 +23,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -42,12 +45,41 @@ public class CheckInsuranceController extends JeecgController<CheckInsurance, IC
 	@Autowired
 	private IInsuranceInHandService insuranceInHandService;
 
+
+	@AutoLog(value = "录入的保单-批量比对")
+	@GetMapping(value = "/batchCheck")
+	public Result<?> batchCheck(@RequestParam String ids) {
+		String[] split = ids.split(",");
+//		todo 对比失败，收集比对失败的车牌号
+		ArrayList<String> insuranceNums = new ArrayList<>();
+		int successList = 0;
+		InsuranceInHand insuranceInHand = null;
+		for (String id : split) {
+			insuranceInHand = insuranceInHandService.getById(id);
+			boolean flag = checkInsuranceService.checkAndSaveInsuracne(insuranceInHand);
+			if(!flag){
+				insuranceInHand.setIsChecked(IsChecked.NO_CHECKED.getCode());//比对失败，修改比对状态为未比对
+				insuranceInHandService.saveOrUpdate(insuranceInHand);
+				insuranceNums.add(insuranceInHand.getVehicleLicense());
+			}else {
+				successList ++;
+			}
+		}
+		return Result.OK(successList+"条数据比对成功；"+insuranceNums.size()+"条数据比对失败");
+	}
+
+
+
 	 @AutoLog(value = "录入的保单-对比保司保单数据")
 	 @ApiOperation(value="录入的保单-对比保司保单数据", notes="录入的保单-对比保司保单数据")
 	 @GetMapping(value = "/check")
 	 public Result<?> check(String id){
 		 InsuranceInHand insuranceInHand = insuranceInHandService.getById(id);
-		 return checkInsuranceService.checkAndSaveInsuracne(insuranceInHand);
+		 boolean flag = checkInsuranceService.checkAndSaveInsuracne(insuranceInHand);
+		 if(flag){
+			 return Result.OK("比对成功");
+		 }
+		 return Result.error("比对失败,录入信息有误或未导入保司保单");
 	 }
 
 	/**
@@ -143,9 +175,18 @@ public class CheckInsuranceController extends JeecgController<CheckInsurance, IC
 	@ApiOperation(value="核对的保单-通过id删除", notes="核对的保单-通过id删除")
 	@DeleteMapping(value = "/delete")
 	public Result<?> delete(@RequestParam(name="id",required=true) String id) {
-		checkInsuranceService.removeById(id);
-		return Result.OK("删除成功!");
+//		todo
+//		删除比对后的数据，改变录入保单的比对状态为未比对
+		boolean isChanged = checkInsuranceService.changeInsuranceInHand(id);
+		if(isChanged){
+			checkInsuranceService.removeById(id);
+			return Result.OK("删除成功!");
+		}
+		return Result.error("删除失败");
+
 	}
+
+
 
 	/**
 	 *  批量删除
@@ -157,9 +198,16 @@ public class CheckInsuranceController extends JeecgController<CheckInsurance, IC
 	@ApiOperation(value="核对的保单-批量删除", notes="核对的保单-批量删除")
 	@DeleteMapping(value = "/deleteBatch")
 	public Result<?> deleteBatch(@RequestParam(name="ids",required=true) String ids) {
-		this.checkInsuranceService.removeByIds(Arrays.asList(ids.split(",")));
+		List<String> idList = (List<String>) Arrays.asList(ids.split(","));
+		List<String> list = checkInsuranceService.changeInsuranceInHandBatch(idList);
+		this.checkInsuranceService.removeByIds(idList);
+		if(CollectionUtils.isNotEmpty(list)){
+			return Result.OK("批量删除成功，但未找到对应的录入保单信息"+list.toString());
+		}
 		return Result.OK("批量删除成功!");
 	}
+
+
 
 	/**
 	 * 通过id查询

@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.shiro.SecurityUtils;
 import org.jeecg.common.api.vo.Result;
+import org.jeecg.common.handler.InsuranceHandler;
 import org.jeecg.common.system.query.QueryGenerator;
 import org.jeecg.common.system.vo.LoginUser;
 import org.jeecg.common.util.oConvertUtils;
@@ -40,6 +41,8 @@ public class JeecgController<T, S extends IService<T>> {
     @Autowired
     S service;
 
+    @Autowired
+    private InsuranceHandler insuranceHandler;
     @Value("${jeecg.path.upload}")
     private String upLoadPath;
     /**
@@ -191,4 +194,63 @@ public class JeecgController<T, S extends IService<T>> {
         }
         return Result.error("文件导入失败！");
     }
+
+
+
+    /**
+     * 通过excel导入数据
+     *
+     * @param request
+     * @param response
+     * @return
+     */
+    protected Result<?> importInsuranceExcel(HttpServletRequest request, HttpServletResponse response, Class<T> clazz,int code) {
+
+        MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
+        Map<String, MultipartFile> fileMap = multipartRequest.getFileMap();
+        for (Map.Entry<String, MultipartFile> entity : fileMap.entrySet()) {
+            MultipartFile file = entity.getValue();// 获取上传文件对象
+            ImportParams params = new ImportParams();
+            params.setTitleRows(2);
+            params.setHeadRows(1);
+            params.setNeedSave(true);
+            try {
+                List<T> list = ExcelImportUtil.importExcel(file.getInputStream(), clazz, params);
+                //update-begin-author:taoyan date:20190528 for:批量插入数据
+                long start = System.currentTimeMillis();
+
+               int existNums = 0;
+               int notExistNums = 0;
+
+//                判断是否有重复
+                for(int i=0;i<list.size();i++){
+                      if(insuranceHandler.isExistAndSave(list.get(i),code)){
+                          existNums ++;
+                      }else{
+                          notExistNums ++;
+                      }
+
+               }
+//                service.saveBatch(list);
+                            //400条 saveBatch消耗时间1592毫秒  循环插入消耗时间1947毫秒
+                            //1200条  saveBatch消耗时间3687毫秒 循环插入消耗时间5212毫秒
+                                    log.info("消耗时间" + (System.currentTimeMillis() - start) + "毫秒");
+
+                //update-end-author:taoyan date:20190528 for:批量插入数据
+                return Result.ok("文件导入成功！数据行数：" + notExistNums+",重复行数："+ existNums);
+            } catch (Exception e) {
+                log.error(e.getMessage(), e);
+                return Result.error("文件导入失败:" + e.getMessage());
+            } finally {
+                try {
+                    file.getInputStream().close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return Result.error("文件导入失败！");
+//        return result;
+    }
+
 }

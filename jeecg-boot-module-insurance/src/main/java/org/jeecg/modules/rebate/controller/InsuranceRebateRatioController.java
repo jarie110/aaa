@@ -15,7 +15,6 @@ import org.jeecg.modules.rebate.entity.InsuranceRebateRatio;
 import org.jeecg.modules.rebate.entity.RebatePojo;
 import org.jeecg.modules.rebate.entity.Region;
 import org.jeecg.modules.rebate.service.IInsuranceRebateRatioService;
-import org.jeecg.pojo.RebatePo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
@@ -101,23 +100,23 @@ public class InsuranceRebateRatioController extends JeecgController<InsuranceReb
 
 		return insuranceRebateRatioService.isAlreadyExist(rebatePojo);
 	}
-
-	/**
-	 *  批量新增
-	 *
-	 * @param rebatePos
-	 * @return
-	 */
-	@AutoLog(value = "返点比例-批量新增")
-	@ApiOperation(value="返点比例-批量新增", notes="返点比例-批量新增")
-	@PutMapping(value = "/insertBatch")
-	public Result<?> insertBatch(@RequestBody List<RebatePo> rebatePos) {
-		boolean b = insuranceRebateRatioService.insertBatch(rebatePos);
-		if(b){
-			return Result.OK("批量保存成功!");
-		}
-		return Result.error("批量保存失败");
-	}
+//
+//	/**
+//	 *  批量新增
+//	 *
+//	 * @param rebatePos
+//	 * @return
+//	 */
+//	@AutoLog(value = "返点比例-批量新增")
+//	@ApiOperation(value="返点比例-批量新增", notes="返点比例-批量新增")
+//	@PutMapping(value = "/insertBatch")
+//	public Result<?> insertBatch(@RequestBody List<RebatePo> rebatePos) {
+//		boolean b = insuranceRebateRatioService.insertBatch(rebatePos);
+//		if(b){
+//			return Result.OK("批量保存成功!");
+//		}
+//		return Result.error("批量保存失败");
+//	}
 
 
 	/**

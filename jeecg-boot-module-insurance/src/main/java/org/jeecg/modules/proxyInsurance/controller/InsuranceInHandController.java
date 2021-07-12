@@ -83,29 +83,29 @@ public class InsuranceInHandController extends JeecgController<InsuranceInHand, 
 		 return  Result.OK(String.valueOf(count));
 	 }
 
-	 /**
-	  * 计算该用户所有保单保费总金额
-	  * @return
-	  */
-	 @AutoLog(value = "录入保单-保费总金额")
-	 @ApiOperation(value="录入保单-保费总金额", notes="录入保单-保费总金额")
-	 @GetMapping(value = "/totalInsuranceFee")
-	 public Result<?> totalInsuranceFee(String uid){
-		 String totalInsuranceFee = insuranceInHandService.totalInsuranceFee(uid);
-		 return Result.OK(totalInsuranceFee);
-	 }
+//	 /**
+//	  * 计算该用户所有保单保费总金额
+//	  * @return
+//	  */
+//	 @AutoLog(value = "录入保单-保费总金额")
+//	 @ApiOperation(value="录入保单-保费总金额", notes="录入保单-保费总金额")
+//	 @GetMapping(value = "/totalInsuranceFee")
+//	 public Result<?> totalInsuranceFee(String uid){
+//		 String totalInsuranceFee = insuranceInHandService.totalInsuranceFee(uid);
+//		 return Result.OK(totalInsuranceFee);
+//	 }
 
-	 /**
-	  * 计算该用户所有保单已返点总金额
-	  * @return
-	  */
-	 @AutoLog(value = "录入保单-已返点总金额")
-	 @ApiOperation(value="录入保单-已返点总金额", notes="录入保单-已返点总金额")
-	 @GetMapping(value = "/totalInsurancePaidFee")
-	 public Result<?> totalInsurancePaidFee(String uid){
-		 String insurancePaidFee = insuranceInHandService.totalInsurancePaidFee(uid);
-		 return Result.OK(insurancePaidFee);
-	 }
+//	 /**
+//	  * 计算该用户所有保单已返点总金额
+//	  * @return
+//	  */
+//	 @AutoLog(value = "录入保单-已返点总金额")
+//	 @ApiOperation(value="录入保单-已返点总金额", notes="录入保单-已返点总金额")
+//	 @GetMapping(value = "/totalInsurancePaidFee")
+//	 public Result<?> totalInsurancePaidFee(String uid){
+//		 String insurancePaidFee = insuranceInHandService.totalInsurancePaidFee(uid);
+//		 return Result.OK(insurancePaidFee);
+//	 }
 
 	 /**
 	  * 汽车使用性质列表
@@ -143,7 +143,6 @@ public class InsuranceInHandController extends JeecgController<InsuranceInHand, 
 		IPage<InsuranceInHand> pageList = insuranceInHandService.page(page, queryWrapper);
 		return Result.OK(pageList);
 	}
-
 
 //	@AutoLog(value = "录入的保单-分页列表查询排序")
 //	@ApiOperation(value="录入的保单-分页列表查询排序", notes="录入的保单-分页列表查询排序")
@@ -270,8 +269,12 @@ public class InsuranceInHandController extends JeecgController<InsuranceInHand, 
 	@ApiOperation(value="录入的保单-通过id删除", notes="录入的保单-通过id删除")
 	@DeleteMapping(value = "/delete")
 	public Result<?> delete(@RequestParam(name="id",required=true) String id) {
-		insuranceInHandService.removeById(id);
-		return Result.OK("删除成功!");
+		InsuranceInHand insuranceInHand = insuranceInHandService.getById(id);
+		if(insuranceInHand.getIsChecked() == IsChecked.NO_CHECKED.getCode()){
+			insuranceInHandService.removeById(id);
+			return Result.OK("删除成功!");
+		}
+		return  Result.error("已比对后的保单不允许删除");
 	}
 
 	/**
@@ -324,8 +327,8 @@ public class InsuranceInHandController extends JeecgController<InsuranceInHand, 
     * @return
     */
     @RequestMapping(value = "/importExcel", method = RequestMethod.POST)
-    public Result<?> importExcel(HttpServletRequest request, HttpServletResponse response) {
-        return super.importExcel(request, response, InsuranceInHand.class);
+    public Result<?> importExcel(HttpServletRequest request, HttpServletResponse response,Integer code) {
+        return super.importInsuranceExcel(request, response, InsuranceInHand.class,code);
     }
 
 }
